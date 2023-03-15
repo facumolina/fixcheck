@@ -1,7 +1,6 @@
 package org.imdea.fixcheck.loader;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
 import java.util.ArrayList;
 import java.util.List;
 
