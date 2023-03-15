@@ -15,6 +15,7 @@ dependencies {
     implementation "org.soot-oss:sootup.jimple.parser:1.0.0"
     implementation "org.soot-oss:sootup.callgraph:1.0.0"
     implementation "org.soot-oss:sootup.analysis:1.0.0"
+    testImplementation "junit:junit:4.12"
 }
 
 jar {
