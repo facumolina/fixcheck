@@ -14,7 +14,6 @@ import static org.junit.Assert.*;
  */
 public class TestLoaderTests {
 
-
   @Test
   public void testLoadPrefixes() {
     String classesPath = "/Users/facundo.molina/research/software/bad-fixes-dataset/tmp/jackson-databind-118/badfix/jackson-databind/target/test-classes";
