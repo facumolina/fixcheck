@@ -1,6 +1,9 @@
 apply plugin: 'java'
 
 repositories {
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
     mavenCentral()
 }
 
@@ -8,13 +11,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    implementation "org.soot-oss:sootup.core:1.0.0"
-    implementation "org.soot-oss:sootup.java.core:1.0.0"
-    implementation "org.soot-oss:sootup.java.sourcecode:1.0.0"
-    implementation "org.soot-oss:sootup.java.bytecode:1.0.0"
-    implementation "org.soot-oss:sootup.jimple.parser:1.0.0"
-    implementation "org.soot-oss:sootup.callgraph:1.0.0"
-    implementation "org.soot-oss:sootup.analysis:1.0.0"
+    implementation "org.soot-oss:soot:4.4.0"
     testImplementation "junit:junit:4.12"
 }
 
