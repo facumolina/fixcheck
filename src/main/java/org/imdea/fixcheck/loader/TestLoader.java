@@ -67,7 +67,7 @@ public class TestLoader {
     SootClass<JavaSootClassSource> sootClass = loadTestClass(testClass);
     for (SootMethod method : sootClass.getMethods()) {
       if (method.getName().equals("<init>")) continue;
-      prefixes.add(new Prefix(method));
+      prefixes.add(new Prefix(method, sootClass));
     }
     return prefixes;
   }
