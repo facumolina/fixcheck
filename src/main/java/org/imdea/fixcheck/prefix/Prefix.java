@@ -1,6 +1,8 @@
 package org.imdea.fixcheck.prefix;
 
+import sootup.core.model.SootClass;
 import sootup.core.model.SootMethod;
+import sootup.java.core.JavaSootClassSource;
 
 import java.util.Objects;
 
@@ -12,9 +14,19 @@ import java.util.Objects;
 public class Prefix {
 
   SootMethod method;
+  SootClass<JavaSootClassSource> methodClass;
 
-  public Prefix(SootMethod method) {
+  public Prefix(SootMethod method, SootClass<JavaSootClassSource> methodClass) {
     this.method = Objects.requireNonNull(method, "method cannot be null");
+    this.methodClass = Objects.requireNonNull(methodClass, "methodClass cannot be null");
+  }
+
+  public SootMethod getMethod() {
+    return method;
+  }
+
+  public SootClass<JavaSootClassSource> getMethodClass() {
+    return methodClass;
   }
 
   @Override
