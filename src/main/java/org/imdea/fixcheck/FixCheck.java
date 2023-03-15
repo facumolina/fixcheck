@@ -50,10 +50,12 @@ public class FixCheck {
       for (int i=0; i < n; i++) {
         // Generate n similar prefixes
         SootMethod newMethod = new SootMethod("similarPrefix"+i, method.getParameterTypes(), method.getReturnType(), method.getModifiers());
+        newMethod.addAllTagsOf(method);
 
         sootClass.addMethod(newMethod);
         // Create the method body
         Body newBody = (Body)oldBody.clone();
+
         newMethod.setActiveBody(newBody);
 
         for (SootMethod m : sootClass.getMethods()) {
