@@ -14,7 +14,7 @@ import soot.options.Options;
 /**
  * TestLoader class: provides methods to load a test class.
  *
- * @author Facundo Molina <facundo.molina@imdea.org>
+ * @author Facundo Molina
  */
 public class TestLoader {
 
