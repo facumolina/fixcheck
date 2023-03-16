@@ -3,6 +3,8 @@ package org.imdea.fixcheck;
 import org.imdea.fixcheck.loader.TestLoader;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.Initializer;
+import org.imdea.fixcheck.transform.PrefixTransformer;
+import org.imdea.fixcheck.transform.input.InputTransformer;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -60,34 +62,29 @@ public class FixCheck {
 
       for (int i=0; i < n; i++) {
 
-        // Initialize new class
-        SootClass newClass = Initializer.initializeTransformedClass("SimilarPrefixClass", sootClass);
 
         // Generate n similar prefixes
         System.out.println("Generating similar prefix: " + i);
-        SootMethod newMethod = new SootMethod("similarPrefix"+i, method.getParameterTypes(), method.getReturnType(), method.getModifiers());
-        newMethod.addAllTagsOf(method);
-        Body newBody = (Body)oldBody.clone();
-        newMethod.setActiveBody(newBody);
-        newClass.addMethod(newMethod);
+        PrefixTransformer prefixTransformer = new InputTransformer(prefix);
+        Prefix newPrefix = prefixTransformer.transform();
 
-        System.out.println("Generated prefix: " + newClass.getName() + "." + newMethod.getName());
-        System.out.println(newBody);
+        System.out.println("Generated prefix: " + newPrefix.getMethodClass().getName() + "." + newPrefix.getMethod().getName());
+        System.out.println(newPrefix.getMethod().getActiveBody());
 
         // Get the class bytes
-        byte[] classBytes = getClassBytes(newClass);
+        byte[] classBytes = getClassBytes(newPrefix.getMethodClass());
 
         // Load the class bytes into a new class loader
         ClassLoader loader = new ClassLoader() {
           @Override
           public Class<?> loadClass(String name) throws ClassNotFoundException {
-            if (name.equals(newClass.getName())) {
+            if (name.equals(newPrefix.getMethodClass().getName())) {
               return defineClass(name, classBytes, 0, classBytes.length);
             }
             return super.loadClass(name);
           }
         };
-        Class<?> justCreatedClass = loader.loadClass(newClass.getName());
+        Class<?> justCreatedClass = loader.loadClass(newPrefix.getMethodClass().getName());
 
         System.out.println("Running the test: " + justCreatedClass.getName());
         // Use JUnit core to run the just created test class
