@@ -2,6 +2,7 @@ package org.imdea.fixcheck;
 
 import org.imdea.fixcheck.loader.TestLoader;
 import org.imdea.fixcheck.prefix.Prefix;
+import org.imdea.fixcheck.runner.PrefixRunner;
 import org.imdea.fixcheck.transform.Initializer;
 import org.imdea.fixcheck.transform.PrefixTransformer;
 import org.imdea.fixcheck.transform.input.InputTransformer;
@@ -55,14 +56,8 @@ public class FixCheck {
     Class<?> inputClassType = Class.forName(inputType);
     List<Prefix> similarPrefixes = new ArrayList<>();
     for (Prefix prefix : prefixes) {
-      SootMethod method = prefix.getMethod();
-      SootClass sootClass = prefix.getMethodClass();
-      Body oldBody = method.retrieveActiveBody();
-
 
       for (int i=0; i < n; i++) {
-
-
         // Generate n similar prefixes
         System.out.println("Generating similar prefix: " + i);
         PrefixTransformer prefixTransformer = new InputTransformer(prefix);
@@ -71,32 +66,9 @@ public class FixCheck {
         System.out.println("Generated prefix: " + newPrefix.getMethodClass().getName() + "." + newPrefix.getMethod().getName());
         System.out.println(newPrefix.getMethod().getActiveBody());
 
-        // Get the class bytes
-        byte[] classBytes = getClassBytes(newPrefix.getMethodClass());
+        // Run the transformed prefix
+        PrefixRunner.runPrefix(newPrefix);
 
-        // Load the class bytes into a new class loader
-        ClassLoader loader = new ClassLoader() {
-          @Override
-          public Class<?> loadClass(String name) throws ClassNotFoundException {
-            if (name.equals(newPrefix.getMethodClass().getName())) {
-              return defineClass(name, classBytes, 0, classBytes.length);
-            }
-            return super.loadClass(name);
-          }
-        };
-        Class<?> justCreatedClass = loader.loadClass(newPrefix.getMethodClass().getName());
-
-        System.out.println("Running the test: " + justCreatedClass.getName());
-        // Use JUnit core to run the just created test class
-        JUnitCore jUnitCore = new JUnitCore();
-        Result result = jUnitCore.run(justCreatedClass);
-        System.out.printf("Test ran: %s, Failed: %s%n", result.getRunCount(), result.getFailureCount());
-        if (result.getFailureCount() > 0) {
-          System.out.println("Failures:");
-          for (Failure failure : result.getFailures()) {
-            System.out.println(failure.toString());
-          }
-        }
         break;
       }
     }
@@ -113,14 +85,6 @@ public class FixCheck {
     jasminClass.print(writerOut);
     writerOut.flush();
     streamOut.close();
-  }
-
-  public static byte[] getClassBytes(SootClass sootClass) {
-    int java_version = Options.v().java_version();
-    ByteArrayOutputStream streamOut = new ByteArrayOutputStream();
-    BafASMBackend backend = new BafASMBackend(sootClass, java_version);
-    backend.generateClassFile(streamOut);
-    return streamOut.toByteArray();
   }
 
 }
