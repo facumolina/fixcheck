@@ -21,7 +21,6 @@ import java.util.List;
 
 /**
  * FixCheck class: main class.
- *
  * @author Facundo Molina
  */
 public class FixCheck {
@@ -39,7 +38,6 @@ public class FixCheck {
     List<Prefix> prefixes = TestLoader.loadPrefixes(targetTestsPath, targetTests);
     System.out.println("prefixes: " + prefixes.size());
 
-    // TODO: analyze the prefixes
     // TODO: first approach: generate similar prefixes by changing the 'inputs' in the given prefixes
     try {
       generateSimilarPrefixes(prefixes, variations);
@@ -73,18 +71,6 @@ public class FixCheck {
       }
     }
     return similarPrefixes;
-  }
-
-  public void writeClassFile(SootClass sootClass) throws IOException {
-    String fileName = SourceLocator.v().getFileNameFor(sootClass, Options.output_format_class);
-    File f = new File(fileName);
-    f.getParentFile().mkdirs();
-    OutputStream streamOut = new JasminOutputStream(new FileOutputStream(f, false));
-    PrintWriter writerOut = new PrintWriter(new OutputStreamWriter(streamOut));
-    JasminClass jasminClass = new soot.jimple.JasminClass(sootClass);
-    jasminClass.print(writerOut);
-    writerOut.flush();
-    streamOut.close();
   }
 
 }
