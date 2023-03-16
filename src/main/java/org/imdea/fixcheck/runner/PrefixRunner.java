@@ -1,14 +1,20 @@
 package org.imdea.fixcheck.runner;
 
+import com.strobel.decompiler.Decompiler;
+import com.strobel.decompiler.DecompilerSettings;
+import com.strobel.decompiler.PlainTextOutput;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 import soot.SootClass;
+import soot.SourceLocator;
 import soot.baf.BafASMBackend;
+import soot.jimple.JasminClass;
 import soot.options.Options;
+import soot.util.JasminOutputStream;
 
-import java.io.ByteArrayOutputStream;
+import java.io.*;
 
 /**
  * PrefixRunner class: provide methods to run a prefix.
@@ -16,9 +22,9 @@ import java.io.ByteArrayOutputStream;
  */
 public class PrefixRunner {
 
-  public static void runPrefix(Prefix prefix) throws ClassNotFoundException {
+  public static void runPrefix(Prefix prefix) throws ClassNotFoundException, FileNotFoundException {
     // Get the class bytes
-    byte[] classBytes = getClassBytes(prefix.getMethodClass());
+    byte[] classBytes = getClassBytesAndSaveToFile(prefix.getMethodClass());
 
     // Load the class bytes into a new class loader
     ClassLoader loader = new ClassLoader() {
@@ -31,6 +37,11 @@ public class PrefixRunner {
       }
     };
     Class<?> justCreatedClass = loader.loadClass(prefix.getMethodClass().getName());
+    PlainTextOutput plainTextOutput = new PlainTextOutput();
+
+    Decompiler.decompile(justCreatedClass.getName(), plainTextOutput, DecompilerSettings.javaDefaults());
+    System.out.println("Decompiled class: ");
+    System.out.println(plainTextOutput);
 
     System.out.println("Running the test: " + justCreatedClass.getName());
     // Use JUnit core to run the just created test class
@@ -56,6 +67,20 @@ public class PrefixRunner {
     BafASMBackend backend = new BafASMBackend(sootClass, java_version);
     backend.generateClassFile(streamOut);
     return streamOut.toByteArray();
+  }
+
+  private static byte[] getClassBytesAndSaveToFile(SootClass sootClass) throws FileNotFoundException {
+    String fileName = SourceLocator.v().getFileNameFor(sootClass, Options.output_format_class);
+    fileName = fileName.replace("sootOutput", "/Users/facundo.molina/research/software/bad-fixes-dataset/tmp/jackson-databind-118/badfix/jackson-databind/target/test-classes");
+    File f = new File(fileName);
+    f.getParentFile().mkdirs();
+    OutputStream streamOut = new JasminOutputStream(new FileOutputStream(f, false));
+    PrintWriter writerOut = new PrintWriter(new OutputStreamWriter(streamOut));
+    JasminClass jasminClass = new soot.jimple.JasminClass(sootClass);
+    jasminClass.print(writerOut);
+    writerOut.flush();
+    writerOut.close();
+    return getClassBytes(sootClass);
   }
 
 }
