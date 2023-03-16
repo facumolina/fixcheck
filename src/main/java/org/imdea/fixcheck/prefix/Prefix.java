@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * Prefix class: represents a prefix, i.e., a sequence of statements revealing a bug addressed by the fix under analysis.
  *
- * @author Facundo Molina <facundo.molina@imdea.org>
+ * @author Facundo Molina
  */
 public class Prefix {
 
