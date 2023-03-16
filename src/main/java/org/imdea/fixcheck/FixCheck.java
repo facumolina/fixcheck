@@ -4,28 +4,27 @@ import org.imdea.fixcheck.loader.TestLoader;
 import org.imdea.fixcheck.prefix.Prefix;
 import soot.*;
 import soot.jimple.JasminClass;
-import soot.jimple.Jimple;
-import soot.jimple.JimpleBody;
 import soot.options.Options;
 import soot.util.JasminOutputStream;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * FixCheck class: main class.
  *
- * @author Facundo Molina <facundo.molina@imdea.org>
+ * @author Facundo Molina
  */
 public class FixCheck {
   public static void main(String[] args) {
     System.out.println("> FixCheck");
     String targetTestsPath = args[0];
     String targetTests = args[1];
+    int variations = Integer.parseInt(args[2]);
     System.out.println("target tests path: " + targetTestsPath);
     System.out.println("bug revealing tests: " + targetTests);
+    System.out.println("variations to analyze: " + variations);
     System.out.println();
 
     // Loading the prefixes to analyze
@@ -80,5 +79,7 @@ public class FixCheck {
     }
     return similarPrefixes;
   }
+
+
 
 }
