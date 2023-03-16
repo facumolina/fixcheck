@@ -2,7 +2,11 @@ package org.imdea.fixcheck;
 
 import org.imdea.fixcheck.loader.TestLoader;
 import org.imdea.fixcheck.prefix.Prefix;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 import soot.*;
+import soot.baf.BafASMBackend;
 import soot.jimple.JasminClass;
 import soot.options.Options;
 import soot.util.JasminOutputStream;
@@ -33,6 +37,13 @@ public class FixCheck {
 
     // TODO: analyze the prefixes
     // TODO: first approach: generate similar prefixes by changing the 'inputs' in the given prefixes
+    try {
+      generateSimilarPrefixes(prefixes, variations);
+    } catch (ClassNotFoundException | IOException e) {
+      e.printStackTrace();
+    }
+
+    System.out.println("Done!");
   }
 
   public static List<Prefix> generateSimilarPrefixes(List<Prefix> prefixes, int n) throws ClassNotFoundException, IOException {
@@ -47,39 +58,80 @@ public class FixCheck {
 
 
       for (int i=0; i < n; i++) {
+
+        // Initialize new class
+        SootClass newClass = new SootClass("SimilarPrefixClass", sootClass.getModifiers(), sootClass.moduleName);
+        SootMethod initMethod = sootClass.getMethodByName("<init>");
+        Body initMethodBody = initMethod.retrieveActiveBody();
+
+        // Replicate the init method
+        SootMethod newInitMethod = new SootMethod("<init>", initMethod.getParameterTypes(), initMethod.getReturnType(), initMethod.getModifiers());
+        newInitMethod.addAllTagsOf(initMethod);
+        Body newInitMethodBody = (Body)initMethodBody.clone();
+        newInitMethod.setActiveBody(newInitMethodBody);
+        newClass.addMethod(newInitMethod);
+
         // Generate n similar prefixes
+        System.out.println("Generating similar prefix: " + i);
         SootMethod newMethod = new SootMethod("similarPrefix"+i, method.getParameterTypes(), method.getReturnType(), method.getModifiers());
         newMethod.addAllTagsOf(method);
-
-        sootClass.addMethod(newMethod);
-        // Create the method body
         Body newBody = (Body)oldBody.clone();
-
         newMethod.setActiveBody(newBody);
+        newClass.addMethod(newMethod);
 
-        for (SootMethod m : sootClass.getMethods()) {
-          m.retrieveActiveBody();
+        System.out.println("Generated prefix: " + newClass.getName() + "." + newMethod.getName());
+        System.out.println(newBody);
+
+        // Get the class bytes
+        byte[] classBytes = getClassBytes(newClass);
+
+        // Load the class bytes into a new class loader
+        ClassLoader loader = new ClassLoader() {
+          @Override
+          public Class<?> loadClass(String name) throws ClassNotFoundException {
+            if (name.equals(newClass.getName())) {
+              return defineClass(name, classBytes, 0, classBytes.length);
+            }
+            return super.loadClass(name);
+          }
+        };
+        Class<?> justCreatedClass = loader.loadClass(newClass.getName());
+
+        System.out.println("Running the test: " + justCreatedClass.getName());
+        // Use JUnit core to run the just created test class
+        JUnitCore jUnitCore = new JUnitCore();
+        Result result = jUnitCore.run(justCreatedClass);
+        System.out.printf("Test ran: %s, Failed: %s%n", result.getRunCount(), result.getFailureCount());
+        if (result.getFailureCount() > 0) {
+          System.out.println("Failures:");
+          for (Failure failure : result.getFailures()) {
+            System.out.println(failure.toString());
+          }
         }
-
-        String fileName = SourceLocator.v().getFileNameFor(sootClass, Options.output_format_class);
-        File f = new File(fileName);
-        f.getParentFile().mkdirs();
-        f.createNewFile(); // if file already exists will do nothing
-        OutputStream streamOut = new JasminOutputStream(
-            new FileOutputStream(f, false));
-        PrintWriter writerOut = new PrintWriter(
-            new OutputStreamWriter(streamOut));
-        JasminClass jasminClass = new soot.jimple.JasminClass(sootClass);
-        jasminClass.print(writerOut);
-        writerOut.flush();
-        streamOut.close();
-
         break;
       }
     }
     return similarPrefixes;
   }
 
+  public void writeClassFile(SootClass sootClass) throws IOException {
+    String fileName = SourceLocator.v().getFileNameFor(sootClass, Options.output_format_class);
+    File f = new File(fileName);
+    f.getParentFile().mkdirs();
+    OutputStream streamOut = new JasminOutputStream(new FileOutputStream(f, false));
+    PrintWriter writerOut = new PrintWriter(new OutputStreamWriter(streamOut));
+    JasminClass jasminClass = new soot.jimple.JasminClass(sootClass);
+    jasminClass.print(writerOut);
+    writerOut.flush();
+    streamOut.close();
+  }
 
+  public static byte[] getClassBytes(SootClass sootClass) {
+    int java_version = Options.v().java_version();
+    ByteArrayOutputStream streamOut = new ByteArrayOutputStream();
+    BafASMBackend backend = new BafASMBackend(sootClass, java_version);
+    backend.generateClassFile(streamOut);
+    return streamOut.toByteArray();
+  }
 
 }
