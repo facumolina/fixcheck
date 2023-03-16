@@ -18,7 +18,6 @@ import soot.options.Options;
  */
 public class TestLoader {
 
-
   /**
    * Setup the TestLoader.
    */
@@ -43,10 +42,14 @@ public class TestLoader {
     SootClass sootClass = setup(classesPath, testClass);
     List<Prefix> prefixes = new ArrayList<>();
     for (SootMethod method : sootClass.getMethods()) {
+      // We don't want to process init methods
       if (method.getName().equals("<init>")) continue;
+      // Remove assert statements from the method
+      method.retrieveActiveBody().getUnits().removeIf(unit -> unit.toString().startsWith("assert") || unit.toString().contains("org.junit.Assert"));
       prefixes.add(new Prefix(method, sootClass));
     }
     return prefixes;
   }
+
 
 }
