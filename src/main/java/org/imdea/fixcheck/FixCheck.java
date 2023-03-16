@@ -2,6 +2,7 @@ package org.imdea.fixcheck;
 
 import org.imdea.fixcheck.loader.TestLoader;
 import org.imdea.fixcheck.prefix.Prefix;
+import org.imdea.fixcheck.transform.Initializer;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -60,16 +61,7 @@ public class FixCheck {
       for (int i=0; i < n; i++) {
 
         // Initialize new class
-        SootClass newClass = new SootClass("SimilarPrefixClass", sootClass.getModifiers(), sootClass.moduleName);
-        SootMethod initMethod = sootClass.getMethodByName("<init>");
-        Body initMethodBody = initMethod.retrieveActiveBody();
-
-        // Replicate the init method
-        SootMethod newInitMethod = new SootMethod("<init>", initMethod.getParameterTypes(), initMethod.getReturnType(), initMethod.getModifiers());
-        newInitMethod.addAllTagsOf(initMethod);
-        Body newInitMethodBody = (Body)initMethodBody.clone();
-        newInitMethod.setActiveBody(newInitMethodBody);
-        newClass.addMethod(newInitMethod);
+        SootClass newClass = Initializer.initializeTransformedClass("SimilarPrefixClass", sootClass);
 
         // Generate n similar prefixes
         System.out.println("Generating similar prefix: " + i);
