@@ -3,17 +3,8 @@ package org.imdea.fixcheck;
 import org.imdea.fixcheck.loader.TestLoader;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.runner.PrefixRunner;
-import org.imdea.fixcheck.transform.Initializer;
 import org.imdea.fixcheck.transform.PrefixTransformer;
 import org.imdea.fixcheck.transform.input.InputTransformer;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
-import org.junit.runner.notification.Failure;
-import soot.*;
-import soot.baf.BafASMBackend;
-import soot.jimple.JasminClass;
-import soot.options.Options;
-import soot.util.JasminOutputStream;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -34,15 +25,18 @@ public class FixCheck {
     System.out.println("variations to analyze: " + variations);
     System.out.println();
 
+    System.out.println("----- Going to generate prefixes -----");
     // Loading the prefixes to analyze
     List<Prefix> prefixes = TestLoader.loadPrefixes(targetTestsPath, targetTests);
-    System.out.println("prefixes: " + prefixes.size());
+    System.out.println("loaded prefixes: " + prefixes.size());
+    System.out.println("prefixes to generate: " + variations);
+    System.out.println();
 
-    // TODO: first approach: generate similar prefixes by changing the 'inputs' in the given prefixes
     try {
       generateSimilarPrefixes(prefixes, variations);
     } catch (ClassNotFoundException | IOException e) {
-      e.printStackTrace();
+      System.out.println("Error generating similar prefixes!!");
+      System.out.println(e.getMessage());
     }
 
     System.out.println("Done!");
@@ -54,20 +48,19 @@ public class FixCheck {
     Class<?> inputClassType = Class.forName(inputType);
     List<Prefix> similarPrefixes = new ArrayList<>();
     for (Prefix prefix : prefixes) {
-
+      // Generate n similar prefixes
       for (int i=0; i < n; i++) {
-        // Generate n similar prefixes
-        System.out.println("Generating similar prefix: " + i);
+        // Generate the prefix
         PrefixTransformer prefixTransformer = new InputTransformer(prefix);
         Prefix newPrefix = prefixTransformer.transform();
-
-        System.out.println("Generated prefix: " + newPrefix.getMethodClass().getName() + "." + newPrefix.getMethod().getName());
+        System.out.println("Generated prefix " + i + ": " + newPrefix.getMethodClass().getName() + "." + newPrefix.getMethod().getName());
         System.out.println(newPrefix.getMethod().getActiveBody());
+        // Generate the assertions for the prefix
 
         // Run the transformed prefix
         PrefixRunner.runPrefix(newPrefix);
-
-        break;
+        
+        similarPrefixes.add(newPrefix);
       }
     }
     return similarPrefixes;
