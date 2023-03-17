@@ -21,8 +21,8 @@ public class FixCheckTest {
     String testClass = "com.fasterxml.jackson.databind.jsontype.TestExternalIdForAnalysis";
     List<Prefix> prefixes = TestLoader.loadPrefixes(cp, testClass);
     // Generate similar prefixes
-    List<Prefix> similarPrefixes = FixCheck.generateSimilarPrefixes(prefixes, 10);
-    assertEquals(0, similarPrefixes.size());
+    List<Prefix> similarPrefixes = FixCheck.generateSimilarPrefixes(prefixes, 1);
+    assertEquals(1, similarPrefixes.size());
   }
 
 }
