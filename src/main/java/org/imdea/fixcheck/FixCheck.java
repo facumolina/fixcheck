@@ -19,17 +19,17 @@ import java.util.List;
 public class FixCheck {
   public static void main(String[] args) {
     System.out.println("> FixCheck");
-    String targetTestsPath = args[0];
+    String targetClassPath = args[0];
     String targetTests = args[1];
     int variations = Integer.parseInt(args[2]);
-    System.out.println("target tests path: " + targetTestsPath);
+    System.out.println("target tests path: " + targetClassPath);
     System.out.println("bug revealing tests: " + targetTests);
     System.out.println("variations to analyze: " + variations);
     System.out.println();
 
     System.out.println("----- Going to generate prefixes -----");
     // Loading the prefixes to analyze
-    List<Prefix> prefixes = TestLoader.loadPrefixes(targetTestsPath, targetTests);
+    List<Prefix> prefixes = TestLoader.loadPrefixes(targetClassPath, targetTests);
     System.out.println("loaded prefixes: " + prefixes.size());
     System.out.println("prefixes to generate: " + variations);
     System.out.println();
