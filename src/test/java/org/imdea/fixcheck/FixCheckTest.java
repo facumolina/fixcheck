@@ -22,7 +22,7 @@ public class FixCheckTest {
     Properties.TEST_CLASS = "com.fasterxml.jackson.databind.jsontype.TestExternalIdForAnalysis";
     Properties.TARGET_CLASS = "com.fasterxml.jackson.databind.ObjectMapper";
     // Load the prefixes to analyze
-    List<Prefix> prefixes = TestLoader.loadPrefixes();
+    List<Prefix> prefixes = Properties.getPrefixes();
     // Generate similar prefixes
     List<Prefix> similarPrefixes = FixCheck.generateSimilarPrefixes(prefixes, 1);
     assertEquals(1, similarPrefixes.size());

@@ -2,7 +2,6 @@ package org.imdea.fixcheck;
 
 import org.imdea.fixcheck.assertion.AssertFalseGenerator;
 import org.imdea.fixcheck.assertion.AssertionGenerator;
-import org.imdea.fixcheck.loader.TestLoader;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.runner.PrefixRunner;
 import org.imdea.fixcheck.transform.PrefixTransformer;
@@ -36,7 +35,7 @@ public class FixCheck {
 
     System.out.println("----- Going to generate prefixes -----");
     // Loading the prefixes to analyze
-    List<Prefix> prefixes = TestLoader.loadPrefixes();
+    List<Prefix> prefixes = Properties.getPrefixes();
     System.out.println("loaded prefixes: " + prefixes.size());
     System.out.println();
 
@@ -46,7 +45,7 @@ public class FixCheck {
       System.out.println("Error generating similar prefixes!!");
       System.out.println(e.getMessage());
     }
-  
+
     System.out.println("Done!");
   }
 
