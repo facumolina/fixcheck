@@ -4,6 +4,7 @@ package org.imdea.fixcheck.loader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.imdea.fixcheck.Properties;
 import org.imdea.fixcheck.prefix.Prefix;
 import soot.G;
 import soot.Scene;
@@ -13,7 +14,6 @@ import soot.options.Options;
 
 /**
  * TestLoader class: provides methods to load a test class.
- *
  * @author Facundo Molina
  */
 public class TestLoader {
@@ -21,16 +21,16 @@ public class TestLoader {
   /**
    * Setup the TestLoader.
    */
-  public static SootClass setup(String classesPath, String testClass) {
+  public static SootClass setup() {
     System.out.println("Setting up TestLoader");
     G.reset();
     Options.v().set_prepend_classpath(true);
     Options.v().set_allow_phantom_refs(true);
-    Options.v().set_soot_classpath(classesPath);
-    SootClass sc = Scene.v().loadClassAndSupport(testClass);
+    Options.v().set_soot_classpath(Properties.TEST_CLASSES_PATH);
+    SootClass sc = Scene.v().loadClassAndSupport(Properties.TEST_CLASS);
     sc.setApplicationClass();
     Scene.v().loadNecessaryClasses();
-    return Scene.v().getSootClass(testClass);
+    return Scene.v().getSootClass(Properties.TEST_CLASS);
   }
 
   /**
@@ -38,8 +38,8 @@ public class TestLoader {
    * @param testClass is the name of the test class to load the prefixes from.
    * @return the list of prefixes.
    */
-  public static List<Prefix> loadPrefixes(String classesPath, String testClass) {
-    SootClass sootClass = setup(classesPath, testClass);
+  public static List<Prefix> loadPrefixes() {
+    SootClass sootClass = setup();
     List<Prefix> prefixes = new ArrayList<>();
     for (SootMethod method : sootClass.getMethods()) {
       // We don't want to process init methods

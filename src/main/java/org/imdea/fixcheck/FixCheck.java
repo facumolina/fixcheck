@@ -17,25 +17,31 @@ import java.util.List;
  * @author Facundo Molina
  */
 public class FixCheck {
+
+  private static void readArgs(String[] args) {
+    Properties.TEST_CLASSES_PATH = args[0];
+    Properties.TEST_CLASS = args[1];
+    Properties.TARGET_CLASS = args[2];
+    Properties.PREFIX_VARIATIONS = Integer.parseInt(args[3]);
+  }
+
   public static void main(String[] args) {
     System.out.println("> FixCheck");
-    String targetClassPath = args[0];
-    String targetTests = args[1];
-    int variations = Integer.parseInt(args[2]);
-    System.out.println("target tests path: " + targetClassPath);
-    System.out.println("bug revealing tests: " + targetTests);
-    System.out.println("variations to analyze: " + variations);
+    readArgs(args);
+    System.out.println("target tests path: " + Properties.TEST_CLASSES_PATH);
+    System.out.println("bug revealing tests: " + Properties.TEST_CLASS);
+    System.out.println("target class: " + Properties.TARGET_CLASS);
+    System.out.println("prefixes to generate: " + Properties.PREFIX_VARIATIONS);
     System.out.println();
 
     System.out.println("----- Going to generate prefixes -----");
     // Loading the prefixes to analyze
-    List<Prefix> prefixes = TestLoader.loadPrefixes(targetClassPath, targetTests);
+    List<Prefix> prefixes = TestLoader.loadPrefixes();
     System.out.println("loaded prefixes: " + prefixes.size());
-    System.out.println("prefixes to generate: " + variations);
     System.out.println();
 
     try {
-      generateSimilarPrefixes(prefixes, variations);
+      generateSimilarPrefixes(prefixes, Properties.PREFIX_VARIATIONS);
     } catch (ClassNotFoundException | IOException e) {
       System.out.println("Error generating similar prefixes!!");
       System.out.println(e.getMessage());
