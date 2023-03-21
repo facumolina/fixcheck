@@ -23,16 +23,16 @@ public class FixCheck {
     Properties.TEST_CLASS = args[1];
     Properties.TARGET_CLASS = args[2];
     Properties.PREFIX_VARIATIONS = Integer.parseInt(args[3]);
-  }
-
-  public static void main(String[] args) {
-    System.out.println("> FixCheck");
-    readArgs(args);
     System.out.println("target tests path: " + Properties.TEST_CLASSES_PATH);
     System.out.println("bug revealing tests: " + Properties.TEST_CLASS);
     System.out.println("target class: " + Properties.TARGET_CLASS);
     System.out.println("prefixes to generate: " + Properties.PREFIX_VARIATIONS);
     System.out.println();
+  }
+
+  public static void main(String[] args) {
+    System.out.println("> FixCheck");
+    readArgs(args);
 
     System.out.println("----- Going to generate prefixes -----");
     // Loading the prefixes to analyze
@@ -46,7 +46,7 @@ public class FixCheck {
       System.out.println("Error generating similar prefixes!!");
       System.out.println(e.getMessage());
     }
-
+  
     System.out.println("Done!");
   }
 
