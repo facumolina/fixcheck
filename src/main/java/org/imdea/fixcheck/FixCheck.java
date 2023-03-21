@@ -21,10 +21,12 @@ public class FixCheck {
     Properties.TEST_CLASSES_PATH = args[0];
     Properties.TEST_CLASS = args[1];
     Properties.TARGET_CLASS = args[2];
-    Properties.PREFIX_VARIATIONS = Integer.parseInt(args[3]);
+    Properties.INPUTS_CLASS = args[3];
+    Properties.PREFIX_VARIATIONS = Integer.parseInt(args[4]);
     System.out.println("target tests path: " + Properties.TEST_CLASSES_PATH);
     System.out.println("bug revealing tests: " + Properties.TEST_CLASS);
     System.out.println("target class: " + Properties.TARGET_CLASS);
+    System.out.println("inputs class: " + Properties.INPUTS_CLASS);
     System.out.println("prefixes to generate: " + Properties.PREFIX_VARIATIONS);
     System.out.println();
   }

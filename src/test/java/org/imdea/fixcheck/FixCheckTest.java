@@ -1,10 +1,8 @@
 package org.imdea.fixcheck;
 
-import org.imdea.fixcheck.loader.TestLoader;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -21,6 +19,7 @@ public class FixCheckTest {
     Properties.TEST_CLASSES_PATH = fixCheckPath + ":" + projectCp + ":" + projectTestsCp;
     Properties.TEST_CLASS = "com.fasterxml.jackson.databind.jsontype.TestExternalIdForAnalysis";
     Properties.TARGET_CLASS = "com.fasterxml.jackson.databind.ObjectMapper";
+    Properties.INPUTS_CLASS = "java.util.Date";
     // Load the prefixes to analyze
     List<Prefix> prefixes = Properties.getPrefixes();
     // Generate similar prefixes
