@@ -1,11 +1,15 @@
 package org.imdea.fixcheck.transform.input;
 
+import org.imdea.fixcheck.Properties;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.Initializer;
 import org.imdea.fixcheck.transform.PrefixTransformer;
 import org.imdea.fixcheck.transform.common.TransformationHelper;
 import soot.*;
 import soot.jimple.*;
+
+import java.util.List;
+import java.util.Random;
 
 /**
  * Input Transformer class: transform a prefix by changing its 'input'.
@@ -38,7 +42,7 @@ public class InputTransformer extends PrefixTransformer {
   }
 
   private void replaceInput(Body body) {
-    Local input = TransformationHelper.getLocalWithType(body, "java.util.Date");
+    Local input = getRandomLocal(body);
     // Define local for the new input
     Local newInput = Jimple.v().newLocal("newInput", RefType.v("java.lang.Integer"));
     body.getLocals().add(newInput);
@@ -75,6 +79,18 @@ public class InputTransformer extends PrefixTransformer {
         }
       }
     }
+  }
+
+  /**
+   * Get a random Local for the input class
+   * @param body Body to search
+   * @return Random Local for the input class
+   */
+  private Local getRandomLocal(Body body) {
+    List<Local> locals = TransformationHelper.getLocalsWithType(body, Properties.INPUTS_CLASS);
+    Random random = new Random();
+    int index = random.nextInt(locals.size());
+    return locals.get(index);
   }
 
 }

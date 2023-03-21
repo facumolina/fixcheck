@@ -2,24 +2,28 @@ package org.imdea.fixcheck.transform.common;
 
 import soot.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * TransformationHelper class: helper class for applying transformations.
  */
 public class TransformationHelper {
 
   /**
-   * Get a local of a given type in a body
+   * Return the list of locals of a given type in a body
    * @param body Body to search
    * @param typeName Type of the local to search
-   * @return Local of the given type, null if not found
+   * @return List of Locals of the given type, empty if not found
    */
-  public static Local getLocalWithType(Body body, String typeName) {
+  public static List<Local> getLocalsWithType(Body body, String typeName) {
+    List<Local> locals = new ArrayList<>();
     for (Local local : body.getLocals()) {
       if (local.getType().toString().equals(typeName)) {
-        return local;
+        locals.add(local);
       }
     }
-    return null;
+    return locals;
   }
 
   /**
