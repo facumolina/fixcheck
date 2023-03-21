@@ -3,6 +3,7 @@ package org.imdea.fixcheck.transform.input;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.Initializer;
 import org.imdea.fixcheck.transform.PrefixTransformer;
+import org.imdea.fixcheck.transform.common.TransformationHelper;
 import soot.*;
 import soot.jimple.*;
 
@@ -37,7 +38,7 @@ public class InputTransformer extends PrefixTransformer {
   }
 
   private void replaceInput(Body body) {
-    Local input = getLocalWithType(body, "java.util.Date");
+    Local input = TransformationHelper.getLocalWithType(body, "java.util.Date");
     // Define local for the new input
     Local newInput = Jimple.v().newLocal("newInput", RefType.v("java.lang.Integer"));
     body.getLocals().add(newInput);
@@ -48,24 +49,7 @@ public class InputTransformer extends PrefixTransformer {
     // Replace old input constructor with new input constructor
     replaceConstructor(body, input, assignStmt, constructorInvoke);
     // Use the new input in the right place
-    replace(body, input, newInput);
-  }
-
-  private Local getLocalWithType(Body body, String typeName) {
-    for (Local local : body.getLocals()) {
-      if (local.getType().toString().equals(typeName)) {
-        return local;
-      }
-    }
-    return null;
-  }
-  /* Replace all uses of v1 in body with v2 */
-  private void replace(Body body, Value v1, Value v2) {
-    for (Unit ut : body.getUnits()) {
-      for (ValueBox vb : ut.getUseBoxes())
-        if( vb.getValue().equals(v1))
-          vb.setValue(v2);
-    }
+    TransformationHelper.replace(body, input, newInput);
   }
 
   private void replaceConstructor(Body body, Local inputToReplace, AssignStmt assignStmt, InvokeStmt constructorInvoke) {
