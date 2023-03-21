@@ -42,10 +42,10 @@ public class InputTransformer extends PrefixTransformer {
   }
 
   private void replaceInput(Body body) {
+    // Get a random local
     Local input = getRandomLocal(body);
     // Define local for the new input
-    Local newInput = Jimple.v().newLocal("newInput", RefType.v("java.lang.Integer"));
-    body.getLocals().add(newInput);
+    Local newInput = defineRandomLocal(input, body);
     // Add call for new input constructor
     AssignStmt assignStmt = Jimple.v().newAssignStmt(newInput, Jimple.v().newNewExpr(RefType.v("java.lang.Integer")));
     SootMethod newInputConstructor = Scene.v().getMethod("<java.lang.Integer: void <init>(int)>");
@@ -91,6 +91,16 @@ public class InputTransformer extends PrefixTransformer {
     Random random = new Random();
     int index = random.nextInt(locals.size());
     return locals.get(index);
+  }
+
+  private Local defineRandomLocal(Local local, Body body) {
+    // Find the unit where the local is used
+    // Determine the type of the new local based on the usage
+    Class<?> type = Integer.class;
+    // Define a new local
+    Local newInput = Jimple.v().newLocal("newInput", RefType.v(type.getName()));
+    body.getLocals().add(newInput);
+    return newInput;
   }
 
 }
