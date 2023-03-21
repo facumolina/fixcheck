@@ -34,8 +34,7 @@ public class TestLoader {
   }
 
   /**
-   * Load prefixes from the given test class.
-   * @param testClass is the name of the test class to load the prefixes from.
+   * Load prefixes from the input test class.
    * @return the list of prefixes.
    */
   public static List<Prefix> loadPrefixes() {
@@ -50,6 +49,5 @@ public class TestLoader {
     }
     return prefixes;
   }
-
 
 }
