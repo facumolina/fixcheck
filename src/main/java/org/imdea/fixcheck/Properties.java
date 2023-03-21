@@ -19,6 +19,8 @@ public class Properties {
   public static String TEST_CLASSES_PATH; // Full path to the test classes + dependencies + fixcheck
   public static String TEST_CLASS; // Full name of the test class
   public static SootClass SOOT_TEST_CLASS; // Soot class of the test class
+  public static String INPUTS_CLASS; // Full name of the inputs class
+  public static SootClass SOOT_INPUTS_CLASS; // Soot class of the inputs class
 
   public static String TARGET_CLASS; // Full name of the target class
   public static int PREFIX_VARIATIONS = 1; // Total number of prefix variations to generate
@@ -28,6 +30,7 @@ public class Properties {
    */
   public static void setup() {
     System.out.println("Setting up Properties");
+    // Setup Soot
     G.reset();
     Options.v().set_prepend_classpath(true);
     Options.v().set_allow_phantom_refs(true);
@@ -35,7 +38,11 @@ public class Properties {
     SootClass sc = Scene.v().loadClassAndSupport(TEST_CLASS);
     sc.setApplicationClass();
     Scene.v().loadNecessaryClasses();
+    // Set the test class
     SOOT_TEST_CLASS = sc;
+    // Set the inputs class
+    SOOT_INPUTS_CLASS = Scene.v().getSootClass(INPUTS_CLASS);
+    // TODO: inspect the target class to setup all the possible inputs
   }
 
   /**
@@ -55,4 +62,5 @@ public class Properties {
     }
     return prefixes;
   }
+
 }
