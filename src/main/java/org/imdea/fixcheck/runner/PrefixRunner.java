@@ -40,18 +40,18 @@ public class PrefixRunner {
     PlainTextOutput plainTextOutput = new PlainTextOutput();
 
     Decompiler.decompile(justCreatedClass.getName(), plainTextOutput, DecompilerSettings.javaDefaults());
-    System.out.println("Decompiled class: ");
+    System.out.println("---> decompiled prefix: ");
+    System.out.println();
     System.out.println(plainTextOutput);
-
-    System.out.println("Running the test: " + justCreatedClass.getName());
+    System.out.println("---> running test: " + justCreatedClass.getName());
     // Use JUnit core to run the just created test class
     JUnitCore jUnitCore = new JUnitCore();
     Result result = jUnitCore.run(justCreatedClass);
-    System.out.printf("Test ran: %s, Failed: %s%n", result.getRunCount(), result.getFailureCount());
+    System.out.printf("---> test ran: %s, Failed: %s%n", result.getRunCount(), result.getFailureCount());
     if (result.getFailureCount() > 0) {
-      System.out.println("Failures:");
+      System.out.println("---> failures:");
       for (Failure failure : result.getFailures()) {
-        System.out.println(failure.toString());
+        System.out.println("\t"+failure.toString());
       }
     }
   }

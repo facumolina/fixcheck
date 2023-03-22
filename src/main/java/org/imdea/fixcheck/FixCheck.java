@@ -52,18 +52,17 @@ public class FixCheck {
   }
 
   public static List<Prefix> generateSimilarPrefixes(List<Prefix> prefixes, int n) throws ClassNotFoundException, IOException {
-    String inputClass = "java.util.Date";
-    String inputType = "java.lang.Object";
-    Class<?> inputClassType = Class.forName(inputType);
     List<Prefix> similarPrefixes = new ArrayList<>();
     for (Prefix prefix : prefixes) {
       // Generate n similar prefixes
-      for (int i=0; i < n; i++) {
+      for (int i=1; i <= n; i++) {
         // Generate the prefix
+        System.out.println("PREFIX " + i + " of " + n);
         PrefixTransformer prefixTransformer = new InputTransformer(prefix);
+        System.out.println("---> transformer: " + prefixTransformer.getClass().getSimpleName());
         Prefix newPrefix = prefixTransformer.transform();
-        System.out.println("Generated prefix " + i + ": " + newPrefix.getMethodClass().getName() + "." + newPrefix.getMethod().getName());
-        System.out.println(newPrefix.getMethod().getActiveBody());
+        System.out.println("---> generated prefix: " + newPrefix.getMethodClass().getName() + "." + newPrefix.getMethod().getName());
+        //System.out.println(newPrefix.getMethod().getActiveBody());
 
         // Generate the assertions for the prefix
         AssertionGenerator assertionGenerator = new AssertFalseGenerator(newPrefix);
@@ -71,8 +70,8 @@ public class FixCheck {
 
         // Run the transformed prefix
         PrefixRunner.runPrefix(newPrefix);
-
         similarPrefixes.add(newPrefix);
+        System.out.println();
       }
     }
     return similarPrefixes;
