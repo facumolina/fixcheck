@@ -1,14 +1,14 @@
 package org.imdea.fixcheck;
 
 import org.imdea.fixcheck.prefix.Prefix;
+import org.imdea.fixcheck.transform.input.InputHelper;
 import soot.G;
 import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.options.Options;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Properties class: contains properties to configure the FixCheck execution.
@@ -16,14 +16,20 @@ import java.util.List;
  */
 public class Properties {
 
+  // Properties related to the tests
   public static String TEST_CLASSES_PATH; // Full path to the test classes + dependencies + fixcheck
   public static String TEST_CLASS; // Full name of the test class
   public static SootClass SOOT_TEST_CLASS; // Soot class of the test class
+
+  // Properties related to the target class
+  public static String TARGET_CLASS; // Full name of the target class
+
+  // Properties related to prefixes
+  public static int PREFIX_VARIATIONS = 1; // Total number of prefix variations to generate
+
+  // Properties related to inputs
   public static String INPUTS_CLASS; // Full name of the inputs class
   public static SootClass SOOT_INPUTS_CLASS; // Soot class of the inputs class
-
-  public static String TARGET_CLASS; // Full name of the target class
-  public static int PREFIX_VARIATIONS = 1; // Total number of prefix variations to generate
 
   /**
    * Setup the TestLoader.
@@ -41,7 +47,8 @@ public class Properties {
     SOOT_TEST_CLASS = sc;
     // Set the inputs class
     SOOT_INPUTS_CLASS = Scene.v().getSootClass(INPUTS_CLASS);
-    // TODO: inspect the target class to setup all the possible inputs
+    // Initialize the possible input classes for each type
+    InputHelper.initializeInputsByType();
   }
 
   /**

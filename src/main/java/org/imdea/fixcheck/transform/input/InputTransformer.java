@@ -112,11 +112,13 @@ public class InputTransformer extends PrefixTransformer {
    * @return Class for the given type
    */
   private Class<?> getClassForNewInput(Type type) {
-    if ("java.lang.Object".equals(type.toString())) {
-      // TODO: select a random class for Object
-      return Integer.class;
+    if (InputHelper.INPUTS_BY_TYPE.containsKey(type.toString())) {
+      List<Class<?>> possibleInputs = InputHelper.INPUTS_BY_TYPE.get(type.toString());
+      Random random = new Random();
+      int index = random.nextInt(possibleInputs.size());
+      return possibleInputs.get(index);
     }
-    throw new IllegalArgumentException("Type not supported: " + type.toString());
+    throw new IllegalArgumentException("Type not supported: " + type);
   }
 
   /**
