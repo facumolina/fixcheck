@@ -46,7 +46,7 @@ public class InputTransformer extends PrefixTransformer {
     // Find the type where the input is used
     Type usageType = TransformationHelper.getTypeOfFirstUsage(input, body);
     // Determine the type of the new local based on the usage
-    Class<?> type = getClassForType(usageType);
+    Class<?> type = getClassForNewInput(usageType);
     Local newInput = defineLocalForType(type, body);
     // Generate call for input constructor
     AssignStmt assignStmt = Jimple.v().newAssignStmt(newInput, Jimple.v().newNewExpr(RefType.v(type.getName())));
@@ -111,7 +111,7 @@ public class InputTransformer extends PrefixTransformer {
    * @param type Type to get the class for
    * @return Class for the given type
    */
-  private Class<?> getClassForType(Type type) {
+  private Class<?> getClassForNewInput(Type type) {
     if ("java.lang.Object".equals(type.toString())) {
       // TODO: select a random class for Object
       return Integer.class;
