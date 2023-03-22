@@ -1,7 +1,6 @@
 package org.imdea.fixcheck.transform.common;
 
 import soot.*;
-import soot.jimple.DefinitionStmt;
 import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.internal.JInvokeStmt;
 
