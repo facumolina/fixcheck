@@ -14,22 +14,41 @@ import java.util.List;
 public class TransformationHelper {
 
   /**
-   * Return the first unit that uses a given local in the given body
+   * Return the Type of the first usage of a given local in a body.
+   * The type is essentially the type of the parameter of the method call that uses the local.
    * @param local Local to search
    * @param body Body to search
-   * @return First unit that uses the given local, null if not found
+   * @return Type of the first usage of the given local
    */
-  public static Unit getFirstUnitUsingLocal(Local local, Body body) {
+  public static Type getTypeOfFirstUsage(Local local, Body body) {
     for (Unit ut : body.getUnits()) {
       for (ValueBox vb : ut.getUseBoxes()) {
         if (vb.getValue().equals(local)) {
-          if (ut instanceof JInvokeStmt && isConstructorCall((JInvokeStmt)ut,local))
-            continue;
-          return ut;
+          if (ut instanceof JInvokeStmt) {
+            JInvokeStmt stmt = ((JInvokeStmt) ut);
+            if (isConstructorCall(stmt, local)) continue;
+            return stmt.getInvokeExpr().getMethod().getParameterType(getIndexForLocal(stmt, local));
+          }
         }
       }
     }
-    return null;
+    throw new IllegalArgumentException("Unable to find type for Local " + local.getName() + ". Is it used?");
+  }
+
+  /**
+   * Return the index of a given local in the list of parameters of the method call that uses it.
+   * @param stmt Invoke statement to search
+   * @param local Local to search
+   * @return Index of the local in the list of parameters
+   */
+  private static int getIndexForLocal(JInvokeStmt stmt, Local local) {
+    int index = 0;
+    List<Value> args = stmt.getInvokeExpr().getArgs();
+    for (Value arg : args) {
+      if (arg.equals(local)) return index;
+      index++;
+    }
+    throw new IllegalArgumentException("Unable to find index for Local " + local.getName() + ". Is it used?");
   }
 
   /**
