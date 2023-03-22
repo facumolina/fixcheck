@@ -28,7 +28,6 @@ public class InputTransformer extends PrefixTransformer {
     SootMethod prefixMethod = prefix.getMethod();
     Body oldBody = prefixMethod.retrieveActiveBody();
 
-    System.out.println("Generating similar prefix with InputTransformer");
     SootClass newClass = Initializer.initializeTransformedClass(prefixClass.getPackageName() + ".SimilarPrefixClass", prefixClass);
     SootMethod newMethod = new SootMethod("similarPrefix", prefixMethod.getParameterTypes(), prefixMethod.getReturnType(), prefixMethod.getModifiers());
     newMethod.addAllTagsOf(prefixMethod);
