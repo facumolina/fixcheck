@@ -49,10 +49,9 @@ public class InputTransformer extends PrefixTransformer {
     // Determine the type of the new local based on the usage
     Class<?> type = getClassForType(usageType);
     Local newInput = defineLocalForType(type, body);
-    // Add call for new input constructor
+    // Generate call for input constructor
     AssignStmt assignStmt = Jimple.v().newAssignStmt(newInput, Jimple.v().newNewExpr(RefType.v(type.getName())));
-    SootMethod newInputConstructor = Scene.v().getMethod("<java.lang.Integer: void <init>(int)>");
-    InvokeStmt constructorInvoke = Jimple.v().newInvokeStmt(Jimple.v().newSpecialInvokeExpr(newInput, newInputConstructor.makeRef(), IntConstant.v(1)));
+    InvokeStmt constructorInvoke = addConstructorCall(newInput, type);
     // Replace old input constructor with new input constructor
     replaceConstructor(body, input, assignStmt, constructorInvoke);
     // Use the new input in the right place
@@ -108,12 +107,30 @@ public class InputTransformer extends PrefixTransformer {
     return newInput;
   }
 
+  /**
+   * Get the class for the given type
+   * @param type Type to get the class for
+   * @return Class for the given type
+   */
   private Class<?> getClassForType(Type type) {
     if ("java.lang.Object".equals(type.toString())) {
       // TODO: select a random class for Object
       return Integer.class;
     }
     throw new IllegalArgumentException("Type not supported: " + type.toString());
+  }
+
+  /**
+   * Generate the constructor for the given type
+   * @param input Local to use in the constructor
+   * @param type Type of the constructor
+   * @return Constructor call
+   */
+  private InvokeStmt addConstructorCall(Local input, Class<?> type) {
+    SootMethod newInputConstructor = InputHelper.getConstructorForType(type);
+    Value value = InputHelper.getValueForType(type);
+    InvokeStmt constructorInvoke = Jimple.v().newInvokeStmt(Jimple.v().newSpecialInvokeExpr(input, newInputConstructor.makeRef(), value));
+    return constructorInvoke;
   }
 
 }
