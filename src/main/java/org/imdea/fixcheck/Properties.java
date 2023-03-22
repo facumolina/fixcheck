@@ -29,7 +29,6 @@ public class Properties {
    * Setup the TestLoader.
    */
   public static void setup() {
-    System.out.println("Setting up Properties");
     // Setup Soot
     G.reset();
     Options.v().set_prepend_classpath(true);
