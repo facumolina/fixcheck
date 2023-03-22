@@ -6,7 +6,7 @@ import soot.Value;
 import soot.jimple.IntConstant;
 import soot.jimple.StringConstant;
 
-import java.util.Random;
+import java.util.*;
 
 /**
  * Input Helper class: provides methods to handle the creation of inputs of specific types.
@@ -14,12 +14,27 @@ import java.util.Random;
  */
 public class InputHelper {
 
+  protected static Map<String, List<Class<?>>> INPUTS_BY_TYPE; // Map of possible input classes for each type
+
+  public static void initializeInputsByType() {
+    INPUTS_BY_TYPE = new HashMap<>();
+    INPUTS_BY_TYPE.put("java.util.Boolean", Collections.singletonList(Boolean.class));
+    INPUTS_BY_TYPE.put("java.lang.Integer", Collections.singletonList(Integer.class));
+    INPUTS_BY_TYPE.put("java.lang.Long", Collections.singletonList(Long.class));
+    INPUTS_BY_TYPE.put("java.lang.Float", Collections.singletonList(Float.class));
+    INPUTS_BY_TYPE.put("java.lang.Double", Collections.singletonList(Double.class));
+    INPUTS_BY_TYPE.put("java.lang.String", Collections.singletonList(String.class));
+    INPUTS_BY_TYPE.put("java.lang.Object", Arrays.asList(Boolean.class, Integer.class, String.class));
+  }
+
   /**
    * Get the constructor method for the given type.
    * @param type Type of the input
    * @return Constructor method
    */
   public static SootMethod getConstructorForType(Class<?> type) {
+    if (type.equals(Boolean.class))
+      return Scene.v().getMethod("<java.lang.Boolean: void <init>(boolean)>");
     if (type.equals(Integer.class))
       return Scene.v().getMethod("<java.lang.Integer: void <init>(int)>");
     if (type.equals(String.class))
@@ -33,8 +48,12 @@ public class InputHelper {
    * @return Value for the given type
    */
   public static Value getValueForType(Class<?> type) {
+    Random random = new Random();
+    if (type.equals(Boolean.class)) {
+      boolean b = random.nextBoolean();
+      return IntConstant.v(b ? 1 : 0);
+    }
     if (type.equals(Integer.class)) {
-      Random random = new Random();
       return IntConstant.v(random.nextInt(100));
     }
     if (type.equals(String.class))
