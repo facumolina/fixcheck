@@ -11,12 +11,8 @@ import soot.jimple.Jimple;
  */
 public class AssertFalseGenerator extends AssertionGenerator {
 
-    public AssertFalseGenerator(Prefix prefix) {
-      super(prefix);
-    }
-
     @Override
-    public void generateAssertions() {
+    public void generateAssertions(Prefix prefix) {
       // Take the method and units
       SootMethod method = prefix.getMethod();
       Body body = method.retrieveActiveBody();

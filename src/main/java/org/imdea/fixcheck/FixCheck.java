@@ -65,8 +65,8 @@ public class FixCheck {
         //System.out.println(newPrefix.getMethod().getActiveBody());
 
         // Generate the assertions for the prefix
-        AssertionGenerator assertionGenerator = new AssertFalseGenerator(newPrefix);
-        assertionGenerator.generateAssertions();
+        AssertionGenerator assertionGenerator = new AssertFalseGenerator();
+        assertionGenerator.generateAssertions(newPrefix);
 
         // Run the transformed prefix
         PrefixRunner.runPrefix(newPrefix);
