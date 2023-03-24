@@ -16,8 +16,11 @@ import java.util.*;
  */
 public class Properties {
 
+  // General properties
+  public static String FULL_CLASSPATH = System.getProperty("java.class.path"); // Full classpath (test classes + dependencies + fixcheck)
+
   // Properties related to the tests
-  public static String TEST_CLASSES_PATH; // Full path to the test classes + dependencies + fixcheck
+  public static String TEST_CLASSES_PATH; // Path to where the test classes are located
   public static String TEST_CLASS; // Full name of the test class
   public static SootClass SOOT_TEST_CLASS; // Soot class of the test class
 
@@ -39,7 +42,7 @@ public class Properties {
     G.reset();
     Options.v().set_prepend_classpath(true);
     Options.v().set_allow_phantom_refs(true);
-    Options.v().set_soot_classpath(TEST_CLASSES_PATH);
+    Options.v().set_soot_classpath(FULL_CLASSPATH);
     SootClass sc = Scene.v().loadClassAndSupport(TEST_CLASS);
     sc.setApplicationClass();
     Scene.v().loadNecessaryClasses();

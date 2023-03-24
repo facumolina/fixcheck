@@ -23,7 +23,8 @@ public class FixCheck {
     Properties.TARGET_CLASS = args[2];
     Properties.INPUTS_CLASS = args[3];
     Properties.PREFIX_VARIATIONS = Integer.parseInt(args[4]);
-    System.out.println("classpath: " + Properties.TEST_CLASSES_PATH);
+    System.out.println("classpath: " + Properties.FULL_CLASSPATH);
+    System.out.println("test classes path: " + Properties.TEST_CLASSES_PATH);
     System.out.println("bug revealing tests: " + Properties.TEST_CLASS);
     System.out.println("target class: " + Properties.TARGET_CLASS);
     System.out.println("inputs class: " + Properties.INPUTS_CLASS);
