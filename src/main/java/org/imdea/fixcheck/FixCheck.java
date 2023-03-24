@@ -54,12 +54,12 @@ public class FixCheck {
 
   public static List<Prefix> generateSimilarPrefixes(List<Prefix> prefixes, int n) throws ClassNotFoundException, IOException {
     List<Prefix> similarPrefixes = new ArrayList<>();
+    PrefixTransformer prefixTransformer = new InputTransformer();
     for (Prefix prefix : prefixes) {
       // Generate n similar prefixes
       for (int i=1; i <= n; i++) {
         // Generate the prefix
         System.out.println("PREFIX " + i + " of " + n);
-        PrefixTransformer prefixTransformer = new InputTransformer();
         System.out.println("---> transformer: " + prefixTransformer.getClass().getSimpleName());
         Prefix newPrefix = prefixTransformer.transform(prefix);
         System.out.println("---> generated prefix: " + newPrefix.getMethodClass().getName() + "." + newPrefix.getMethod().getName());

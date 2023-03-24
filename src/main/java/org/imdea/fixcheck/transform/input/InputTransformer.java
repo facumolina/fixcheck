@@ -16,7 +16,14 @@ import java.util.Random;
  */
 public class InputTransformer extends PrefixTransformer {
 
-  public InputTransformer() { }
+  private static final String baseClassName = "SimilarPrefixInputTransformer";
+  private static final String basePrefixName = "similarPrefix";
+
+  private int transformationsApplied;
+
+  public InputTransformer() {
+    transformationsApplied = 0;
+  }
 
   @Override
   public Prefix transform(Prefix prefix) {
@@ -24,8 +31,9 @@ public class InputTransformer extends PrefixTransformer {
     SootMethod prefixMethod = prefix.getMethod();
     Body oldBody = prefixMethod.retrieveActiveBody();
 
-    SootClass newClass = TransformationHelper.initializeTransformedClass(prefixClass.getPackageName() + ".SimilarPrefixClass", prefixClass);
-    SootMethod newMethod = new SootMethod("similarPrefix", prefixMethod.getParameterTypes(), prefixMethod.getReturnType(), prefixMethod.getModifiers());
+    String className = baseClassName + transformationsApplied;
+    SootClass newClass = TransformationHelper.initializeTransformedClass(prefixClass.getPackageName() + "." + className, prefixClass);
+    SootMethod newMethod = new SootMethod(basePrefixName, prefixMethod.getParameterTypes(), prefixMethod.getReturnType(), prefixMethod.getModifiers());
     newMethod.addAllTagsOf(prefixMethod);
     newMethod.setExceptions(prefixMethod.getExceptions());
     Body newBody = (Body)oldBody.clone();
@@ -33,6 +41,7 @@ public class InputTransformer extends PrefixTransformer {
     newMethod.setActiveBody(newBody);
     newClass.addMethod(newMethod);
 
+    transformationsApplied++;
     return new Prefix(newMethod, newClass);
   }
 
