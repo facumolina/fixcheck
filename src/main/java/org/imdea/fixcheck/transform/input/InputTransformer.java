@@ -2,7 +2,6 @@ package org.imdea.fixcheck.transform.input;
 
 import org.imdea.fixcheck.Properties;
 import org.imdea.fixcheck.prefix.Prefix;
-import org.imdea.fixcheck.transform.Initializer;
 import org.imdea.fixcheck.transform.PrefixTransformer;
 import org.imdea.fixcheck.transform.common.TransformationHelper;
 import soot.*;
@@ -28,7 +27,7 @@ public class InputTransformer extends PrefixTransformer {
     SootMethod prefixMethod = prefix.getMethod();
     Body oldBody = prefixMethod.retrieveActiveBody();
 
-    SootClass newClass = Initializer.initializeTransformedClass(prefixClass.getPackageName() + ".SimilarPrefixClass", prefixClass);
+    SootClass newClass = TransformationHelper.initializeTransformedClass(prefixClass.getPackageName() + ".SimilarPrefixClass", prefixClass);
     SootMethod newMethod = new SootMethod("similarPrefix", prefixMethod.getParameterTypes(), prefixMethod.getReturnType(), prefixMethod.getModifiers());
     newMethod.addAllTagsOf(prefixMethod);
     newMethod.setExceptions(prefixMethod.getExceptions());
