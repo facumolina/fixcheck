@@ -3,6 +3,7 @@ package org.imdea.fixcheck.runner;
 import com.strobel.decompiler.Decompiler;
 import com.strobel.decompiler.DecompilerSettings;
 import com.strobel.decompiler.PlainTextOutput;
+import org.imdea.fixcheck.Properties;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -71,7 +72,7 @@ public class PrefixRunner {
 
   private static byte[] getClassBytesAndSaveToFile(SootClass sootClass) throws FileNotFoundException {
     String fileName = SourceLocator.v().getFileNameFor(sootClass, Options.output_format_class);
-    fileName = fileName.replace("sootOutput", "/Users/facundo.molina/research/software/bad-fixes-dataset/tmp/jackson-databind-118/badfix/jackson-databind/target/test-classes");
+    fileName = fileName.replace("sootOutput", Properties.TEST_CLASSES_PATH);
     File f = new File(fileName);
     f.getParentFile().mkdirs();
     OutputStream streamOut = new JasminOutputStream(new FileOutputStream(f, false));
