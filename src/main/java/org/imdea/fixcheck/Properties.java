@@ -1,5 +1,8 @@
 package org.imdea.fixcheck;
 
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.utils.CodeGenerationUtils;
+import com.github.javaparser.utils.SourceRoot;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.input.InputHelper;
 import soot.G;
@@ -8,6 +11,7 @@ import soot.SootClass;
 import soot.SootMethod;
 import soot.options.Options;
 
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -23,7 +27,8 @@ public class Properties {
   public static String TEST_CLASSES_PATH; // Path to where the test classes are located
   public static String TEST_CLASS; // Full name of the test class
   public static SootClass SOOT_TEST_CLASS; // Soot class of the test class
-  public static String TEST_CLASS_SRC_FILENAME; // Source file name of the test class
+  public static String TEST_CLASS_SRC_DIR; // Source file dir for tests
+  public static CompilationUnit TEST_CLASS_SRC; // Source file for tests
 
   // Properties related to the target class
   public static String TARGET_CLASS; // Full name of the target class
@@ -52,6 +57,8 @@ public class Properties {
     SOOT_TEST_CLASS = sc;
     // Set the inputs class
     SOOT_INPUTS_CLASS = Scene.v().getSootClass(INPUTS_CLASS);
+    // Load the test class source code
+    loadTestClassSourceCode();
     // Initialize the possible input classes for each type
     InputHelper.initializeInputsByType();
   }
@@ -69,9 +76,22 @@ public class Properties {
       if (method.getName().equals("<init>")) continue;
       // Remove assert statements from the method
       method.retrieveActiveBody().getUnits().removeIf(unit -> unit.toString().startsWith("assert") || unit.toString().contains("org.junit.Assert"));
+      // Create the prefix
       prefixes.add(new Prefix(method, SOOT_TEST_CLASS));
     }
     return prefixes;
+  }
+
+  /**
+   * Load the source code of the test class.
+   */
+  private static void loadTestClassSourceCode() {
+    if (TEST_CLASS_SRC_DIR == null) {
+      System.out.println("!!! TEST_CLASS_SRC_DIR is null, cannot load test class source code");
+    } else {
+      SourceRoot sourceRoot = new SourceRoot(Paths.get(TEST_CLASS_SRC_DIR));
+      TEST_CLASS_SRC = sourceRoot.parse(SOOT_TEST_CLASS.getPackageName(), SOOT_TEST_CLASS.getShortName() + ".java");
+    }
   }
 
 }

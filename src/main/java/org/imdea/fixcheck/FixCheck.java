@@ -20,14 +20,14 @@ public class FixCheck {
   private static void readArgs(String[] args) {
     Properties.TEST_CLASSES_PATH = args[0];
     Properties.TEST_CLASS = args[1];
-    Properties.TEST_CLASS_SRC_FILENAME = args[2];
+    Properties.TEST_CLASS_SRC_DIR = args[2];
     Properties.TARGET_CLASS = args[3];
     Properties.INPUTS_CLASS = args[4];
     Properties.PREFIX_VARIATIONS = Integer.parseInt(args[5]);
     System.out.println("classpath: " + Properties.FULL_CLASSPATH);
     System.out.println("test classes path: " + Properties.TEST_CLASSES_PATH);
     System.out.println("test class: " + Properties.TEST_CLASS);
-    System.out.println("test class source: " + Properties.TEST_CLASS_SRC_FILENAME);
+    System.out.println("test classes sources: " + Properties.TEST_CLASS_SRC_DIR);
     System.out.println("target class: " + Properties.TARGET_CLASS);
     System.out.println("inputs class: " + Properties.INPUTS_CLASS);
     System.out.println("output prefixes: " + Properties.PREFIX_VARIATIONS);
