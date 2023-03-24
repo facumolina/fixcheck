@@ -21,8 +21,11 @@ public class InputTransformer extends PrefixTransformer {
 
   private int transformationsApplied;
 
+  private String lastTransformation;
+
   public InputTransformer() {
     transformationsApplied = 0;
+    lastTransformation = "";
   }
 
   @Override
@@ -45,6 +48,11 @@ public class InputTransformer extends PrefixTransformer {
     return new Prefix(newMethod, newClass);
   }
 
+  @Override
+  public String getLastTransformation() {
+    return lastTransformation;
+  }
+
   private void replaceInput(Body body) {
     // Get a random local
     Local input = getRandomLocal(body);
@@ -52,6 +60,7 @@ public class InputTransformer extends PrefixTransformer {
     Type usageType = TransformationHelper.getTypeOfFirstUsage(input, body);
     // Determine the type of the new local based on the usage
     Class<?> type = getClassForNewInput(usageType);
+    lastTransformation = "[" + input.getType() + "] replaced by [" + type.getName()+"]";
     Local newInput = defineLocalForType(type, body);
     // Generate call for input constructor
     AssignStmt assignStmt = Jimple.v().newAssignStmt(newInput, Jimple.v().newNewExpr(RefType.v(type.getName())));

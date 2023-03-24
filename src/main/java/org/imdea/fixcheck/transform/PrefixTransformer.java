@@ -14,4 +14,9 @@ public abstract class PrefixTransformer {
    */
   public abstract Prefix transform(Prefix prefix);
 
+  /**
+   * Get the last transformation applied.
+   * @return the last transformation applied.
+   */
+  public abstract String getLastTransformation();
 }

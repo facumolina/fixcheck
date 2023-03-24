@@ -63,6 +63,7 @@ public class FixCheck {
         System.out.println("---> transformer: " + prefixTransformer.getClass().getSimpleName());
         Prefix newPrefix = prefixTransformer.transform(prefix);
         System.out.println("---> generated prefix: " + newPrefix.getMethodClass().getName() + "." + newPrefix.getMethod().getName());
+        System.out.println("---> transformation: " + prefixTransformer.getLastTransformation());
         //System.out.println(newPrefix.getMethod().getActiveBody());
 
         // Generate the assertions for the prefix
