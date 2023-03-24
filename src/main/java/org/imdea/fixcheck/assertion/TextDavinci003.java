@@ -1,6 +1,5 @@
 package org.imdea.fixcheck.assertion;
 
-import org.imdea.fixcheck.Properties;
 import org.imdea.fixcheck.prefix.Prefix;
 
 import java.io.BufferedReader;
