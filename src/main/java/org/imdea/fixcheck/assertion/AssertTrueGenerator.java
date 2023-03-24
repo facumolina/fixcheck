@@ -1,5 +1,6 @@
 package org.imdea.fixcheck.assertion;
 
+import org.imdea.fixcheck.assertion.common.AssertionsHelper;
 import org.imdea.fixcheck.prefix.Prefix;
 import soot.*;
 import soot.jimple.IntConstant;
@@ -20,8 +21,8 @@ public class AssertTrueGenerator extends AssertionGenerator {
       // Define local for org.junit.Assert
       Local assertRef = Jimple.v().newLocal("assertRef", RefType.v("org.junit.Assert"));
       body.getLocals().add(assertRef);
-      // Add the assertFalse at the end of the prefix
-      SootMethod assertMethod = Scene.v().getMethod("<org.junit.Assert: void assertTrue(boolean)>");
+      // Add the assertTrue at the end of the prefix
+      SootMethod assertMethod = AssertionsHelper.getAssertTrueMethod();
       Unit unit = Jimple.v().newInvokeStmt(Jimple.v().newStaticInvokeExpr(assertMethod.makeRef(), IntConstant.v(1)));
       units.removeLast(); // Remove the return statement
       units.addLast(unit);
