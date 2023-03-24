@@ -8,9 +8,9 @@
 subject_cp=$1
 test_classes_path=$2
 target_test=$3
-target_test_src=$4
+target_test_dir=$4
 target_class=$5
 inputs_class=$6
 full_cp='build/libs/fixcheck-all-1.0.0.jar:'$subject_cp
 
-java -cp $full_cp org.imdea.fixcheck.FixCheck $test_classes_path $target_test $target_test_src $target_class $inputs_class 2
+java -cp $full_cp org.imdea.fixcheck.FixCheck $test_classes_path $target_test $target_test_dir $target_class $inputs_class 2
