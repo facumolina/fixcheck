@@ -4,6 +4,7 @@ import soot.Scene;
 import soot.SootMethod;
 import soot.Value;
 import soot.jimple.IntConstant;
+import soot.jimple.LongConstant;
 import soot.jimple.StringConstant;
 
 import java.util.*;
@@ -24,7 +25,7 @@ public class InputHelper {
     INPUTS_BY_TYPE.put("java.lang.Float", Collections.singletonList(Float.class));
     INPUTS_BY_TYPE.put("java.lang.Double", Collections.singletonList(Double.class));
     INPUTS_BY_TYPE.put("java.lang.String", Collections.singletonList(String.class));
-    INPUTS_BY_TYPE.put("java.lang.Object", Arrays.asList(Boolean.class, Integer.class, String.class));
+    INPUTS_BY_TYPE.put("java.lang.Object", Arrays.asList(Boolean.class, Integer.class, Long.class, String.class));
   }
 
   /**
@@ -37,9 +38,11 @@ public class InputHelper {
       return Scene.v().getMethod("<java.lang.Boolean: void <init>(boolean)>");
     if (type.equals(Integer.class))
       return Scene.v().getMethod("<java.lang.Integer: void <init>(int)>");
+    if (type.equals(Long.class))
+      return Scene.v().getMethod("<java.lang.Long: void <init>(long)>");
     if (type.equals(String.class))
       return Scene.v().getMethod("<java.lang.String: void <init>(java.lang.String)>");
-    throw new IllegalArgumentException("Type not supported: " + type.toString());
+    throw new IllegalArgumentException("Type not supported: " + type);
   }
 
   /**
@@ -53,9 +56,10 @@ public class InputHelper {
       boolean b = random.nextBoolean();
       return IntConstant.v(b ? 1 : 0);
     }
-    if (type.equals(Integer.class)) {
+    if (type.equals(Integer.class))
       return IntConstant.v(random.nextInt(100));
-    }
+    if (type.equals(Long.class))
+      return LongConstant.v(random.nextLong());
     if (type.equals(String.class))
       return StringConstant.v("test");
     throw new IllegalArgumentException("Type not supported: " + type);

@@ -18,6 +18,7 @@ public class Initializer {
    */
   public static SootClass initializeTransformedClass(String newClassName, SootClass sootClass) {
     SootClass transformedClass = new SootClass(newClassName, sootClass.getModifiers(), sootClass.moduleName);
+    transformedClass.setSuperclass(sootClass.getSuperclass());
     // Replicate the init method
     SootMethod initMethod = sootClass.getMethodByName("<init>");
     Body initMethodBody = initMethod.retrieveActiveBody();
