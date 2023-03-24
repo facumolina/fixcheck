@@ -15,7 +15,6 @@ public class Prefix {
 
   SootMethod method;
   SootClass methodClass;
-  String methodSourceCode;
   Prefix parent;
 
   /**
@@ -37,17 +36,20 @@ public class Prefix {
     this.method = Objects.requireNonNull(method, "method cannot be null");
     this.methodClass = Objects.requireNonNull(methodClass, "methodClass cannot be null");
     this.parent = parent;
-    initMethodCode();
   }
 
-  private void initMethodCode() {
+  /**
+   * Get the source code of the method
+   * @return Source code of the method
+   */
+  public String getSourceCode() {
     if (parent == null) {
-      methodSourceCode = Properties.TEST_CLASS_SRC
+      return Properties.TEST_CLASS_SRC
           .findFirst(com.github.javaparser.ast.body.MethodDeclaration.class, md -> md.getNameAsString().equals(method.getName()))
           .orElseThrow(() -> new RuntimeException("Method not found in compilation unit"))
           .toString();
     } else {
-      methodSourceCode = "Still unable to get the source code of a method after applying a transformation";
+      return "Still unable to get the source code of a method after applying a transformation";
     }
 
   }
@@ -63,12 +65,6 @@ public class Prefix {
    * @return Soot class of the method
    */
   public SootClass getMethodClass() { return methodClass; }
-
-  /**
-   * Get the source code of the method
-   * @return Source code of the method
-   */
-  public String getSourceCode() { return methodSourceCode; }
 
   /**
    * Get the parent prefix
