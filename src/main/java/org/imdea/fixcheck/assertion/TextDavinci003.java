@@ -32,11 +32,19 @@ public class TextDavinci003 extends AssertionGenerator {
   // make it more focused and deterministic.
   private double temperature;
 
+  /**
+   * Default constructor
+   */
   public TextDavinci003() {
     maxTokens = 300;
     temperature = 0.5;
   }
 
+  /**
+   * Constructor with parameters
+   * @param maxTokens Maximum number of tokens to generate in the completion.
+   * @param temperature sampling temperature to use.
+   */
   public TextDavinci003(int maxTokens, double temperature) {
     this.maxTokens = maxTokens;
     this.temperature = temperature;
@@ -46,12 +54,11 @@ public class TextDavinci003 extends AssertionGenerator {
   public void generateAssertions(Prefix prefix) {
     // Prepare the prompt
     String prompt = generatePrompt(prefix);
+    System.out.println("Calling with prompt: " + prompt);
   }
 
   /**
-   * Generate the prompt for the model.
-   * The prompt will have the following format:
-   *
+   * Generate the prompt for the model. The prompt will have the following format:
    * 'Given the following Java test case:'
    *   <test case code>
    * 'Produce as output assertions for the following test case:'
@@ -62,9 +69,9 @@ public class TextDavinci003 extends AssertionGenerator {
    */
   private String generatePrompt(Prefix prefix) {
     String prompt = "Given the following Java test case:\n";
-    //prompt += prefix.getTestCase().getCode() + "\n";
+    prompt += prefix.getParent().getSourceCode() + "\n";
     prompt += "Produce as output assertions for the following test case:\n";
-    //prompt += prefix.getCode();
+    prompt += prefix.getSourceCode();
     return prompt;
   }
 
