@@ -1,9 +1,14 @@
 package org.imdea.fixcheck.prefix;
 
+import com.strobel.decompiler.Decompiler;
+import com.strobel.decompiler.DecompilerSettings;
+import com.strobel.decompiler.PlainTextOutput;
 import org.imdea.fixcheck.Properties;
+import org.imdea.fixcheck.utils.BytecodeUtils;
 import soot.SootClass;
 import soot.SootMethod;
 
+import java.io.FileNotFoundException;
 import java.util.Objects;
 
 /**
@@ -44,14 +49,36 @@ public class Prefix {
    */
   public String getSourceCode() {
     if (parent == null) {
-      return Properties.TEST_CLASS_SRC
-          .findFirst(com.github.javaparser.ast.body.MethodDeclaration.class, md -> md.getNameAsString().equals(method.getName()))
-          .orElseThrow(() -> new RuntimeException("Method not found in compilation unit"))
-          .toString();
+      return getSourceCodeForLoadedMethod();
     } else {
-      return "Still unable to get the source code of a method after applying a transformation";
+      return getSourceCodeForTransformedMethod();
     }
+  }
 
+  /**
+   * Get the source code of the method
+   * @return Source code of the method
+   */
+  private String getSourceCodeForLoadedMethod() {
+    return Properties.TEST_CLASS_SRC
+        .findFirst(com.github.javaparser.ast.body.MethodDeclaration.class, md -> md.getNameAsString().equals(method.getName()))
+        .orElseThrow(() -> new RuntimeException("Method not found in compilation unit"))
+        .toString();
+  }
+
+  /**
+   * Get the source code of the method after applying a transformation
+   * @return Source code of the method
+   */
+  private String getSourceCodeForTransformedMethod() {
+    try {
+      Class<?> prefixClass = BytecodeUtils.loadAsClass(methodClass);
+      PlainTextOutput plainTextOutput = new PlainTextOutput();
+      Decompiler.decompile(prefixClass.getName(), plainTextOutput, DecompilerSettings.javaDefaults());
+      return plainTextOutput.toString();
+    } catch (FileNotFoundException | ClassNotFoundException e) {
+      throw new IllegalStateException("Unable to load the class of a method after applying a transformation: " + methodClass.getName() + method.getName());
+    }
   }
 
   /**
