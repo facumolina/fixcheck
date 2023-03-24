@@ -6,8 +6,10 @@
 #inputs_class='java.util.Date'
 
 subject_cp=$1
-target_test=$2
-target_class=$3
-inputs_class=$4
+test_classes_path=$2
+target_test=$3
+target_class=$4
+inputs_class=$5
 full_cp='build/libs/fixcheck-all-1.0.0.jar:'$subject_cp
-java -cp $full_cp org.imdea.fixcheck.FixCheck $full_cp $target_test $target_class $inputs_class 2
+
+java -cp $full_cp org.imdea.fixcheck.FixCheck $test_classes_path $target_test $target_class $inputs_class 2

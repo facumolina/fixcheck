@@ -22,11 +22,12 @@ project = subject_data['project'].values[0]
 subject_base_dir = os.path.join(dataset_base_dir, subject_id+'/badfix/'+project)
 main_dep = subject_data['main_dep'].values[0]
 test_classes = subject_data['tests_classes'].values[0]
-subject_cp = os.path.join(subject_base_dir, main_dep)+':'+os.path.join(subject_base_dir, test_classes)
+test_classes_path = os.path.join(subject_base_dir, test_classes)
+subject_cp = os.path.join(subject_base_dir, main_dep)+':'+test_classes_path
 target_test = subject_data['target_test'].values[0]
 target_class = subject_data['target_class'].values[0]
 input_class = subject_data['input_class'].values[0]
 
 # Run FixCheck
-subprocess.run(f'./fixcheck.sh {subject_cp} {target_test} {target_class} {input_class}', shell=True)
+subprocess.run(f'./fixcheck.sh {subject_cp} {test_classes_path} {target_test} {target_class} {input_class}', shell=True)
 
