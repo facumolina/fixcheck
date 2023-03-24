@@ -45,7 +45,7 @@ public class InputTransformer extends PrefixTransformer {
     newClass.addMethod(newMethod);
 
     transformationsApplied++;
-    return new Prefix(newMethod, newClass);
+    return new Prefix(newMethod, newClass, prefix);
   }
 
   @Override
