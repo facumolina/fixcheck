@@ -1,5 +1,6 @@
 package org.imdea.fixcheck.assertion;
 
+import org.imdea.fixcheck.assertion.common.AssertionsHelper;
 import org.imdea.fixcheck.prefix.Prefix;
 
 import java.io.BufferedReader;
@@ -63,6 +64,7 @@ public class TextDavinci003 extends AssertionGenerator {
     String assertions = performCall(prompt);
     System.out.println("---> assertions: " + assertions);
     System.out.println();
+    AssertionsHelper.appendAssertionsToPrefix(assertions, prefix);
     // TODO: append the assertions to the prefix
   }
 
