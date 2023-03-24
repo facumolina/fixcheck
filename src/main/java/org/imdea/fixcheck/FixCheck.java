@@ -1,6 +1,6 @@
 package org.imdea.fixcheck;
 
-import org.imdea.fixcheck.assertion.AssertFalseGenerator;
+import org.imdea.fixcheck.assertion.AssertTrueGenerator;
 import org.imdea.fixcheck.assertion.AssertionGenerator;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.runner.PrefixRunner;
@@ -65,7 +65,7 @@ public class FixCheck {
         //System.out.println(newPrefix.getMethod().getActiveBody());
 
         // Generate the assertions for the prefix
-        AssertionGenerator assertionGenerator = new AssertFalseGenerator();
+        AssertionGenerator assertionGenerator = new AssertTrueGenerator();
         assertionGenerator.generateAssertions(newPrefix);
 
         // Run the transformed prefix

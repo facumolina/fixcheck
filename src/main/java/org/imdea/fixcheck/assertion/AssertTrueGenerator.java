@@ -6,10 +6,10 @@ import soot.jimple.IntConstant;
 import soot.jimple.Jimple;
 
 /**
- * AssertFalseGenerator class: simple generator including an assert(false) at the end of the prefix, just for testing.
+ * AssertTrueGenerator class: simple generator including an assert(true) at the end of the prefix, just for testing.
  * @author Facundo Molina
  */
-public class AssertFalseGenerator extends AssertionGenerator {
+public class AssertTrueGenerator extends AssertionGenerator {
 
     @Override
     public void generateAssertions(Prefix prefix) {
@@ -21,7 +21,7 @@ public class AssertFalseGenerator extends AssertionGenerator {
       Local assertRef = Jimple.v().newLocal("assertRef", RefType.v("org.junit.Assert"));
       body.getLocals().add(assertRef);
       // Add the assertFalse at the end of the prefix
-      SootMethod assertMethod = Scene.v().getMethod("<org.junit.Assert: void assertFalse(boolean)>");
+      SootMethod assertMethod = Scene.v().getMethod("<org.junit.Assert: void assertTrue(boolean)>");
       Unit unit = Jimple.v().newInvokeStmt(Jimple.v().newStaticInvokeExpr(assertMethod.makeRef(), IntConstant.v(1)));
       units.removeLast(); // Remove the return statement
       units.addLast(unit);
