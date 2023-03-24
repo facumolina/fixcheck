@@ -59,9 +59,9 @@ public class FixCheck {
       for (int i=1; i <= n; i++) {
         // Generate the prefix
         System.out.println("PREFIX " + i + " of " + n);
-        PrefixTransformer prefixTransformer = new InputTransformer(prefix);
+        PrefixTransformer prefixTransformer = new InputTransformer();
         System.out.println("---> transformer: " + prefixTransformer.getClass().getSimpleName());
-        Prefix newPrefix = prefixTransformer.transform();
+        Prefix newPrefix = prefixTransformer.transform(prefix);
         System.out.println("---> generated prefix: " + newPrefix.getMethodClass().getName() + "." + newPrefix.getMethod().getName());
         //System.out.println(newPrefix.getMethod().getActiveBody());
 

@@ -16,13 +16,10 @@ import java.util.Random;
  */
 public class InputTransformer extends PrefixTransformer {
 
-  public InputTransformer(Prefix prefix) {
-    super(prefix);
-  }
+  public InputTransformer() { }
 
   @Override
-  public Prefix transform() {
-    Prefix prefix = this.prefix;
+  public Prefix transform(Prefix prefix) {
     SootClass prefixClass = prefix.getMethodClass();
     SootMethod prefixMethod = prefix.getMethod();
     Body oldBody = prefixMethod.retrieveActiveBody();
