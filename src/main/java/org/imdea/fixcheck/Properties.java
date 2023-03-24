@@ -23,6 +23,7 @@ public class Properties {
   public static String TEST_CLASSES_PATH; // Path to where the test classes are located
   public static String TEST_CLASS; // Full name of the test class
   public static SootClass SOOT_TEST_CLASS; // Soot class of the test class
+  public static String TEST_CLASS_SRC_FILENAME; // Source file name of the test class
 
   // Properties related to the target class
   public static String TARGET_CLASS; // Full name of the target class
