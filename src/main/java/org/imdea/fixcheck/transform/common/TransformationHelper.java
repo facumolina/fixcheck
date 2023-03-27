@@ -108,19 +108,20 @@ public class TransformationHelper {
   }
 
   /**
-   * Return the list of locals of a given type in a body
+   * Return the list of inputs of a given type in a body
    * @param body Body to search
    * @param typeName Type of the local to search
-   * @return List of Locals of the given type, empty if not found
+   * @return List of Inputs of the given type, empty if not found
    */
-  public static List<Input> getLocalsWithType(Body body, String typeName) {
-    List<Input> locals = new ArrayList<>();
+  public static List<Input> getInputsWithType(Body body, String typeName) {
+    List<Input> inputs = new ArrayList<>();
+    // Firts, search for locals
     for (Local local : body.getLocals()) {
       if (local.getType().toString().equals(typeName)) {
-        locals.add(new LocalInput(typeName, local));
+        inputs.add(new LocalInput(typeName, local));
       }
     }
-    return locals;
+    return inputs;
   }
 
   /**

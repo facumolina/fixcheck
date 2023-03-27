@@ -103,7 +103,7 @@ public class InputTransformer extends PrefixTransformer {
    * @return Random Local for the input class
    */
   private Input getRandomInput(Body body) {
-    List<Input> locals = TransformationHelper.getLocalsWithType(body, Properties.INPUTS_CLASS);
+    List<Input> locals = TransformationHelper.getInputsWithType(body, Properties.INPUTS_CLASS);
     if (locals.isEmpty()) throw new IllegalArgumentException("No locals of type " + Properties.INPUTS_CLASS);
     Random random = new Random();
     int index = random.nextInt(locals.size());
