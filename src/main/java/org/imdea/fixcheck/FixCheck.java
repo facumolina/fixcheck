@@ -6,6 +6,7 @@ import org.imdea.fixcheck.assertion.TextDavinci003;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.runner.PrefixRunner;
 import org.imdea.fixcheck.transform.PrefixTransformer;
+import org.imdea.fixcheck.transform.input.InputHelper;
 import org.imdea.fixcheck.transform.input.InputTransformer;
 
 import java.io.*;
@@ -38,14 +39,18 @@ public class FixCheck {
     System.out.println("> FixCheck");
     readArgs(args);
 
-    System.out.println("----- Going to generate prefixes -----");
+    System.out.println("====== SETUP ======");
     // Loading the prefixes to analyze
     List<Prefix> prefixes = Properties.getPrefixes();
     System.out.println("loaded prefixes: " + prefixes.size());
     System.out.println("prefixes to produce: " + Properties.PREFIX_VARIATIONS);
+    System.out.println("inputs used in the prefixes:");
+    // Show the inputs collected in the providers
+    InputHelper.PROVIDERS.forEach((k,v) -> { System.out.println("  " + k + ": " + v);});
     System.out.println();
 
     try {
+      System.out.println("====== GENERATION ======");
       generateSimilarPrefixes(prefixes, Properties.PREFIX_VARIATIONS);
     } catch (ClassNotFoundException | IOException e) {
       System.out.println("Error generating similar prefixes!!");
