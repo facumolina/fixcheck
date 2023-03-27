@@ -2,6 +2,7 @@ package org.imdea.fixcheck;
 
 import org.imdea.fixcheck.assertion.AssertTrueGenerator;
 import org.imdea.fixcheck.assertion.AssertionGenerator;
+import org.imdea.fixcheck.assertion.TextDavinci003;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.runner.PrefixRunner;
 import org.imdea.fixcheck.transform.PrefixTransformer;
@@ -57,6 +58,8 @@ public class FixCheck {
   public static List<Prefix> generateSimilarPrefixes(List<Prefix> prefixes, int n) throws ClassNotFoundException, IOException {
     List<Prefix> similarPrefixes = new ArrayList<>();
     PrefixTransformer prefixTransformer = new InputTransformer();
+    //AssertionGenerator assertionGenerator = new TextDavinci003();
+    AssertionGenerator assertionGenerator = new AssertTrueGenerator();
     for (Prefix prefix : prefixes) {
       // Generate n similar prefixes
       for (int i=1; i <= n; i++) {
@@ -66,10 +69,12 @@ public class FixCheck {
         Prefix newPrefix = prefixTransformer.transform(prefix);
         System.out.println("---> generated prefix: " + newPrefix.getMethodClass().getName() + "." + newPrefix.getMethod().getName());
         System.out.println("---> transformation: " + prefixTransformer.getLastTransformation());
+
         //System.out.println(newPrefix.getMethod().getActiveBody());
 
         // Generate the assertions for the prefix
-        AssertionGenerator assertionGenerator = new AssertTrueGenerator();
+        System.out.println();
+        System.out.println("---> assertion generator: " + assertionGenerator.getClass().getSimpleName());
         assertionGenerator.generateAssertions(newPrefix);
 
         // Run the transformed prefix
