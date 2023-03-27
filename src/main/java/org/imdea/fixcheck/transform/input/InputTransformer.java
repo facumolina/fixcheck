@@ -1,7 +1,9 @@
 package org.imdea.fixcheck.transform.input;
 
 import org.imdea.fixcheck.Properties;
+import org.imdea.fixcheck.prefix.ConstantInput;
 import org.imdea.fixcheck.prefix.Input;
+import org.imdea.fixcheck.prefix.LocalInput;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.PrefixTransformer;
 import org.imdea.fixcheck.transform.common.TransformationHelper;
@@ -73,6 +75,19 @@ public class InputTransformer extends PrefixTransformer {
   }
 
   private void replaceConstructor(Body body, Input inputToReplace, AssignStmt assignStmt, InvokeStmt constructorInvoke) {
+    if (inputToReplace instanceof LocalInput) {
+      replaceConstructorLocal(body, inputToReplace, assignStmt, constructorInvoke);
+    } else if (inputToReplace instanceof ConstantInput) {
+      // For constants, just add the new constructor call in the right place
+      Unit unit = TransformationHelper.getFirstUnitUsingInput(inputToReplace, body);
+      body.getUnits().insertBefore(assignStmt, unit);
+      body.getUnits().insertBefore(constructorInvoke, unit);
+    } else {
+      throw new IllegalArgumentException("Don't know how to replace the constructor for input type: " + inputToReplace.getClass().getName());
+    }
+  }
+
+  private void replaceConstructorLocal(Body body, Input inputToReplace, AssignStmt assignStmt, InvokeStmt constructorInvoke) {
     // First replace the assignment
     for (Unit ut : body.getUnits()) {
       if (ut instanceof AssignStmt) {
@@ -90,13 +105,12 @@ public class InputTransformer extends PrefixTransformer {
         boolean classMatch = invokeExpr.getMethod().getDeclaringClass().getName().equals(inputToReplace.getValue().getType().toString());
         boolean methodMatch = invokeExpr.getMethod().getName().equals("<init>");
         if (classMatch && methodMatch) {
-            body.getUnits().swapWith(ut, constructorInvoke);
-            break;
+          body.getUnits().swapWith(ut, constructorInvoke);
+          break;
         }
       }
     }
   }
-
   /**
    * Get a random Local for the input class
    * @param body Body to search

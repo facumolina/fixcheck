@@ -1,5 +1,6 @@
 package org.imdea.fixcheck.transform.common;
 
+import org.imdea.fixcheck.prefix.ConstantInput;
 import org.imdea.fixcheck.prefix.Input;
 import org.imdea.fixcheck.prefix.LocalInput;
 import soot.*;
@@ -37,23 +38,35 @@ public class TransformationHelper {
   /**
    * Return the Type of the first usage of a given local in a body.
    * The type is essentially the type of the parameter of the method call that uses the local.
-   * @param local Local to search
+   * @param input Input to search
    * @param body Body to search
    * @return Type of the first usage of the given local
    */
   public static Type getTypeOfFirstUsage(Input input, Body body) {
+    Unit unit = getFirstUnitUsingInput(input, body);
+    JInvokeStmt stmt = ((JInvokeStmt) unit);
+    return stmt.getInvokeExpr().getMethod().getParameterType(getIndexForValue(stmt, input.getValue()));
+  }
+
+  /**
+   * Get first Unit using the input
+   * @param input Input to search
+   * @param body Body to search
+   * @return First unit using the input
+   */
+  public static Unit getFirstUnitUsingInput(Input input, Body body) {
     for (Unit ut : body.getUnits()) {
       for (ValueBox vb : ut.getUseBoxes()) {
         if (vb.getValue().equals(input.getValue())) {
           if (ut instanceof JInvokeStmt) {
             JInvokeStmt stmt = ((JInvokeStmt) ut);
             if (isConstructorCall(stmt, input.getValue())) continue;
-            return stmt.getInvokeExpr().getMethod().getParameterType(getIndexForValue(stmt, input.getValue()));
+            return ut;
           }
         }
       }
     }
-    throw new IllegalArgumentException("Unable to find type for Input " + input + ". Is it used?");
+    throw new IllegalArgumentException("Unable to find unit using Input " + input + ". Is it used?");
   }
 
   /**
@@ -115,13 +128,26 @@ public class TransformationHelper {
    */
   public static List<Input> getInputsWithType(Body body, String typeName) {
     List<Input> inputs = new ArrayList<>();
-    // Firts, search for locals
+    // First, search for locals
     for (Local local : body.getLocals()) {
       if (local.getType().toString().equals(typeName)) {
         inputs.add(new LocalInput(typeName, local));
       }
     }
+    // Second, search for constants if applicable
+    if (canBeConstant(typeName)) {
+      List<ValueBox> useBoxes = body.getUseBoxes();
+      for (ValueBox vb : useBoxes) {
+        if (vb.getValue().getType().toString().equals(typeName)) {
+          inputs.add(new ConstantInput(typeName, vb.getValue()));
+        }
+      }
+    }
     return inputs;
+  }
+
+  private static boolean canBeConstant(String typeName) {
+    return typeName.equals("java.lang.String");
   }
 
   /**
