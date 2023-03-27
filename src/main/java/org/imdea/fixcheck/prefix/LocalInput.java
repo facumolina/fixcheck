@@ -1,6 +1,7 @@
 package org.imdea.fixcheck.prefix;
 
 import soot.Local;
+import soot.Value;
 
 import java.util.Objects;
 
@@ -12,8 +13,8 @@ public class LocalInput extends Input {
 
   private final Local local; // Soot local
 
-  public LocalInput(Class<?> type, Local local) {
-    super(type);
+  public LocalInput(String typeName, Local local) {
+    super(typeName);
     this.local = Objects.requireNonNull(local, "local cannot be null");
   }
 
@@ -21,16 +22,21 @@ public class LocalInput extends Input {
    * Get the Soot local
    * @return Soot local
    */
-  public Local getLocal() {
-    return local;
-  }
 
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof LocalInput)) return false;
     LocalInput that = (LocalInput) o;
-    return type.equals(that.getType()) && local.equals(that.local);
+    return typeName.equals(that.getType()) && local.equals(that.local);
+  }
+
+  @Override
+  public Value getValue() { return local; }
+
+  @Override
+  public String toString() {
+    return "LocalInput: "+local;
   }
 
 }

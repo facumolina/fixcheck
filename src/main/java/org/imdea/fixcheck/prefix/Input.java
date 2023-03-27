@@ -1,5 +1,7 @@
 package org.imdea.fixcheck.prefix;
 
+import soot.Value;
+
 import java.util.Objects;
 
 /**
@@ -8,22 +10,28 @@ import java.util.Objects;
  */
 public abstract class Input {
 
-  protected Class<?> type;
+  protected String typeName;
 
   /**
    * Constructor
    * @param type Type of the input
    */
-  public Input(Class<?> type) {
-    this.type = Objects.requireNonNull(type, "type cannot be null");
+  public Input(String typeName) {
+    this.typeName = Objects.requireNonNull(typeName, "typeName cannot be null");
   }
 
   /**
    * Get the type of the input
    * @return Type of the input
    */
-  public Class<?> getType() {
-    return type;
+  public String getType() {
+    return typeName;
   }
+
+  /**
+   * Get the value of the input
+   * @return Value of the input
+   */
+  public abstract Value getValue();
 
 }
