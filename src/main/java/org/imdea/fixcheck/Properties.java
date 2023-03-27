@@ -1,7 +1,6 @@
 package org.imdea.fixcheck;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.utils.CodeGenerationUtils;
 import com.github.javaparser.utils.SourceRoot;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.input.InputHelper;
@@ -41,7 +40,7 @@ public class Properties {
   public static SootClass SOOT_INPUTS_CLASS; // Soot class of the inputs class
 
   /**
-   * Setup the TestLoader.
+   * Setup all Properties.
    */
   public static void setup() {
     // Setup Soot
@@ -60,7 +59,7 @@ public class Properties {
     // Load the test class source code
     loadTestClassSourceCode();
     // Initialize the possible input classes for each type
-    InputHelper.initializeInputsByType();
+    InputHelper.initializeHelper();
   }
 
   /**

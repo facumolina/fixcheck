@@ -14,16 +14,17 @@ import java.util.*;
 public class InputHelper {
 
   protected static Map<String, List<Class<?>>> INPUTS_BY_TYPE; // Map of possible input classes for each type
-  private static Map<Class<?>, InputProvider> providers;
+  private static Map<Class<?>, InputProvider> PROVIDERS;
   static {
-    providers = new HashMap<>();
-    providers.put(java.lang.Integer.class, new IntegerProvider());
-    providers.put(java.lang.Boolean.class, new BooleanProvider());
-    providers.put(java.lang.Long.class, new LongProvider());
-    providers.put(java.lang.String.class, new StringProvider());
+    PROVIDERS = new HashMap<>();
+    PROVIDERS.put(java.lang.Integer.class, new IntegerProvider());
+    PROVIDERS.put(java.lang.Boolean.class, new BooleanProvider());
+    PROVIDERS.put(java.lang.Long.class, new LongProvider());
+    PROVIDERS.put(java.lang.String.class, new StringProvider());
   }
 
-  public static void initializeInputsByType() {
+  public static void initializeHelper() {
+    // Initialize the map of inputs by type
     INPUTS_BY_TYPE = new HashMap<>();
     INPUTS_BY_TYPE.put("java.util.Boolean", Collections.singletonList(Boolean.class));
     INPUTS_BY_TYPE.put("java.lang.Integer", Collections.singletonList(Integer.class));
@@ -32,6 +33,15 @@ public class InputHelper {
     INPUTS_BY_TYPE.put("java.lang.Double", Collections.singletonList(Double.class));
     INPUTS_BY_TYPE.put("java.lang.String", Collections.singletonList(String.class));
     INPUTS_BY_TYPE.put("java.lang.Object", Arrays.asList(Boolean.class, Integer.class, Long.class, String.class));
+    // Feed providers with inputs that can be obtained from the test suite under analysis
+    searchForInputs();
+  }
+
+  /**
+   * Search for inputs in the test suite under analysis.
+   */
+  private static void searchForInputs() {
+
   }
 
   /**
@@ -57,8 +67,8 @@ public class InputHelper {
    * @return Value for the given type
    */
   public static Value getValueForType(Class<?> type) {
-    if (providers.containsKey(type)) {
-      InputProvider provider = providers.get(type);
+    if (PROVIDERS.containsKey(type)) {
+      InputProvider provider = PROVIDERS.get(type);
       return provider.getInput();
     }
     throw new IllegalArgumentException("Type not supported, don't know how to get values for : " + type);
