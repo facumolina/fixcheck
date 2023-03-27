@@ -1,5 +1,7 @@
 package org.imdea.fixcheck.transform.common;
 
+import org.imdea.fixcheck.prefix.Input;
+import org.imdea.fixcheck.prefix.LocalInput;
 import soot.*;
 import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.internal.JInvokeStmt;
@@ -31,7 +33,7 @@ public class TransformationHelper {
     transformedClass.addMethod(newInitMethod);
     return transformedClass;
   }
-  
+
   /**
    * Return the Type of the first usage of a given local in a body.
    * The type is essentially the type of the parameter of the method call that uses the local.
@@ -39,35 +41,35 @@ public class TransformationHelper {
    * @param body Body to search
    * @return Type of the first usage of the given local
    */
-  public static Type getTypeOfFirstUsage(Local local, Body body) {
+  public static Type getTypeOfFirstUsage(Input input, Body body) {
     for (Unit ut : body.getUnits()) {
       for (ValueBox vb : ut.getUseBoxes()) {
-        if (vb.getValue().equals(local)) {
+        if (vb.getValue().equals(input.getValue())) {
           if (ut instanceof JInvokeStmt) {
             JInvokeStmt stmt = ((JInvokeStmt) ut);
-            if (isConstructorCall(stmt, local)) continue;
-            return stmt.getInvokeExpr().getMethod().getParameterType(getIndexForLocal(stmt, local));
+            if (isConstructorCall(stmt, input.getValue())) continue;
+            return stmt.getInvokeExpr().getMethod().getParameterType(getIndexForValue(stmt, input.getValue()));
           }
         }
       }
     }
-    throw new IllegalArgumentException("Unable to find type for Local " + local.getName() + ". Is it used?");
+    throw new IllegalArgumentException("Unable to find type for Input " + input + ". Is it used?");
   }
 
   /**
    * Return the index of a given local in the list of parameters of the method call that uses it.
    * @param stmt Invoke statement to search
-   * @param local Local to search
+   * @param value Value to search
    * @return Index of the local in the list of parameters
    */
-  private static int getIndexForLocal(JInvokeStmt stmt, Local local) {
+  private static int getIndexForValue(JInvokeStmt stmt, Value value) {
     int index = 0;
     List<Value> args = stmt.getInvokeExpr().getArgs();
     for (Value arg : args) {
-      if (arg.equals(local)) return index;
+      if (arg.equals(value)) return index;
       index++;
     }
-    throw new IllegalArgumentException("Unable to find index for Local " + local.getName() + ". Is it used?");
+    throw new IllegalArgumentException("Unable to find index for Value " + value + ". Is it used?");
   }
 
   /**
@@ -93,13 +95,13 @@ public class TransformationHelper {
   /**
    * Returns true if the invoke statement is a constructor call of the given local
    * @param invokeStmt Invoke statement to check
-   * @param local Local to check
+   * @param value Value to check
    * @return True if the invoke statement is a constructor call
    */
-  public static boolean isConstructorCall(JInvokeStmt invokeStmt, Local local) {
+  public static boolean isConstructorCall(JInvokeStmt invokeStmt, Value value) {
     if (invokeStmt.getInvokeExpr() instanceof SpecialInvokeExpr) {
       SpecialInvokeExpr specialInvokeExpr = (SpecialInvokeExpr) invokeStmt.getInvokeExpr();
-      if (specialInvokeExpr.getBase().equals(local) && specialInvokeExpr.getMethod().getName().equals("<init>"))
+      if (specialInvokeExpr.getBase().equals(value) && specialInvokeExpr.getMethod().getName().equals("<init>"))
         return true;
     }
     return false;
@@ -111,11 +113,11 @@ public class TransformationHelper {
    * @param typeName Type of the local to search
    * @return List of Locals of the given type, empty if not found
    */
-  public static List<Local> getLocalsWithType(Body body, String typeName) {
-    List<Local> locals = new ArrayList<>();
+  public static List<Input> getLocalsWithType(Body body, String typeName) {
+    List<Input> locals = new ArrayList<>();
     for (Local local : body.getLocals()) {
       if (local.getType().toString().equals(typeName)) {
-        locals.add(local);
+        locals.add(new LocalInput(typeName, local));
       }
     }
     return locals;

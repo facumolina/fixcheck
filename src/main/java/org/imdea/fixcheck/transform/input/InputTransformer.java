@@ -1,6 +1,7 @@
 package org.imdea.fixcheck.transform.input;
 
 import org.imdea.fixcheck.Properties;
+import org.imdea.fixcheck.prefix.Input;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.PrefixTransformer;
 import org.imdea.fixcheck.transform.common.TransformationHelper;
@@ -55,7 +56,7 @@ public class InputTransformer extends PrefixTransformer {
 
   private void replaceInput(Body body) {
     // Get a random local
-    Local input = getRandomLocal(body);
+    Input input = getRandomInput(body);
     // Find the type where the input is used
     Type usageType = TransformationHelper.getTypeOfFirstUsage(input, body);
     // Determine the type of the new local based on the usage
@@ -68,15 +69,15 @@ public class InputTransformer extends PrefixTransformer {
     // Replace old input constructor with new input constructor
     replaceConstructor(body, input, assignStmt, constructorInvoke);
     // Use the new input in the right place
-    TransformationHelper.replace(body, input, newInput);
+    TransformationHelper.replace(body, input.getValue(), newInput);
   }
 
-  private void replaceConstructor(Body body, Local inputToReplace, AssignStmt assignStmt, InvokeStmt constructorInvoke) {
+  private void replaceConstructor(Body body, Input inputToReplace, AssignStmt assignStmt, InvokeStmt constructorInvoke) {
     // First replace the assignment
     for (Unit ut : body.getUnits()) {
       if (ut instanceof AssignStmt) {
         AssignStmt assign = (AssignStmt) ut;
-        if (assign.getLeftOp().equals(inputToReplace)) {
+        if (assign.getLeftOp().equals(inputToReplace.getValue())) {
           body.getUnits().swapWith(ut, assignStmt);
           break;
         }
@@ -86,7 +87,7 @@ public class InputTransformer extends PrefixTransformer {
     for (Unit ut : body.getUnits()) {
       if (ut instanceof InvokeStmt) {
         InvokeExpr invokeExpr = ((InvokeStmt)ut).getInvokeExpr();
-        boolean classMatch = invokeExpr.getMethod().getDeclaringClass().getName().equals(inputToReplace.getType().toString());
+        boolean classMatch = invokeExpr.getMethod().getDeclaringClass().getName().equals(inputToReplace.getValue().getType().toString());
         boolean methodMatch = invokeExpr.getMethod().getName().equals("<init>");
         if (classMatch && methodMatch) {
             body.getUnits().swapWith(ut, constructorInvoke);
@@ -101,8 +102,8 @@ public class InputTransformer extends PrefixTransformer {
    * @param body Body to search
    * @return Random Local for the input class
    */
-  private Local getRandomLocal(Body body) {
-    List<Local> locals = TransformationHelper.getLocalsWithType(body, Properties.INPUTS_CLASS);
+  private Input getRandomInput(Body body) {
+    List<Input> locals = TransformationHelper.getLocalsWithType(body, Properties.INPUTS_CLASS);
     if (locals.isEmpty()) throw new IllegalArgumentException("No locals of type " + Properties.INPUTS_CLASS);
     Random random = new Random();
     int index = random.nextInt(locals.size());
