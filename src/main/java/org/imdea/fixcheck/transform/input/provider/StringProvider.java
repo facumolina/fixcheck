@@ -23,4 +23,9 @@ public class StringProvider implements InputProvider {
     usedInputs.add(value);
   }
 
+  @Override
+  public String toString() {
+    return "values: " + usedInputs;
+  }
+
 }

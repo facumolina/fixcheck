@@ -12,12 +12,12 @@ public interface InputProvider {
    * Get an input value
    * @return an input value
    */
-  public Value getInput();
+  Value getInput();
 
   /**
    * Add an input value
    * @param value - input value
    */
-  public void addInput(Value value);
+  void addInput(Value value);
 
 }

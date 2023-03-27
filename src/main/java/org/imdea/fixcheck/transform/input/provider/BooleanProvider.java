@@ -23,4 +23,9 @@ public class BooleanProvider implements InputProvider {
     // Nothing to do
   }
 
+  @Override
+  public String toString() {
+    return "values: [0, 1]";
+  }
+
 }
