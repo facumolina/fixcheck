@@ -146,7 +146,7 @@ public class TransformationHelper {
     return inputs;
   }
 
-  private static boolean canBeConstant(String typeName) {
+  public static boolean canBeConstant(String typeName) {
     return typeName.equals("java.lang.String");
   }
 
