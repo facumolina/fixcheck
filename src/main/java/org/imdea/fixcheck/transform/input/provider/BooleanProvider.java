@@ -18,4 +18,9 @@ public class BooleanProvider implements InputProvider {
     return IntConstant.v(b ? 1 : 0);
   }
 
+  @Override
+  public void addInput(Value value) {
+    // Nothing to do
+  }
+
 }

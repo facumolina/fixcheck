@@ -18,4 +18,9 @@ public class IntegerProvider implements InputProvider {
         return IntConstant.v(random.nextInt(100));
     }
 
+    @Override
+    public void addInput(Value value) {
+        // Nothing to do
+    }
+
 }

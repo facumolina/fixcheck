@@ -16,4 +16,9 @@ public class LongProvider implements InputProvider {
   public Value getInput() {
     return LongConstant.v(random.nextLong());
   }
+
+  @Override
+  public void addInput(Value value) {
+    // Nothing to do
+  }
 }

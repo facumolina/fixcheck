@@ -14,4 +14,10 @@ public interface InputProvider {
    */
   public Value getInput();
 
+  /**
+   * Add an input value
+   * @param value - input value
+   */
+  public void addInput(Value value);
+
 }
