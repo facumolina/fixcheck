@@ -1,9 +1,9 @@
 package org.imdea.fixcheck.transform.input;
 
 import org.imdea.fixcheck.transform.input.provider.*;
-import soot.Scene;
-import soot.SootMethod;
-import soot.Value;
+import org.imdea.fixcheck.Properties;
+import soot.*;
+import soot.jimple.Constant;
 
 import java.util.*;
 
@@ -14,7 +14,7 @@ import java.util.*;
 public class InputHelper {
 
   protected static Map<String, List<Class<?>>> INPUTS_BY_TYPE; // Map of possible input classes for each type
-  private static Map<Class<?>, InputProvider> PROVIDERS;
+  public static Map<Class<?>, InputProvider> PROVIDERS;
   static {
     PROVIDERS = new HashMap<>();
     PROVIDERS.put(java.lang.Integer.class, new IntegerProvider());
@@ -41,7 +41,23 @@ public class InputHelper {
    * Search for inputs in the test suite under analysis.
    */
   private static void searchForInputs() {
-
+    SootClass sootTestClass = Properties.SOOT_TEST_CLASS;
+    // Search for constant inputs used in the methods of the soot test class
+    for (SootMethod method : sootTestClass.getMethods()) {
+      for (ValueBox valueBox : method.retrieveActiveBody().getUseBoxes()) {
+        Value value = valueBox.getValue();
+        if (!(value instanceof Constant)) continue;
+        if (value.getType().toString().equals("java.lang.Integer")) {
+          PROVIDERS.get(Integer.class).addInput(value);
+        } else if (value.getType().toString().equals("java.lang.Long")) {
+          PROVIDERS.get(Long.class).addInput(value);
+        } else if (value.getType().toString().equals("java.lang.String")) {
+          PROVIDERS.get(String.class).addInput(value);
+        } else if (value.getType().toString().equals("java.lang.Boolean")) {
+          PROVIDERS.get(Boolean.class).addInput(value);
+        }
+      }
+    }
   }
 
   /**
