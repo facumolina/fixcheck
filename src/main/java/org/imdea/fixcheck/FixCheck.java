@@ -31,7 +31,6 @@ public class FixCheck {
     System.out.println("test classes sources: " + Properties.TEST_CLASS_SRC_DIR);
     System.out.println("target class: " + Properties.TARGET_CLASS);
     System.out.println("inputs class: " + Properties.INPUTS_CLASS);
-    System.out.println("output prefixes: " + Properties.PREFIX_VARIATIONS);
     System.out.println();
   }
 
@@ -43,6 +42,7 @@ public class FixCheck {
     // Loading the prefixes to analyze
     List<Prefix> prefixes = Properties.getPrefixes();
     System.out.println("loaded prefixes: " + prefixes.size());
+    System.out.println("prefixes to produce: " + Properties.PREFIX_VARIATIONS);
     System.out.println();
 
     try {
