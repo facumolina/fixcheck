@@ -1,11 +1,9 @@
 package org.imdea.fixcheck.transform.input;
 
+import org.imdea.fixcheck.transform.input.provider.*;
 import soot.Scene;
 import soot.SootMethod;
 import soot.Value;
-import soot.jimple.IntConstant;
-import soot.jimple.LongConstant;
-import soot.jimple.StringConstant;
 
 import java.util.*;
 
@@ -16,6 +14,14 @@ import java.util.*;
 public class InputHelper {
 
   protected static Map<String, List<Class<?>>> INPUTS_BY_TYPE; // Map of possible input classes for each type
+  private static Map<Class<?>, InputProvider> providers;
+  static {
+    providers = new HashMap<>();
+    providers.put(java.lang.Integer.class, new IntegerProvider());
+    providers.put(java.lang.Boolean.class, new BooleanProvider());
+    providers.put(java.lang.Long.class, new LongProvider());
+    providers.put(java.lang.String.class, new StringProvider());
+  }
 
   public static void initializeInputsByType() {
     INPUTS_BY_TYPE = new HashMap<>();
@@ -51,18 +57,11 @@ public class InputHelper {
    * @return Value for the given type
    */
   public static Value getValueForType(Class<?> type) {
-    Random random = new Random();
-    if (type.equals(Boolean.class)) {
-      boolean b = random.nextBoolean();
-      return IntConstant.v(b ? 1 : 0);
+    if (providers.containsKey(type)) {
+      InputProvider provider = providers.get(type);
+      return provider.getInput();
     }
-    if (type.equals(Integer.class))
-      return IntConstant.v(random.nextInt(100));
-    if (type.equals(Long.class))
-      return LongConstant.v(random.nextLong());
-    if (type.equals(String.class))
-      return StringConstant.v("test");
-    throw new IllegalArgumentException("Type not supported: " + type);
+    throw new IllegalArgumentException("Type not supported, don't know how to get values for : " + type);
   }
 
 }
