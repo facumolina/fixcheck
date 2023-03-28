@@ -15,10 +15,6 @@ public class StringProvider implements InputProvider {
   List<Value> usedInputs = new ArrayList<>();
   Random random = new Random();
 
-  public StringProvider() {
-    usedInputs.add(StringConstant.v("maxspeed:forward"));
-  }
-
   @Override
   public Value getInput() {
     if (usedInputs.size() > 0) {
@@ -30,7 +26,7 @@ public class StringProvider implements InputProvider {
 
   @Override
   public void addInput(Value value) {
-    //usedInputs.add(value);
+    usedInputs.add(value);
   }
 
   @Override
