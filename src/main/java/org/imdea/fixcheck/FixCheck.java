@@ -8,16 +8,23 @@ import org.imdea.fixcheck.runner.PrefixRunner;
 import org.imdea.fixcheck.transform.PrefixTransformer;
 import org.imdea.fixcheck.transform.input.InputHelper;
 import org.imdea.fixcheck.transform.input.InputTransformer;
+import org.junit.runner.Result;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * FixCheck class: main class.
  * @author Facundo Molina
  */
 public class FixCheck {
+
+  private static Set<Prefix> crashingPrefixes = new HashSet<>(); // Built prefixes that crash when executed
+  private static Set<Prefix> assertionFailingPrefixes = new HashSet<>(); // Built prefixes that fail the assertion when executed
+  private static Set<Prefix> passingPrefixes = new HashSet<>(); // Built prefixes that pass the assertion when executed
 
   private static void readArgs(String[] args) {
     Properties.TEST_CLASSES_PATH = args[0];
@@ -57,11 +64,18 @@ public class FixCheck {
       System.out.println(e.getMessage());
     }
 
+    System.out.println("====== OUTPUT ======");
+    System.out.println("total prefixes: " + (crashingPrefixes.size() + assertionFailingPrefixes.size() + passingPrefixes.size()));
+    System.out.println("crashing prefixes: " + crashingPrefixes.size());
+    System.out.println("assertion failing prefixes: " + assertionFailingPrefixes.size());
+    System.out.println("passing prefixes: " + passingPrefixes.size());
+    System.out.println();
+
     System.out.println("Done!");
   }
 
   public static List<Prefix> generateSimilarPrefixes(List<Prefix> prefixes, int n) throws ClassNotFoundException, IOException {
-    List<Prefix> similarPrefixes = new ArrayList<>();
+    List<Prefix> generatedPrefixes = new ArrayList<>();
     PrefixTransformer prefixTransformer = new InputTransformer();
     //AssertionGenerator assertionGenerator = new TextDavinci003();
     AssertionGenerator assertionGenerator = new AssertTrueGenerator();
@@ -83,12 +97,34 @@ public class FixCheck {
         assertionGenerator.generateAssertions(newPrefix);
 
         // Run the transformed prefix
-        PrefixRunner.runPrefix(newPrefix);
-        similarPrefixes.add(newPrefix);
+        Result result = PrefixRunner.runPrefix(newPrefix);
+        savePrefix(newPrefix, result);
+        generatedPrefixes.add(newPrefix);
         System.out.println();
       }
     }
-    return similarPrefixes;
+    return generatedPrefixes;
+  }
+
+  /**
+   * Save the prefix in the corresponding set
+   * @param prefix Prefix to save
+   * @param result Result of the prefix execution
+   */
+  private static void savePrefix(Prefix prefix, Result result) {
+    if (result.getFailureCount() > 0) {
+      // If some failure is an assertion error, then the prefix failed the assertion
+      if (result.getFailures().stream().anyMatch(f -> f.getException() instanceof AssertionError)) {
+        System.out.println("---> prefix failed assertion");
+        assertionFailingPrefixes.add(prefix);
+      } else {
+        System.out.println("---> prefix crashed");
+        crashingPrefixes.add(prefix);
+      }
+    } else {
+      System.out.println("---> prefix passed");
+      passingPrefixes.add(prefix);
+    }
   }
 
 }
