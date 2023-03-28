@@ -44,6 +44,8 @@ public class InputHelper {
     SootClass sootTestClass = Properties.SOOT_TEST_CLASS;
     // Search for constant inputs used in the methods of the soot test class
     for (SootMethod method : sootTestClass.getMethods()) {
+      // We don't want to process init methods
+      if (method.getName().equals("<init>")) continue;
       for (ValueBox valueBox : method.retrieveActiveBody().getUseBoxes()) {
         Value value = valueBox.getValue();
         if (!(value instanceof Constant)) continue;
