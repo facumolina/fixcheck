@@ -17,7 +17,7 @@ import java.io.*;
  */
 public class PrefixRunner {
 
-  public static void runPrefix(Prefix prefix) throws ClassNotFoundException, FileNotFoundException {
+  public static Result runPrefix(Prefix prefix) throws ClassNotFoundException, FileNotFoundException {
     // Load as class
     Class<?> justCreatedClass = BytecodeUtils.loadAsClass(prefix.getMethodClass());
     // Decompile and print
@@ -37,6 +37,7 @@ public class PrefixRunner {
         System.out.println("\t"+failure.toString());
       }
     }
+    return result;
   }
 
 }
