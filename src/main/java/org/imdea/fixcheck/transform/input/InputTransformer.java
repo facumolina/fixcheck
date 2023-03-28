@@ -72,7 +72,7 @@ public class InputTransformer extends PrefixTransformer {
     // Replace old input constructor with new input constructor
     replaceConstructor(body, input, assignStmt, constructorInvoke);
     // Use the new input in the right place
-    TransformationHelper.replace(body, input.getValue(), newInput);
+    TransformationHelper.replaceIgnoring(body, input.getValue(), newInput, constructorInvoke);
   }
 
   private void replaceConstructor(Body body, Input inputToReplace, AssignStmt assignStmt, InvokeStmt constructorInvoke) {
