@@ -178,4 +178,20 @@ public class TransformationHelper {
     }
   }
 
+  /**
+   * Replace all uses of v1 in body with v2 ignoring the given unit
+   * @param body Body to modify
+   * @param v1 Value to replace
+   * @param v2 Value to replace with
+   * @param unit Unit to ignore
+   */
+  public static void replaceIgnoring(Body body, Value v1, Value v2, Unit unit) {
+    for (Unit ut : body.getUnits()) {
+      if (ut.equals(unit)) continue;
+      for (ValueBox vb : ut.getUseBoxes())
+        if( vb.getValue().equals(v1))
+          vb.setValue(v2);
+    }
+  }
+
 }
