@@ -28,6 +28,7 @@ public class Properties {
   public static SootClass SOOT_TEST_CLASS; // Soot class of the test class
   public static String TEST_CLASS_SRC_DIR; // Source file dir for tests
   public static CompilationUnit TEST_CLASS_SRC; // Source file for tests
+  public static int PREFIXES_IN_TEST_CLASS = 0; // Number of prefixes in the test class
 
   // Properties related to the target class
   public static String TARGET_CLASS; // Full name of the target class
@@ -38,6 +39,10 @@ public class Properties {
   // Properties related to inputs
   public static String INPUTS_CLASS; // Full name of the inputs class
   public static SootClass SOOT_INPUTS_CLASS; // Soot class of the inputs class
+
+  // Output files
+  public static String OUTPUT_DIR = "fixcheck-output"; // Output directory
+  public static String OUTPUT_REPORT = "report.csv"; // Output file for stats
 
   /**
    * Setup all Properties.
@@ -78,6 +83,7 @@ public class Properties {
       // Create the prefix
       prefixes.add(new Prefix(method, SOOT_TEST_CLASS));
     }
+    PREFIXES_IN_TEST_CLASS = prefixes.size();
     return prefixes;
   }
 
@@ -91,6 +97,13 @@ public class Properties {
       SourceRoot sourceRoot = new SourceRoot(Paths.get(TEST_CLASS_SRC_DIR));
       TEST_CLASS_SRC = sourceRoot.parse(SOOT_TEST_CLASS.getPackageName(), SOOT_TEST_CLASS.getShortName() + ".java");
     }
+  }
+
+  /**
+   * Get the report file name
+   */
+  public static String getReportFileName() {
+    return OUTPUT_DIR + "/" + OUTPUT_REPORT;
   }
 
 }
