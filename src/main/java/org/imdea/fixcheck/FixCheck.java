@@ -2,7 +2,6 @@ package org.imdea.fixcheck;
 
 import org.imdea.fixcheck.assertion.AssertTrueGenerator;
 import org.imdea.fixcheck.assertion.AssertionGenerator;
-import org.imdea.fixcheck.assertion.TextDavinci003;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.runner.PrefixRunner;
 import org.imdea.fixcheck.transform.PrefixTransformer;
@@ -86,22 +85,32 @@ public class FixCheck {
     for (Prefix prefix : prefixes) {
       // Generate n similar prefixes
       for (int i=1; i <= n; i++) {
+
         // Generate the prefix
         System.out.println("PREFIX " + i + " of " + n);
+        long start = System.currentTimeMillis();
         System.out.println("---> transformer: " + prefixTransformer.getClass().getSimpleName());
         Prefix newPrefix = prefixTransformer.transform(prefix);
         System.out.println("---> generated prefix: " + newPrefix.getMethodClass().getName() + "." + newPrefix.getMethod().getName());
         System.out.println("---> transformation: " + prefixTransformer.getLastTransformation());
-
-        //System.out.println(newPrefix.getMethod().getActiveBody());
+        long elapsedTime = System.currentTimeMillis() - start;
+        System.out.println("---> time: " + elapsedTime + "ms");
+        Stats.MS_PREFIXES_GENERATION += elapsedTime;
 
         // Generate the assertions for the prefix
         System.out.println();
+        start = System.currentTimeMillis();
         System.out.println("---> assertion generator: " + assertionGenerator.getClass().getSimpleName());
         assertionGenerator.generateAssertions(newPrefix);
+        elapsedTime = System.currentTimeMillis() - start;
+        System.out.println("---> time: " + elapsedTime + "ms");
+        Stats.MS_ASSERTIONS_GENERATION += elapsedTime;
 
         // Run the transformed prefix
+        start = System.currentTimeMillis();
         Result result = PrefixRunner.runPrefix(newPrefix);
+        elapsedTime = System.currentTimeMillis() - start;
+        Stats.MS_RUNNING_PREFIXES += elapsedTime;
         savePrefix(newPrefix, result);
         generatedPrefixes.add(newPrefix);
         System.out.println();
