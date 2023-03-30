@@ -1,7 +1,6 @@
 package org.imdea.fixcheck.writer;
 
 import com.opencsv.CSVWriter;
-import org.imdea.fixcheck.FixCheck;
 import org.imdea.fixcheck.Properties;
 import org.imdea.fixcheck.utils.Stats;
 
@@ -16,7 +15,7 @@ import java.nio.file.Paths;
  */
 public class ReportWriter {
 
-  private static final String[] reportHeader = {"test_class", "input_prefixes", "inputs_class", "target_class", "prefixes_gen_time", "assertions_gen_time", "output_prefixes", "passing_prefixes", "crashing_prefixes", "assertion_failing_prefixes"};
+  private static final String[] reportHeader = {"test_class", "input_prefixes", "inputs_class", "target_class", "prefixes_gen_time", "assertions_gen_time", "prefixes_running_time","output_prefixes", "passing_prefixes", "crashing_prefixes", "assertion_failing_prefixes"};
 
   public static void writeReport(String reportFileName) {
     try {
@@ -42,12 +41,13 @@ public class ReportWriter {
     data[1] = String.valueOf(Properties.PREFIXES_IN_TEST_CLASS);
     data[2] = Properties.INPUTS_CLASS;
     data[3] = Properties.TARGET_CLASS;
-    data[4] = "tbd";
-    data[5] = "tbd";
-    data[6] = "tbd";
-    data[7] = String.valueOf(Stats.TOTAL_PASSING_PREFIXES);
-    data[8] = String.valueOf(Stats.TOTAL_CRASHING_PREFIXES);
-    data[9] = String.valueOf(Stats.TOTAL_ASSERTION_FAILING_PREFIXES);
+    data[4] = String.valueOf(Stats.MS_PREFIXES_GENERATION / 1000F);
+    data[5] = String.valueOf(Stats.MS_ASSERTIONS_GENERATION / 1000F);
+    data[6] = String.valueOf(Stats.MS_RUNNING_PREFIXES / 1000F);
+    data[7] = String.valueOf(Stats.TOTAL_PREFIXES);
+    data[8] = String.valueOf(Stats.TOTAL_PASSING_PREFIXES);
+    data[9] = String.valueOf(Stats.TOTAL_CRASHING_PREFIXES);
+    data[10] = String.valueOf(Stats.TOTAL_ASSERTION_FAILING_PREFIXES);
     writer.writeNext(data);
   }
 
