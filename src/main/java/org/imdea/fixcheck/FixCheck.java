@@ -8,6 +8,8 @@ import org.imdea.fixcheck.runner.PrefixRunner;
 import org.imdea.fixcheck.transform.PrefixTransformer;
 import org.imdea.fixcheck.transform.input.InputHelper;
 import org.imdea.fixcheck.transform.input.InputTransformer;
+import org.imdea.fixcheck.utils.Stats;
+import org.imdea.fixcheck.writer.ReportWriter;
 import org.junit.runner.Result;
 
 import java.io.*;
@@ -65,11 +67,13 @@ public class FixCheck {
     }
 
     System.out.println("====== OUTPUT ======");
-    System.out.println("total prefixes: " + (crashingPrefixes.size() + assertionFailingPrefixes.size() + passingPrefixes.size()));
-    System.out.println("crashing prefixes: " + crashingPrefixes.size());
-    System.out.println("assertion failing prefixes: " + assertionFailingPrefixes.size());
-    System.out.println("passing prefixes: " + passingPrefixes.size());
+    System.out.println("total prefixes: " + Stats.TOTAL_PREFIXES);
+    System.out.println("passing: " + Stats.TOTAL_PASSING_PREFIXES);
+    System.out.println("crashing: " + Stats.TOTAL_CRASHING_PREFIXES);
+    System.out.println("assertion failing: " + Stats.TOTAL_ASSERTION_FAILING_PREFIXES);
     System.out.println();
+
+    generateOutputFiles();
 
     System.out.println("Done!");
   }
@@ -103,6 +107,13 @@ public class FixCheck {
         System.out.println();
       }
     }
+
+    // Save stats
+    Stats.TOTAL_PREFIXES = generatedPrefixes.size();
+    Stats.TOTAL_CRASHING_PREFIXES = crashingPrefixes.size();
+    Stats.TOTAL_ASSERTION_FAILING_PREFIXES = assertionFailingPrefixes.size();
+    Stats.TOTAL_PASSING_PREFIXES = passingPrefixes.size();
+
     return generatedPrefixes;
   }
 
@@ -125,6 +136,15 @@ public class FixCheck {
       System.out.println("---> prefix passed");
       passingPrefixes.add(prefix);
     }
+  }
+
+  /**
+   * Generate the output files
+   */
+  private static void generateOutputFiles() {
+    String reportFile = Properties.getReportFileName();
+    System.out.println("report file: " + reportFile);
+    ReportWriter.writeReport(reportFile);
   }
 
 }
