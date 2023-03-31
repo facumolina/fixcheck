@@ -4,10 +4,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.utils.SourceRoot;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.input.InputHelper;
-import soot.G;
-import soot.Scene;
-import soot.SootClass;
-import soot.SootMethod;
+import soot.*;
 import soot.options.Options;
 
 import java.nio.file.Paths;
@@ -26,6 +23,8 @@ public class Properties {
   public static String TEST_CLASSES_PATH; // Path to where the test classes are located
   public static String TEST_CLASS; // Full name of the test class
   public static SootClass SOOT_TEST_CLASS; // Soot class of the test class
+  public static String[] TEST_CLASS_METHODS; // Methods in the test class to analyze
+
   public static String TEST_CLASS_SRC_DIR; // Source file dir for tests
   public static CompilationUnit TEST_CLASS_SRC; // Source file for tests
   public static int PREFIXES_IN_TEST_CLASS = 0; // Number of prefixes in the test class
@@ -54,6 +53,7 @@ public class Properties {
     Options.v().set_allow_phantom_refs(true);
     //Options.v().setPhaseOption("jb", "use-original-names:true");
     Options.v().set_soot_classpath(FULL_CLASSPATH);
+    // Load the test class
     SootClass sc = Scene.v().loadClassAndSupport(TEST_CLASS);
     sc.setApplicationClass();
     Scene.v().loadNecessaryClasses();
@@ -78,13 +78,36 @@ public class Properties {
     for (SootMethod method : SOOT_TEST_CLASS.getMethods()) {
       // We don't want to process init methods
       if (method.getName().equals("<init>")) continue;
-      // Remove assert statements from the method
-      method.retrieveActiveBody().getUnits().removeIf(unit -> unit.toString().startsWith("assert") || unit.toString().contains("org.junit.Assert"));
+      // We don't want to process methods that are not test methods
+      if (!isTestMethod(method.getName())) continue;
+      // Remove assert statements from the method containing org.junit.Assert or org.junit.TestCase*assert
+      removeAssertionsFromMethod(method);
       // Create the prefix
       prefixes.add(new Prefix(method, SOOT_TEST_CLASS));
     }
+    if (prefixes.size() == 0) {
+      System.out.println("!!! No prefixes found in test class matching the test methods: "+ Arrays.toString(TEST_CLASS_METHODS));
+    }
     PREFIXES_IN_TEST_CLASS = prefixes.size();
     return prefixes;
+  }
+
+  /**
+   * Remove assert statements from the method containing org.junit.Assert
+   */
+  private static void removeAssertionsFromMethod(SootMethod method) {
+    // This is enough to remove the assertions on JUnit 4
+    method.retrieveActiveBody().getUnits().removeIf(unit -> unit.toString().contains("org.junit.Assert"));
+  }
+
+  /**
+   * Returns true if the given method is an input to analyze.
+   */
+  private static boolean isTestMethod(String methodName) {
+    for (String testMethod : TEST_CLASS_METHODS) {
+      if (methodName.equals(testMethod)) return true;
+    }
+    return false;
   }
 
   /**
