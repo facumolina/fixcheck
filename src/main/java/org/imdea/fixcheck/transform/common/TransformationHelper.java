@@ -25,6 +25,10 @@ public class TransformationHelper {
   public static SootClass initializeTransformedClass(String newClassName, SootClass sootClass) {
     SootClass transformedClass = new SootClass(newClassName, sootClass.getModifiers(), sootClass.moduleName);
     transformedClass.setSuperclass(sootClass.getSuperclass());
+    // TODO: We should be copying the fields here!, but the problem is that
+    // we would need to create the corresponding locals in the body of the
+    // init method and others. For now, we just copy the init method.
+    
     // Replicate the init method
     SootMethod initMethod = sootClass.getMethodByName("<init>");
     Body initMethodBody = initMethod.retrieveActiveBody();
