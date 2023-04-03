@@ -104,6 +104,14 @@ public class TransformationHelper {
   }
 
   /**
+   * Returns true if the local is used within the body
+   */
+  public static boolean isLocalUsed(Local local, Body body) {
+    List<Unit> units = getUnitsUsingLocal(local, body);
+    return !units.isEmpty();
+  }
+
+  /**
    * Return the list of units that use a given local, without including the definition of the local
    * @param local Local to search
    * @param body Body to search
@@ -149,7 +157,8 @@ public class TransformationHelper {
     // First, search for locals
     for (Local local : body.getLocals()) {
       if (local.getType().toString().equals(typeName)) {
-        inputs.add(new LocalInput(typeName, local));
+        if (isLocalUsed(local, body))
+          inputs.add(new LocalInput(typeName, local));
       }
     }
     // Second, search for constants if applicable
