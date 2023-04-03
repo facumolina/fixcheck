@@ -36,3 +36,7 @@ input_class = subject_data['input_class'].values[0]
 # Run FixCheck
 subprocess.run(f'./fixcheck.sh {subject_cp} {test_classes_path} {target_test} {target_test_methods} {target_test_dir} {target_class} {input_class}', shell=True)
 
+# Rename output file for this subject
+output_file = os.path.join(outputs_dir, subject_id+'-report.csv')
+print(f'Renaming output file to: {output_file}')
+subprocess.run(f'mv {outputs_dir}/report.csv {output_file}', shell=True)
