@@ -36,7 +36,6 @@ public class InputTransformer extends PrefixTransformer {
     SootClass prefixClass = prefix.getMethodClass();
     SootMethod prefixMethod = prefix.getMethod();
     Body oldBody = prefixMethod.retrieveActiveBody();
-
     String className = baseClassName + transformationsApplied;
     SootClass newClass = TransformationHelper.initializeTransformedClass(prefixClass.getPackageName() + "." + className, prefixClass);
     SootMethod newMethod = new SootMethod(basePrefixName, prefixMethod.getParameterTypes(), prefixMethod.getReturnType(), prefixMethod.getModifiers());
