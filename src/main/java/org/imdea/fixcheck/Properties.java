@@ -55,6 +55,7 @@ public class Properties {
     Options.v().set_soot_classpath(FULL_CLASSPATH);
     // Load the test class
     SootClass sc = Scene.v().loadClassAndSupport(TEST_CLASS);
+    Scene.v().loadClassAndSupport("org.junit.Assert");
     sc.setApplicationClass();
     Scene.v().loadNecessaryClasses();
     // Set the test class
