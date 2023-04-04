@@ -4,6 +4,7 @@ import org.imdea.fixcheck.prefix.ConstantInput;
 import org.imdea.fixcheck.prefix.Input;
 import org.imdea.fixcheck.prefix.LocalInput;
 import soot.*;
+import soot.jimple.InvokeExpr;
 import soot.jimple.SpecialInvokeExpr;
 import soot.jimple.internal.JAssignStmt;
 import soot.jimple.internal.JInvokeStmt;
@@ -15,6 +16,18 @@ import java.util.List;
  * TransformationHelper class: helper class for applying transformations.
  */
 public class TransformationHelper {
+
+  // Classes to be ignored when applying transformations
+  // They are ignored because changing their inputs may cause the program to crash
+  private static final String[] ignoreClasses = {
+      "java.io.File",
+      "java.io.FileInputStream",
+      "java.io.FileOutputStream",
+      "java.io.FileReader",
+      "java.io.FileWriter",
+      "java.nio.file.Files",
+      "java.nio.file.Path",
+  };
 
   /**
    * Initialize a transformed class from a soot class.
@@ -122,14 +135,53 @@ public class TransformationHelper {
     for (Unit ut : body.getUnits()) {
       for (ValueBox vb : ut.getUseBoxes()) {
         if (vb.getValue().equals(local)) {
-          if (ut instanceof JInvokeStmt && isConstructorCall((JInvokeStmt)ut,local))
-            continue;
+          if (ut instanceof JInvokeStmt) {
+            JInvokeStmt stmt = ((JInvokeStmt) ut);
+            if (isConstructorCall(stmt, local)) continue;
+            if (isIgnoredClass(stmt.getInvokeExpr())) {
+              System.out.println("Ignoring class: "+stmt.getInvokeExpr().getMethod().getDeclaringClass().getName());
+              continue;
+            }
+          }
           units.add(ut);
         }
       }
     }
     return units;
   }
+
+  /**
+   * Returns the list of units that use a given constant
+   * @param value Constant to search
+   * @param body Body to search
+   * @return List of Units that use the given constant, empty if not found
+   */
+  public static List<Unit> getUnitsUsingConstant(Value value, Body body) {
+    List<Unit> units = new ArrayList<>();
+    for (Unit ut : body.getUnits()) {
+      for (ValueBox vb : ut.getUseBoxes()) {
+        if (vb.getValue().equals(value)) {
+          if (ut instanceof JInvokeStmt) {
+            JInvokeStmt stmt = ((JInvokeStmt) ut);
+            if (isIgnoredClass(stmt.getInvokeExpr())) {
+              System.out.println("Ignoring class: "+stmt.getInvokeExpr().getMethod().getDeclaringClass().getName());
+              continue;
+            }
+          }
+          if (ut instanceof JAssignStmt) {
+            JAssignStmt stmt = ((JAssignStmt) ut);
+            if (isIgnoredClass(stmt.getInvokeExpr())) {
+              System.out.println("Ignoring class: "+stmt.getInvokeExpr().getMethod().getDeclaringClass().getName());
+              continue;
+            }
+          }
+          units.add(ut);
+        }
+      }
+    }
+    return units;
+  }
+
 
   /**
    * Returns true if the invoke statement is a constructor call of the given local
@@ -141,6 +193,19 @@ public class TransformationHelper {
     if (invokeStmt.getInvokeExpr() instanceof SpecialInvokeExpr) {
       SpecialInvokeExpr specialInvokeExpr = (SpecialInvokeExpr) invokeStmt.getInvokeExpr();
       if (specialInvokeExpr.getBase().equals(value) && specialInvokeExpr.getMethod().getName().equals("<init>"))
+        return true;
+    }
+    return false;
+  }
+
+  /**
+   * Returns true if the invoke statement is a method of a class that must be ignored
+   * @param invokeExpr Invoke expression to check
+   * @return True if the invoke statement is a method of a class that must be ignored
+   */
+  public static boolean isIgnoredClass(InvokeExpr invokeExpr) {
+    for (String ignoredClass : ignoreClasses) {
+      if (invokeExpr.getMethod().getDeclaringClass().getName().equals(ignoredClass))
         return true;
     }
     return false;
@@ -166,6 +231,8 @@ public class TransformationHelper {
       List<ValueBox> useBoxes = body.getUseBoxes();
       for (ValueBox vb : useBoxes) {
         if (vb.getValue().getType().toString().equals(typeName)) {
+          List<Unit> usingConstant = getUnitsUsingConstant(vb.getValue(), body);
+          if (usingConstant.isEmpty()) continue;
           inputs.add(new ConstantInput(typeName, vb.getValue()));
         }
       }
