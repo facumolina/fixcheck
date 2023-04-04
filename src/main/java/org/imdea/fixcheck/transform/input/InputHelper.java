@@ -49,13 +49,14 @@ public class InputHelper {
       for (ValueBox valueBox : method.retrieveActiveBody().getUseBoxes()) {
         Value value = valueBox.getValue();
         if (!(value instanceof Constant)) continue;
-        if (value.getType().toString().equals("java.lang.Integer")) {
+        // Print value and type
+        if (value.getType().toString().equals("java.lang.Integer") || value.getType().toString().equals("int")) {
           PROVIDERS.get(Integer.class).addInput(value);
-        } else if (value.getType().toString().equals("java.lang.Long")) {
+        } else if (value.getType().toString().equals("java.lang.Long") || value.getType().toString().equals("long")) {
           PROVIDERS.get(Long.class).addInput(value);
         } else if (value.getType().toString().equals("java.lang.String")) {
           PROVIDERS.get(String.class).addInput(value);
-        } else if (value.getType().toString().equals("java.lang.Boolean")) {
+        } else if (value.getType().toString().equals("java.lang.Boolean") || value.getType().toString().equals("boolean")) {
           PROVIDERS.get(Boolean.class).addInput(value);
         }
       }
