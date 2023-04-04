@@ -65,8 +65,13 @@ public class TransformationHelper {
   public static Type getTypeOfFirstUsage(Input input, Body body) {
     if (input instanceof LocalInput) {
       Unit unit = getFirstUnitUsingInput(input, body);
-      JInvokeStmt stmt = ((JInvokeStmt) unit);
-      return stmt.getInvokeExpr().getMethod().getParameterType(getIndexForValue(stmt, input.getValue()));
+      if (unit instanceof JInvokeStmt) {
+        JInvokeStmt stmt = ((JInvokeStmt) unit);
+        int index = getIndexForValue(stmt, input.getValue());
+        return stmt.getInvokeExpr().getMethod().getParameterType(index);
+      } else {
+        return input.getValue().getType();
+      }
     } else if (input instanceof ConstantInput) {
       return input.getValue().getType();
     }
