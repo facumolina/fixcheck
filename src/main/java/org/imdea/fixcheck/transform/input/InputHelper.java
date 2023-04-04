@@ -17,6 +17,7 @@ public class InputHelper {
   public static Map<Class<?>, InputProvider> PROVIDERS;
   static {
     PROVIDERS = new HashMap<>();
+    PROVIDERS.put(int.class, new IntegerProvider());
     PROVIDERS.put(java.lang.Integer.class, new IntegerProvider());
     PROVIDERS.put(java.lang.Boolean.class, new BooleanProvider());
     PROVIDERS.put(java.lang.Long.class, new LongProvider());
@@ -27,6 +28,7 @@ public class InputHelper {
     // Initialize the map of inputs by type
     INPUTS_BY_TYPE = new HashMap<>();
     INPUTS_BY_TYPE.put("java.util.Boolean", Collections.singletonList(Boolean.class));
+    INPUTS_BY_TYPE.put("int", Collections.singletonList(int.class));
     INPUTS_BY_TYPE.put("java.lang.Integer", Collections.singletonList(Integer.class));
     INPUTS_BY_TYPE.put("java.lang.Long", Collections.singletonList(Long.class));
     INPUTS_BY_TYPE.put("java.lang.Float", Collections.singletonList(Float.class));
