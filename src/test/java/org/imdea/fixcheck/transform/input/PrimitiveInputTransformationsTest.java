@@ -7,10 +7,10 @@ import org.junit.Test;
 import soot.G;
 import soot.Scene;
 import soot.SootClass;
-import soot.Value;
 import soot.jimple.IntConstant;
 import soot.options.Options;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -42,8 +42,13 @@ public class PrimitiveInputTransformationsTest {
     return new Prefix(Properties.SOOT_TEST_CLASS.getMethodByName(prefixMethodName), Properties.SOOT_TEST_CLASS);
   }
 
+  // Basic methods to be used in the tests in Target class
   private boolean basicIntMethodIsEven(int i) {
     return i % 2 == 0;
+  }
+
+  private String basicBooleanMethodToString(boolean b) {
+    return b ? "true" : "false";
   }
 
   private class TargetClass {
@@ -52,6 +57,12 @@ public class PrimitiveInputTransformationsTest {
       int n = 0;
       boolean result = basicIntMethodIsEven(n);
       assertTrue(result);
+    }
+    @Test
+    public void testBooleanMethod() {
+      boolean b = true;
+      String result = basicBooleanMethodToString(b);
+      assertEquals("true", result);
     }
   }
 
@@ -67,6 +78,16 @@ public class PrimitiveInputTransformationsTest {
     IntConstant oldValue = (IntConstant) targetPrefix.getMethod().getActiveBody().getUseBoxes().get(3).getValue().getUseBoxes().get(1).getValue();
     IntConstant newValue = (IntConstant) transformedPrefix.getMethod().getActiveBody().getUseBoxes().get(3).getValue().getUseBoxes().get(1).getValue();
     assertTrue(oldValue.value != newValue.value);
+  }
+
+  @Test
+  public void testBooleanTransformation() {
+    Properties.INPUTS_CLASS = "boolean";
+    Prefix targetPrefix = getTargetPrefix("testBooleanMethod");
+    Prefix transformedPrefix = INPUT_TRANSFORMER.transform(targetPrefix);
+    String lastTransformation = INPUT_TRANSFORMER.getLastTransformation();
+    // The last transformation should match: [word:int] replaced by [0:boolean]
+    assertTrue(lastTransformation.matches("\\[\\w+:int\\] replaced by \\[\\d+:boolean\\]"));
   }
 
 }
