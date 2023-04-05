@@ -137,7 +137,8 @@ public class InputTransformer extends PrefixTransformer {
    * @return Random Local for the input class
    */
   private Input getRandomInput(Body body) {
-    List<Input> locals = TransformationHelper.getInputsWithType(body, Properties.INPUTS_CLASS);
+    String inputClassName = Properties.INPUTS_CLASS.equals("boolean")?"int":Properties.INPUTS_CLASS;
+    List<Input> locals = TransformationHelper.getInputsWithType(body, inputClassName);
     if (locals.isEmpty()) throw new IllegalArgumentException("No locals of type " + Properties.INPUTS_CLASS);
     Random random = new Random();
     int index = random.nextInt(locals.size());
@@ -162,6 +163,7 @@ public class InputTransformer extends PrefixTransformer {
    * @return Class for the given type
    */
   private Class<?> getClassForNewInput(Type type) {
+    if (Properties.INPUTS_CLASS.equals("boolean")) return boolean.class; // Booleans are handled differently
     if (InputHelper.INPUTS_BY_TYPE.containsKey(type.toString())) {
       List<Class<?>> possibleInputs = InputHelper.INPUTS_BY_TYPE.get(type.toString());
       Random random = new Random();
