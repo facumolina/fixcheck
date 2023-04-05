@@ -246,7 +246,12 @@ public class TransformationHelper {
   }
 
   public static boolean canBeConstant(String typeName) {
-    return typeName.equals("java.lang.String");
+    return typeName.equals("java.lang.String")
+        || typeName.equals("int")
+        || typeName.equals("long")
+        || typeName.equals("float")
+        || typeName.equals("double")
+        || typeName.equals("boolean");
   }
 
   /**
