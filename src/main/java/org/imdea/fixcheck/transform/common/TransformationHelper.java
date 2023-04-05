@@ -175,7 +175,7 @@ public class TransformationHelper {
           }
           if (ut instanceof JAssignStmt) {
             JAssignStmt stmt = ((JAssignStmt) ut);
-            if (isIgnoredClass(stmt.getInvokeExpr())) {
+            if (stmt.containsInvokeExpr() && isIgnoredClass(stmt.getInvokeExpr())) {
               System.out.println("Ignoring class: "+stmt.getInvokeExpr().getMethod().getDeclaringClass().getName());
               continue;
             }
