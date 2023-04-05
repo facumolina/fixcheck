@@ -64,16 +64,23 @@ public class InputTransformer extends PrefixTransformer {
     Type usageType = TransformationHelper.getTypeOfFirstUsage(input, body);
     // Determine the type of the new local based on the usage
     Class<?> type = getClassForNewInput(usageType);
-    Local newInput = defineLocalForType(type, body);
     Value value = InputHelper.getValueForType(type);
     lastTransformation = "[" + input.getValue() + ":" + input.getType() + "] replaced by [" + value + ":" + type.getName()+"]";
     // Generate call for input constructor
-    AssignStmt assignStmt = Jimple.v().newAssignStmt(newInput, Jimple.v().newNewExpr(RefType.v(type.getName())));
-    InvokeStmt constructorInvoke = addConstructorCall(newInput, type, value);
-    // Replace old input constructor with new input constructor
-    replaceConstructor(body, input, assignStmt, constructorInvoke);
-    // Use the new input in the right place
-    TransformationHelper.replaceIgnoring(body, input.getValue(), newInput, constructorInvoke);
+    if (type.isPrimitive()) {
+      // For primitives, just replace the old input with the new input
+      TransformationHelper.replace(body, input.getValue(), value);
+    } else {
+      // For non-primitives, create a new local, call the constructor and then replace the old input with the new local
+      Local newInput = defineLocalForType(type, body);
+      AssignStmt assignStmt = Jimple.v().newAssignStmt(newInput, Jimple.v().newNewExpr(RefType.v(type.getName())));
+      InvokeStmt constructorInvoke = addConstructorCall(newInput, type, value);
+      // Replace old input constructor with new input constructor
+      replaceConstructor(body, input, assignStmt, constructorInvoke);
+      // Use the new input in the right place
+      TransformationHelper.replaceIgnoring(body, input.getValue(), newInput, constructorInvoke);
+    }
+
   }
 
   private void replaceConstructor(Body body, Input inputToReplace, AssignStmt assignStmt, InvokeStmt constructorInvoke) {
