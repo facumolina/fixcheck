@@ -19,6 +19,7 @@ public class InputHelper {
     PROVIDERS = new HashMap<>();
     PROVIDERS.put(int.class, new IntegerProvider());
     PROVIDERS.put(java.lang.Integer.class, new IntegerProvider());
+    PROVIDERS.put(boolean.class, new BooleanProvider());
     PROVIDERS.put(java.lang.Boolean.class, new BooleanProvider());
     PROVIDERS.put(java.lang.Long.class, new LongProvider());
     PROVIDERS.put(java.lang.String.class, new StringProvider());
