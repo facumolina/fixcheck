@@ -130,7 +130,7 @@ public class InputTransformer extends PrefixTransformer {
       }
     }
   }
-  
+
   /**
    * Get a random Local for the input class
    * @param body Body to search
