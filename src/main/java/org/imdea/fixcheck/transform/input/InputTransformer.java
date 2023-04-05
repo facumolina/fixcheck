@@ -19,12 +19,12 @@ import java.util.Random;
  */
 public class InputTransformer extends PrefixTransformer {
 
-  private static final String baseClassName = "SimilarPrefixInputTransformer";
-  private static final String basePrefixName = "similarPrefix";
+  private static final String baseClassName = "SimilarPrefixInputTransformer"; // Base name for the new prefix class
+  private static final String basePrefixName = "similarPrefix"; // Base name for the new prefix method
 
-  private int transformationsApplied;
+  private int transformationsApplied; // Number of transformations applied
 
-  private String lastTransformation;
+  private String lastTransformation; // Last transformation applied
 
   public InputTransformer() {
     transformationsApplied = 0;
@@ -57,6 +57,10 @@ public class InputTransformer extends PrefixTransformer {
     return lastTransformation;
   }
 
+  /**
+   * Replace a randomly selected input within the body.
+   * @param body Body to transform
+   */
   private void replaceInput(Body body) {
     // Get a random local
     Input input = getRandomInput(body);
@@ -80,9 +84,15 @@ public class InputTransformer extends PrefixTransformer {
       // Use the new input in the right place
       TransformationHelper.replaceIgnoring(body, input.getValue(), newInput, constructorInvoke);
     }
-
   }
 
+  /**
+   * Replace the constructor of the given input with the new statements for assigning the new input and calling the constructor.
+   * @param body Body to transform
+   * @param inputToReplace Input to replace
+   * @param assignStmt Statement for assigning the new input
+   * @param constructorInvoke Statement for calling the constructor of the new input
+   */
   private void replaceConstructor(Body body, Input inputToReplace, AssignStmt assignStmt, InvokeStmt constructorInvoke) {
     if (inputToReplace instanceof LocalInput) {
       replaceConstructorLocal(body, inputToReplace, assignStmt, constructorInvoke);
@@ -120,6 +130,7 @@ public class InputTransformer extends PrefixTransformer {
       }
     }
   }
+  
   /**
    * Get a random Local for the input class
    * @param body Body to search
