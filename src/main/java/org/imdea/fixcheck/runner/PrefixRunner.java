@@ -75,19 +75,4 @@ public class PrefixRunner {
     return null;
   }
 
-  private static File savePrefixToFile(Prefix prefix) {
-    /*try {
-      String prefixCode = prefix.getClassSourceCode();
-      String prefixFileName = fileLocationForPrefix(prefix);
-      File sourceFile = new File(prefixFileName);
-      Files.write(sourceFile.toPath(), prefixCode.getBytes(StandardCharsets.UTF_8));
-      return sourceFile;
-    } catch (IOException e) {
-      System.out.println("Error saving prefix to file!!");
-      e.printStackTrace();
-      throw new IllegalStateException("Unable to save prefix to file: " + e.getMessage());
-    }*/
-    return null;
-  }
-
 }
