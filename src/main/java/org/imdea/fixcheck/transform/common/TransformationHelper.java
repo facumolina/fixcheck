@@ -50,9 +50,11 @@ public class TransformationHelper {
    * Get the method declaration of a method in a class.
    */
   public static MethodDeclaration getMethodDeclFromCompilationUnit(CompilationUnit compilationUnit, String methodName) {
-    return compilationUnit.findFirst(MethodDeclaration.class) // Find the first method declaration
-        .filter(method -> method.getNameAsString().equals(methodName)) // Filter by name
-        .get();
+    // Find the method declaration which name is methodName
+    return compilationUnit.findAll(MethodDeclaration.class).stream()
+        .filter(methodDeclaration -> methodDeclaration.getNameAsString().equals(methodName))
+        .findFirst()
+        .orElseThrow(() -> new RuntimeException("Method " + methodName + " not found in class " + compilationUnit.getPrimaryTypeName().get()));
   }
 
   /**
