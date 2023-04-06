@@ -19,7 +19,7 @@ public class PrefixRunner {
 
   public static Result runPrefix(Prefix prefix) throws ClassNotFoundException, FileNotFoundException {
     // Load as class
-    Class<?> justCreatedClass = BytecodeUtils.loadAsClass(prefix.getMethodClass());
+    /*Class<?> justCreatedClass = BytecodeUtils.loadAsClass(prefix.getMethodClass());
     // Decompile and print
     PlainTextOutput plainTextOutput = new PlainTextOutput();
     Decompiler.decompile(justCreatedClass.getName(), plainTextOutput, DecompilerSettings.javaDefaults());
@@ -37,7 +37,8 @@ public class PrefixRunner {
         System.out.println("\t"+failure.toString());
       }
     }
-    return result;
+    return result;*/
+    return null;
   }
 
 }

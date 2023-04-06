@@ -56,7 +56,7 @@ public class TextDavinci003 extends AssertionGenerator {
   @Override
   public void generateAssertions(Prefix prefix) {
     // Prepare the prompt
-    System.out.println("---> prefix: " + prefix.getMethodClass().getName());
+    //System.out.println("---> prefix: " + prefix.getMethodClass().getName());
     String prompt = generatePrompt(prefix);
     System.out.println("prompt:");
     System.out.println(prompt);

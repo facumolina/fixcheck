@@ -1,5 +1,7 @@
 package org.imdea.fixcheck.transform.input;
 
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
 import org.imdea.fixcheck.Properties;
 import org.imdea.fixcheck.prefix.ConstantInput;
 import org.imdea.fixcheck.prefix.Input;
@@ -33,21 +35,15 @@ public class InputTransformer extends PrefixTransformer {
 
   @Override
   public Prefix transform(Prefix prefix) {
-    SootClass prefixClass = prefix.getMethodClass();
-    SootMethod prefixMethod = prefix.getMethod();
-    Body oldBody = prefixMethod.retrieveActiveBody();
+    ClassOrInterfaceDeclaration prefixClass = prefix.getMethodClass();
+    MethodDeclaration prefixMethod = prefix.getMethod();
     // Prepare the new class
     String className = baseClassName + transformationsApplied;
-    SootClass newClass = TransformationHelper.initializeTransformedClass(prefixClass.getPackageName() + "." + className, prefixClass);
-    // Prepare the new method
-    SootMethod newMethod = new SootMethod(basePrefixName, prefixMethod.getParameterTypes(), prefixMethod.getReturnType(), prefixMethod.getModifiers());
-    newMethod.addAllTagsOf(prefixMethod);
-    newMethod.setExceptions(prefixMethod.getExceptions());
-    // Prepare the new body
-    Body newBody = (Body)oldBody.clone();
-    replaceInput(newBody);
-    newMethod.setActiveBody(newBody);
-    newClass.addMethod(newMethod);
+    ClassOrInterfaceDeclaration newClass = TransformationHelper.initializeTransformedClass(className, prefixClass);
+    // Prepare the new method body
+    MethodDeclaration newMethod = TransformationHelper.getMethodDeclFromClass(newClass, prefixMethod.getNameAsString());
+    // Replace the input
+    replaceInput(newMethod);
     transformationsApplied++;
     return new Prefix(newMethod, newClass, prefix);
   }
@@ -58,12 +54,15 @@ public class InputTransformer extends PrefixTransformer {
   }
 
   /**
-   * Replace a randomly selected input within the body.
-   * @param body Body to transform
+   * Replace a randomly selected input within the method.
+   * @param methodDecl is the method declaration to be transformed.
    */
-  private void replaceInput(Body body) {
+  private void replaceInput(MethodDeclaration methodDecl) {
+    // Get
     // Get a random local
-    Input input = getRandomInput(body);
+    //Input input = getRandomInput(methodDecl);
+
+    /*Input input = getRandomInput(body);
     // Find the type where the input is used
     Type usageType = TransformationHelper.getTypeOfFirstUsage(input, body);
     // Determine the type of the new local based on the usage
@@ -83,7 +82,7 @@ public class InputTransformer extends PrefixTransformer {
       replaceConstructor(body, input, assignStmt, constructorInvoke);
       // Use the new input in the right place
       TransformationHelper.replaceIgnoring(body, input.getValue(), newInput, constructorInvoke);
-    }
+    }*/
   }
 
   /**
@@ -133,12 +132,12 @@ public class InputTransformer extends PrefixTransformer {
 
   /**
    * Get a random Local for the input class
-   * @param body Body to search
-   * @return Random Local for the input class
+   * @param methodDecl method to search
+   * @return Random Input for the input class
    */
-  private Input getRandomInput(Body body) {
+  private Input getRandomInput(MethodDeclaration methodDecl) {
     String inputClassName = Properties.INPUTS_CLASS.equals("boolean")?"int":Properties.INPUTS_CLASS;
-    List<Input> locals = TransformationHelper.getInputsWithType(body, inputClassName);
+    List<Input> locals = TransformationHelper.getInputsWithType(methodDecl, inputClassName);
     if (locals.isEmpty()) throw new IllegalArgumentException("No locals of type " + Properties.INPUTS_CLASS);
     Random random = new Random();
     int index = random.nextInt(locals.size());

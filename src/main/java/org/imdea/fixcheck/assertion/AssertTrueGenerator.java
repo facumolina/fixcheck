@@ -15,7 +15,7 @@ public class AssertTrueGenerator extends AssertionGenerator {
     @Override
     public void generateAssertions(Prefix prefix) {
       // Take the method and units
-      SootMethod method = prefix.getMethod();
+      /*SootMethod method = prefix.getMethod();
       Body body = method.retrieveActiveBody();
       UnitPatchingChain units = body.getUnits();
       // Define local for org.junit.Assert
@@ -26,7 +26,8 @@ public class AssertTrueGenerator extends AssertionGenerator {
       Unit unit = Jimple.v().newInvokeStmt(Jimple.v().newStaticInvokeExpr(assertMethod.makeRef(), IntConstant.v(1)));
       units.removeLast(); // Remove the return statement
       units.addLast(unit);
-      units.addLast(Jimple.v().newReturnVoidStmt());
+      units.addLast(Jimple.v().newReturnVoidStmt());*/
+      System.out.println("FIX ME: AssertTrueGenerator.generateAssertions");
     }
 
 }

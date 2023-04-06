@@ -14,7 +14,7 @@ public abstract class Input {
 
   /**
    * Constructor
-   * @param type Type of the input
+   * @param typeName Type of the input
    */
   public Input(String typeName) {
     this.typeName = Objects.requireNonNull(typeName, "typeName cannot be null");

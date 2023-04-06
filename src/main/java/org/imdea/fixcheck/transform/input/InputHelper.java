@@ -44,7 +44,7 @@ public class InputHelper {
    * Search for inputs in the test suite under analysis.
    */
   private static void searchForInputs() {
-    SootClass sootTestClass = Properties.SOOT_TEST_CLASS;
+    /*SootClass sootTestClass = Properties.SOOT_TEST_CLASS;
     // Search for constant inputs used in the methods of the soot test class
     for (SootMethod method : sootTestClass.getMethods()) {
       // We don't want to process init methods
@@ -63,7 +63,7 @@ public class InputHelper {
           PROVIDERS.get(Boolean.class).addInput(value);
         }
       }
-    }
+    }*/
   }
 
   /**

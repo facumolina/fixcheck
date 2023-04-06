@@ -23,7 +23,6 @@ public class FixCheckTest {
     Properties.TEST_CLASS_SRC_DIR = "/Users/facundo.molina/research/software/bad-fixes-dataset/tmp/jackson-databind-118/badfix/jackson-databind/src/test/java";
     Properties.TARGET_CLASS = "com.fasterxml.jackson.databind.ObjectMapper";
     Properties.INPUTS_CLASS = "java.util.Date";
-    Properties.SOOT_TEST_CLASS = null;
     // Load the prefixes to analyze
     List<Prefix> prefixes = Properties.getPrefixes();
     // Generate similar prefixes
@@ -44,7 +43,6 @@ public class FixCheckTest {
     Properties.TEST_CLASS_SRC_DIR = "/Users/facundo.molina/research/software/bad-fixes-dataset/tmp/graphhopper-172/badfix/graphhopper/core/src/test/java";
     Properties.TARGET_CLASS = "com.graphhopper.routing.util.CarFlagEncoder";
     Properties.INPUTS_CLASS = "java.lang.String";
-    Properties.SOOT_TEST_CLASS = null;
     // Load the prefixes to analyze
     List<Prefix> prefixes = Properties.getPrefixes();
     // Generate similar prefixes
@@ -65,7 +63,6 @@ public class FixCheckTest {
     Properties.TEST_CLASS_SRC_DIR = "/Users/facundo.molina/research/software/bad-fixes-dataset/tmp/choco-600/badfix/choco-solver/src/test/java";
     Properties.TARGET_CLASS = "org.chocosolver.solver.Model";
     Properties.INPUTS_CLASS = "int";
-    Properties.SOOT_TEST_CLASS = null;
     // Load the prefixes to analyze
     List<Prefix> prefixes = Properties.getPrefixes();
     // Generate similar prefixes

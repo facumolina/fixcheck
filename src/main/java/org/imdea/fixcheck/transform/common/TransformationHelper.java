@@ -1,8 +1,12 @@
 package org.imdea.fixcheck.transform.common;
 
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import org.imdea.fixcheck.Properties;
 import org.imdea.fixcheck.prefix.ConstantInput;
 import org.imdea.fixcheck.prefix.Input;
 import org.imdea.fixcheck.prefix.LocalInput;
+import org.imdea.fixcheck.prefix.Prefix;
 import soot.*;
 import soot.jimple.InvokeExpr;
 import soot.jimple.SpecialInvokeExpr;
@@ -28,6 +32,27 @@ public class TransformationHelper {
       "java.nio.file.Files",
       "java.nio.file.Path",
   };
+
+  /**
+   * Initialize a transformed class from a class declaration and a method declaration
+   */
+  public static ClassOrInterfaceDeclaration initializeTransformedClass(String newClassName, ClassOrInterfaceDeclaration classDecl) {
+    ClassOrInterfaceDeclaration newClass = classDecl.clone();
+    newClass.setName(newClassName);
+    return newClass;
+  }
+
+  /**
+   * Get the method declaration of a method in a class.
+   */
+  public static MethodDeclaration getMethodDeclFromClass(ClassOrInterfaceDeclaration classDecl, String methodName) {
+    for (MethodDeclaration method : classDecl.findAll(MethodDeclaration.class)) {
+      if (method.getNameAsString().equals(methodName)) {
+        return method;
+      }
+    }
+    return null;
+  }
 
   /**
    * Initialize a transformed class from a soot class.
@@ -218,12 +243,13 @@ public class TransformationHelper {
 
   /**
    * Return the list of inputs of a given type in a body
-   * @param body Body to search
+   * @param methodDecl is the method to search
    * @param typeName Type of the local to search
    * @return List of Inputs of the given type, empty if not found
    */
-  public static List<Input> getInputsWithType(Body body, String typeName) {
-    List<Input> inputs = new ArrayList<>();
+  public static List<Input> getInputsWithType(MethodDeclaration methodDecl, String typeName) {
+    return new ArrayList<>();
+    /*List<Input> inputs = new ArrayList<>();
     // First, search for locals
     for (Local local : body.getLocals()) {
       if (local.getType().toString().equals(typeName)) {
@@ -242,7 +268,7 @@ public class TransformationHelper {
         }
       }
     }
-    return inputs;
+    return inputs;*/
   }
 
   public static boolean canBeConstant(String typeName) {
