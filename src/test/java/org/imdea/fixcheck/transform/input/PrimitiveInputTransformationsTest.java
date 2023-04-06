@@ -32,13 +32,8 @@ public class PrimitiveInputTransformationsTest {
 
   private Prefix getTargetPrefix(String prefixMethodName) {
     // Get the corresponding method from the compilation unit
-    String className = Properties.TEST_CLASS_SRC.getPrimaryTypeName().get();
-    Optional<ClassOrInterfaceDeclaration> classDeclarationOpt = Properties.TEST_CLASS_SRC.getClassByName(className);
-    if (classDeclarationOpt.isPresent()) {
-      MethodDeclaration methodDecl = TransformationHelper.getMethodDeclFromClass(classDeclarationOpt.get(), prefixMethodName);
-      return new Prefix(methodDecl, classDeclarationOpt.get());
-    }
-    throw new RuntimeException("Method not found");
+    MethodDeclaration methodDecl = TransformationHelper.getMethodDeclFromCompilationUnit(Properties.TEST_CLASS_SRC, prefixMethodName);
+    return new Prefix(methodDecl, Properties.TEST_CLASS_SRC);
   }
 
   // Basic methods to be used in the tests in Target class
