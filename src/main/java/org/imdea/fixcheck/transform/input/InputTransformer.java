@@ -1,7 +1,10 @@
 package org.imdea.fixcheck.transform.input;
 
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.Statement;
 import org.imdea.fixcheck.Properties;
 import org.imdea.fixcheck.prefix.ConstantInput;
 import org.imdea.fixcheck.prefix.Input;
@@ -35,17 +38,20 @@ public class InputTransformer extends PrefixTransformer {
 
   @Override
   public Prefix transform(Prefix prefix) {
-    ClassOrInterfaceDeclaration prefixClass = prefix.getMethodClass();
+    CompilationUnit prefixCompilationUnit = prefix.getMethodCompilationUnit();
     MethodDeclaration prefixMethod = prefix.getMethod();
     // Prepare the new class
     String className = baseClassName + transformationsApplied;
-    ClassOrInterfaceDeclaration newClass = TransformationHelper.initializeTransformedClass(className, prefixClass);
+    CompilationUnit newCompilationUnit = TransformationHelper.initializeTransformedClass(className, prefixCompilationUnit);
     // Prepare the new method body
-    MethodDeclaration newMethod = TransformationHelper.getMethodDeclFromClass(newClass, prefixMethod.getNameAsString());
+    MethodDeclaration newMethod = TransformationHelper.getMethodDeclFromCompilationUnit(newCompilationUnit, prefixMethod.getNameAsString());
     // Replace the input
     replaceInput(newMethod);
     transformationsApplied++;
-    return new Prefix(newMethod, newClass, prefix);
+    // Transformed prefix
+    Prefix transformedPrefix = new Prefix(newMethod, newCompilationUnit, prefix);
+    transformedPrefix.setClassName(className);
+    return transformedPrefix;
   }
 
   @Override
@@ -58,6 +64,12 @@ public class InputTransformer extends PrefixTransformer {
    * @param methodDecl is the method declaration to be transformed.
    */
   private void replaceInput(MethodDeclaration methodDecl) {
+    if (!methodDecl.getBody().isPresent()) throw new IllegalArgumentException("Method body is not present");
+    BlockStmt body = methodDecl.getBody().get();
+    for (Statement stmt : body.getStatements()) {
+      System.out.println("Stmt: "+stmt);
+    }
+
     // Get
     // Get a random local
     //Input input = getRandomInput(methodDecl);

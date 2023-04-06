@@ -93,7 +93,7 @@ public class FixCheck {
         long start = System.currentTimeMillis();
         System.out.println("---> transformer: " + prefixTransformer.getClass().getSimpleName());
         Prefix newPrefix = prefixTransformer.transform(prefix);
-        System.out.println("---> generated prefix: FixThisName " + "." + newPrefix.getMethod().getName());
+        System.out.println("---> generated prefix: " + newPrefix.fullName());
         System.out.println("---> transformation: " + prefixTransformer.getLastTransformation());
         long elapsedTime = System.currentTimeMillis() - start;
         System.out.println("---> time: " + elapsedTime + "ms");

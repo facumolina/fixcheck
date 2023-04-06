@@ -1,5 +1,6 @@
 package org.imdea.fixcheck.transform.common;
 
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import org.imdea.fixcheck.Properties;
@@ -15,6 +16,7 @@ import soot.jimple.internal.JInvokeStmt;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * TransformationHelper class: helper class for applying transformations.
@@ -36,22 +38,21 @@ public class TransformationHelper {
   /**
    * Initialize a transformed class from a class declaration and a method declaration
    */
-  public static ClassOrInterfaceDeclaration initializeTransformedClass(String newClassName, ClassOrInterfaceDeclaration classDecl) {
-    ClassOrInterfaceDeclaration newClass = classDecl.clone();
-    newClass.setName(newClassName);
-    return newClass;
+  public static CompilationUnit initializeTransformedClass(String newClassName, CompilationUnit compilationUnit) {
+    CompilationUnit newCompilationUnit = compilationUnit.clone();
+    String className = newCompilationUnit.getPrimaryTypeName().get();
+    Optional<ClassOrInterfaceDeclaration> classDeclarationOpt = newCompilationUnit.getClassByName(className);
+    classDeclarationOpt.get().setName(newClassName);
+    return newCompilationUnit;
   }
 
   /**
    * Get the method declaration of a method in a class.
    */
-  public static MethodDeclaration getMethodDeclFromClass(ClassOrInterfaceDeclaration classDecl, String methodName) {
-    for (MethodDeclaration method : classDecl.findAll(MethodDeclaration.class)) {
-      if (method.getNameAsString().equals(methodName)) {
-        return method;
-      }
-    }
-    return null;
+  public static MethodDeclaration getMethodDeclFromCompilationUnit(CompilationUnit compilationUnit, String methodName) {
+    return compilationUnit.findFirst(MethodDeclaration.class) // Find the first method declaration
+        .filter(method -> method.getNameAsString().equals(methodName)) // Filter by name
+        .get();
   }
 
   /**

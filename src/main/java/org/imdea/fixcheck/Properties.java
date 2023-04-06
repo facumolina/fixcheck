@@ -7,7 +7,6 @@ import com.github.javaparser.utils.SourceRoot;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.input.InputHelper;
 import soot.*;
-import soot.options.Options;
 
 import java.nio.file.Paths;
 import java.util.*;
@@ -25,6 +24,8 @@ public class Properties {
   public static String TEST_CLASSES_PATH; // Path to where the test classes are located
   public static String TEST_CLASS_SRC_DIR; // Source file dir for tests
   public static String TEST_CLASS; // Full name of the test class
+  public static String TEST_CLASS_SIMPLE_NAME; // Simple name of the test class
+  public static String TEST_CLASS_PACKAGE_NAME; // Package name of the test class
   public static CompilationUnit TEST_CLASS_SRC; // Source file of test class
   public static String[] TEST_CLASS_METHODS; // Methods in the test class to analyze
   public static int PREFIXES_IN_TEST_CLASS = 0; // Number of prefixes in the test class
@@ -78,7 +79,7 @@ public class Properties {
       // Remove assert statements from the method containing org.junit.Assert or org.junit.TestCase*assert
       //removeAssertionsFromMethod(method);
       // Create the prefix
-      prefixes.add(new Prefix(method, classDeclaration));
+      prefixes.add(new Prefix(method, TEST_CLASS_SRC));
     }
 
     if (prefixes.size() == 0) {
@@ -116,9 +117,9 @@ public class Properties {
       SourceRoot sourceRoot = new SourceRoot(Paths.get(TEST_CLASS_SRC_DIR));
       // Split class name from the last dot
       String[] classParts = TEST_CLASS.split("\\.");
-      String className = classParts[classParts.length - 1];
-      String packageName = TEST_CLASS.substring(0, TEST_CLASS.length() - className.length() - 1);
-      TEST_CLASS_SRC = sourceRoot.parse(packageName, className + ".java");
+      TEST_CLASS_SIMPLE_NAME = classParts[classParts.length - 1];
+      TEST_CLASS_PACKAGE_NAME = TEST_CLASS.substring(0, TEST_CLASS.length() - TEST_CLASS_SIMPLE_NAME.length() - 1);
+      TEST_CLASS_SRC = sourceRoot.parse(TEST_CLASS_PACKAGE_NAME, TEST_CLASS_SIMPLE_NAME + ".java");
     }
   }
 
