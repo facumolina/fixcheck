@@ -3,6 +3,8 @@ package org.imdea.fixcheck.transform.common;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.IntegerLiteralExpr;
 import org.imdea.fixcheck.Properties;
 import org.imdea.fixcheck.prefix.ConstantInput;
 import org.imdea.fixcheck.prefix.Input;
@@ -283,18 +285,12 @@ public class TransformationHelper {
         || typeName.equals("boolean");
   }
 
-  /**
-   * Replace all uses of v1 in body with v2
-   * @param body Body to modify
-   * @param v1 Value to replace
-   * @param v2 Value to replace with
-   */
-  public static void replace(Body body, Value v1, Value v2) {
-    for (Unit ut : body.getUnits()) {
-      for (ValueBox vb : ut.getUseBoxes())
-        if( vb.getValue().equals(v1))
-          vb.setValue(v2);
+  public static void replace(Expression expression, Object value) {
+    if (expression instanceof IntegerLiteralExpr) {
+      IntegerLiteralExpr integerLiteralExpr = (IntegerLiteralExpr) expression;
+      integerLiteralExpr.setValue(value.toString());
     }
+    throw new IllegalArgumentException("Don't know how to replace expression of type " + expression.getClass().getName());
   }
 
   /**
