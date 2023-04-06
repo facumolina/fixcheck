@@ -49,7 +49,7 @@ public class PrimitiveInputTransformationsTest {
     @Test
     public void testIntMethod() {
       int n = 0;
-      boolean result = basicIntMethodIsEven(n);
+      boolean result = basicIntMethodIsEven(1);
       assertTrue(result);
     }
     @Test
@@ -66,12 +66,8 @@ public class PrimitiveInputTransformationsTest {
     Prefix targetPrefix = getTargetPrefix("testIntMethod");
     Prefix transformedPrefix = INPUT_TRANSFORMER.transform(targetPrefix);
     String lastTransformation = INPUT_TRANSFORMER.getLastTransformation();
-    // The last transformation should match: [digit:int] replaced by [digit:int]
-    assertTrue(lastTransformation.matches("\\[\\d+:int\\] replaced by \\[\\d+:int\\]"));
-    // Value in prefix should have changed
-    //IntConstant oldValue = (IntConstant) targetPrefix.getMethod().getActiveBody().getUseBoxes().get(3).getValue().getUseBoxes().get(1).getValue();
-    //IntConstant newValue = (IntConstant) transformedPrefix.getMethod().getActiveBody().getUseBoxes().get(3).getValue().getUseBoxes().get(1).getValue();
-    //assertTrue(oldValue.value != newValue.value);
+    // The last transformation should match: [digit:IntegerLiteralExpr] replaced by [digit:IntegerLiteralExpr]
+    assertTrue(lastTransformation.matches("\\[\\d+:IntegerLiteralExpr\\] replaced by \\[\\d+:IntConstant\\]"));
   }
 
   @Test
