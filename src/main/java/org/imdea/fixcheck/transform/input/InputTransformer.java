@@ -2,8 +2,7 @@ package org.imdea.fixcheck.transform.input;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.stmt.BlockStmt;
-import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.ast.expr.Expression;
 import org.imdea.fixcheck.Properties;
 import org.imdea.fixcheck.prefix.ConstantInput;
 import org.imdea.fixcheck.prefix.Input;
@@ -46,7 +45,6 @@ public class InputTransformer extends PrefixTransformer {
     MethodDeclaration newMethod = TransformationHelper.getMethodDeclFromCompilationUnit(newCompilationUnit, prefixMethod.getNameAsString());
     // Replace the input
     replaceInput(newMethod);
-    transformationsApplied++;
     // Transformed prefix
     Prefix transformedPrefix = new Prefix(newMethod, newCompilationUnit, prefix);
     transformedPrefix.setClassName(className);
@@ -64,36 +62,16 @@ public class InputTransformer extends PrefixTransformer {
    */
   private void replaceInput(MethodDeclaration methodDecl) {
     if (!methodDecl.getBody().isPresent()) throw new IllegalArgumentException("Method body is not present");
-    BlockStmt body = methodDecl.getBody().get();
-    for (Statement stmt : body.getStatements()) {
-      System.out.println("Stmt: "+stmt);
-    }
-
-    // Get
-    // Get a random local
-    //Input input = getRandomInput(methodDecl);
-
-    /*Input input = getRandomInput(body);
-    // Find the type where the input is used
-    Type usageType = TransformationHelper.getTypeOfFirstUsage(input, body);
-    // Determine the type of the new local based on the usage
-    Class<?> type = getClassForNewInput(usageType);
-    Value value = InputHelper.getValueForType(type);
-    lastTransformation = "[" + input.getValue() + ":" + input.getType() + "] replaced by [" + value + ":" + type.getName()+"]";
-    // Generate call for input constructor
-    if (type.isPrimitive()) {
-      // For primitives, just replace the old input with the new input
-      TransformationHelper.replace(body, input.getValue(), value);
-    } else {
-      // For non-primitives, create a new local, call the constructor and then replace the old input with the new local
-      Local newInput = defineLocalForType(type, body);
-      AssignStmt assignStmt = Jimple.v().newAssignStmt(newInput, Jimple.v().newNewExpr(RefType.v(type.getName())));
-      InvokeStmt constructorInvoke = addConstructorCall(newInput, type, value);
-      // Replace old input constructor with new input constructor
-      replaceConstructor(body, input, assignStmt, constructorInvoke);
-      // Use the new input in the right place
-      TransformationHelper.replaceIgnoring(body, input.getValue(), newInput, constructorInvoke);
-    }*/
+    // Get an input expression to be replaced
+    Class<? extends Expression> classToSearch = getClassForInput();
+    Expression inputExpr = getRandomInput(methodDecl, classToSearch);
+    String previousExpr = inputExpr.toString();
+    // Get a value for the new input
+    Object value = InputHelper.getValueForType(inputExpr.getClass());
+    // Replace the value in the expression
+    TransformationHelper.replace(inputExpr, value);
+    lastTransformation = "[" + previousExpr + ":" + classToSearch.getSimpleName() +"] replaced by [" + inputExpr + ":" + value.getClass().getSimpleName()+"]";
+    transformationsApplied++;
   }
 
   /**
@@ -142,17 +120,16 @@ public class InputTransformer extends PrefixTransformer {
   }
 
   /**
-   * Get a random Local for the input class
+   * Get a random Expression for the input class
    * @param methodDecl method to search
-   * @return Random Input for the input class
+   * @return Random Expression for the input class
    */
-  private Input getRandomInput(MethodDeclaration methodDecl) {
-    String inputClassName = Properties.INPUTS_CLASS.equals("boolean")?"int":Properties.INPUTS_CLASS;
-    List<Input> locals = TransformationHelper.getInputsWithType(methodDecl, inputClassName);
-    if (locals.isEmpty()) throw new IllegalArgumentException("No locals of type " + Properties.INPUTS_CLASS);
+  private Expression getRandomInput(MethodDeclaration methodDecl, Class<? extends Expression> classToSearch) {
+    List<? extends Expression> allInputsOfType = methodDecl.findAll(classToSearch);
+    if (allInputsOfType.isEmpty()) throw new IllegalArgumentException("No locals of type " + Properties.INPUTS_CLASS);
     Random random = new Random();
-    int index = random.nextInt(locals.size());
-    return locals.get(index);
+    int index = random.nextInt(allInputsOfType.size());
+    return allInputsOfType.get(index);
   }
 
   /**
@@ -169,18 +146,16 @@ public class InputTransformer extends PrefixTransformer {
 
   /**
    * Get the class for the given type
-   * @param type Type to get the class for
-   * @return Class for the given type
+   * @return Class for the current input type
    */
-  private Class<?> getClassForNewInput(Type type) {
-    if (Properties.INPUTS_CLASS.equals("boolean")) return boolean.class; // Booleans are handled differently
-    if (InputHelper.INPUTS_BY_TYPE.containsKey(type.toString())) {
-      List<Class<?>> possibleInputs = InputHelper.INPUTS_BY_TYPE.get(type.toString());
+  private Class<? extends Expression> getClassForInput() {
+    if (InputHelper.INPUTS_BY_TYPE.containsKey(Properties.INPUTS_CLASS)) {
+      List<Class<? extends Expression>> possibleInputs = InputHelper.INPUTS_BY_TYPE.get(Properties.INPUTS_CLASS);
       Random random = new Random();
       int index = random.nextInt(possibleInputs.size());
       return possibleInputs.get(index);
     }
-    throw new IllegalArgumentException("Type not supported: " + type);
+    throw new IllegalArgumentException("Input type not supported: " + Properties.INPUTS_CLASS);
   }
 
   /**
