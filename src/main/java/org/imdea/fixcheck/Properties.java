@@ -3,6 +3,10 @@ package org.imdea.fixcheck;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
+import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.utils.SourceRoot;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.input.InputHelper;
@@ -77,7 +81,7 @@ public class Properties {
       // We don't want to process methods that are not test methods
       if (!isTestMethod(method.getNameAsString())) continue;
       // Remove assert statements from the method containing org.junit.Assert or org.junit.TestCase*assert
-      //removeAssertionsFromMethod(method);
+      removeAssertionsFromMethod(method);
       // Create the prefix
       prefixes.add(new Prefix(method, TEST_CLASS_SRC));
     }
@@ -92,9 +96,23 @@ public class Properties {
   /**
    * Remove assert statements from the method containing org.junit.Assert
    */
-  private static void removeAssertionsFromMethod(SootMethod method) {
-    // This is enough to remove the assertions on JUnit 4
-    method.retrieveActiveBody().getUnits().removeIf(unit -> unit.toString().contains("org.junit.Assert"));
+  private static void removeAssertionsFromMethod(MethodDeclaration methodDecl) {
+    // Remove the assertion statements from the method declaration
+    methodDecl.getBody().get().getStatements().removeIf(stmt -> {
+      if (stmt instanceof ExpressionStmt) {
+        ExpressionStmt exprStmt = (ExpressionStmt) stmt;
+        if (exprStmt.getExpression() instanceof MethodCallExpr) {
+          MethodCallExpr methodCallExpr = (MethodCallExpr) exprStmt.getExpression();
+          if (methodCallExpr.getNameAsString().equals("assertNotNull")
+              || methodCallExpr.getNameAsString().equals("assertTrue")
+              || methodCallExpr.getNameAsString().equals("assertFalse")
+              || methodCallExpr.getNameAsString().equals("assertEquals")) {
+            return true;
+          }
+        }
+      }
+      return false;
+    });
   }
 
   /**
