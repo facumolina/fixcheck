@@ -103,12 +103,10 @@ public class Properties {
         ExpressionStmt exprStmt = (ExpressionStmt) stmt;
         if (exprStmt.getExpression() instanceof MethodCallExpr) {
           MethodCallExpr methodCallExpr = (MethodCallExpr) exprStmt.getExpression();
-          if (methodCallExpr.getNameAsString().equals("assertNotNull")
+          return methodCallExpr.getNameAsString().equals("assertNotNull")
               || methodCallExpr.getNameAsString().equals("assertTrue")
               || methodCallExpr.getNameAsString().equals("assertFalse")
-              || methodCallExpr.getNameAsString().equals("assertEquals")) {
-            return true;
-          }
+              || methodCallExpr.getNameAsString().equals("assertEquals");
         }
       }
       return false;
