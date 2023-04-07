@@ -1,6 +1,5 @@
 package org.imdea.fixcheck.transform.input;
 
-import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.*;
 import org.imdea.fixcheck.transform.input.provider.*;
 import soot.*;
@@ -36,6 +35,13 @@ public class InputHelper {
     INPUTS_BY_TYPE.put("java.lang.Object", Arrays.asList(BooleanLiteralExpr.class, IntegerLiteralExpr.class, LongLiteralExpr.class, StringLiteralExpr.class));
     // Feed providers with inputs that can be obtained from the test suite under analysis
     searchForInputs();
+  }
+
+  /**
+   * Return true if the given class is a known input class.
+   */
+  public static boolean isKnownClass(String className) {
+    return INPUTS_BY_TYPE.containsKey(className);
   }
 
   /**
