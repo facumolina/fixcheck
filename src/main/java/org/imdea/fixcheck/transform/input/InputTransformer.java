@@ -11,14 +11,9 @@ import com.github.javaparser.resolution.model.SymbolReference;
 import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import org.imdea.fixcheck.Properties;
-import org.imdea.fixcheck.prefix.ConstantInput;
-import org.imdea.fixcheck.prefix.Input;
-import org.imdea.fixcheck.prefix.LocalInput;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.PrefixTransformer;
 import org.imdea.fixcheck.transform.common.TransformationHelper;
-import soot.*;
-import soot.jimple.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,51 +88,6 @@ public class InputTransformer extends PrefixTransformer {
   }
 
   /**
-   * Replace the constructor of the given input with the new statements for assigning the new input and calling the constructor.
-   * @param body Body to transform
-   * @param inputToReplace Input to replace
-   * @param assignStmt Statement for assigning the new input
-   * @param constructorInvoke Statement for calling the constructor of the new input
-   */
-  private void replaceConstructor(Body body, Input inputToReplace, AssignStmt assignStmt, InvokeStmt constructorInvoke) {
-    if (inputToReplace instanceof LocalInput) {
-      replaceConstructorLocal(body, inputToReplace, assignStmt, constructorInvoke);
-    } else if (inputToReplace instanceof ConstantInput) {
-      // For constants, just add the new constructor call in the right place
-      Unit unit = TransformationHelper.getFirstUnitUsingInput(inputToReplace, body);
-      body.getUnits().insertBefore(assignStmt, unit);
-      body.getUnits().insertBefore(constructorInvoke, unit);
-    } else {
-      throw new IllegalArgumentException("Don't know how to replace the constructor for input type: " + inputToReplace.getClass().getName());
-    }
-  }
-
-  private void replaceConstructorLocal(Body body, Input inputToReplace, AssignStmt assignStmt, InvokeStmt constructorInvoke) {
-    // First replace the assignment
-    for (Unit ut : body.getUnits()) {
-      if (ut instanceof AssignStmt) {
-        AssignStmt assign = (AssignStmt) ut;
-        if (assign.getLeftOp().equals(inputToReplace.getValue())) {
-          body.getUnits().swapWith(ut, assignStmt);
-          break;
-        }
-      }
-    }
-    // Then replace the actual constructor call
-    for (Unit ut : body.getUnits()) {
-      if (ut instanceof InvokeStmt) {
-        InvokeExpr invokeExpr = ((InvokeStmt)ut).getInvokeExpr();
-        boolean classMatch = invokeExpr.getMethod().getDeclaringClass().getName().equals(inputToReplace.getValue().getType().toString());
-        boolean methodMatch = invokeExpr.getMethod().getName().equals("<init>");
-        if (classMatch && methodMatch) {
-          body.getUnits().swapWith(ut, constructorInvoke);
-          break;
-        }
-      }
-    }
-  }
-
-  /**
    * Get a random Expression for a known input class
    * @param methodDecl method to search
    * @param classToSearch class to search
@@ -194,18 +144,6 @@ public class InputTransformer extends PrefixTransformer {
   }
 
   /**
-   * Define a new local for the given type
-   * @param type Type of the local
-   * @param body Body to add the local
-   * @return New local
-   */
-  private Local defineLocalForType(Class<?> type, Body body) {
-    Local newInput = Jimple.v().newLocal("newInput", RefType.v(type.getName()));
-    body.getLocals().add(newInput);
-    return newInput;
-  }
-
-  /**
    * Get the class for the given type
    * @return Class for the current input type
    */
@@ -217,19 +155,6 @@ public class InputTransformer extends PrefixTransformer {
       return possibleInputs.get(index);
     }
     throw new IllegalArgumentException("Input type not supported: " + Properties.INPUTS_CLASS);
-  }
-
-  /**
-   * Generate the constructor for the given type
-   * @param input Local to use in the constructor
-   * @param type Type of the constructor
-   * @param value Value to use in the constructor
-   * @return Constructor call
-   */
-  private InvokeStmt addConstructorCall(Local input, Class<?> type, Value value) {
-    SootMethod newInputConstructor = InputHelper.getConstructorForType(type);
-    InvokeStmt constructorInvoke = Jimple.v().newInvokeStmt(Jimple.v().newSpecialInvokeExpr(input, newInputConstructor.makeRef(), value));
-    return constructorInvoke;
   }
 
 }
