@@ -289,8 +289,9 @@ public class TransformationHelper {
     if (expression instanceof IntegerLiteralExpr) {
       IntegerLiteralExpr integerLiteralExpr = (IntegerLiteralExpr) expression;
       integerLiteralExpr.setValue(value.toString());
+    } else {
+      throw new IllegalArgumentException("Don't know how to replace expression of type " + expression.getClass().getName());
     }
-    throw new IllegalArgumentException("Don't know how to replace expression of type " + expression.getClass().getName());
   }
 
   /**
