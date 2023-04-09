@@ -5,11 +5,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.IntegerLiteralExpr;
-import org.imdea.fixcheck.Properties;
-import org.imdea.fixcheck.prefix.ConstantInput;
 import org.imdea.fixcheck.prefix.Input;
-import org.imdea.fixcheck.prefix.LocalInput;
-import org.imdea.fixcheck.prefix.Prefix;
 import soot.*;
 import soot.jimple.InvokeExpr;
 import soot.jimple.SpecialInvokeExpr;
@@ -81,58 +77,6 @@ public class TransformationHelper {
     newInitMethod.setActiveBody(newInitMethodBody);
     transformedClass.addMethod(newInitMethod);
     return transformedClass;
-  }
-
-  /**
-   * Return the Type of the first usage of a given input in a body.
-   * If the input is a LocalInput, then the type is essentially the type of the parameter
-   * of the method call that uses the local.
-   * If the input is a ConstantInput, then the type is the type of the constant.
-   * @param input Input to search
-   * @param body Body to search
-   * @return Type of the first usage of the given local
-   */
-  public static Type getTypeOfFirstUsage(Input input, Body body) {
-    if (input instanceof LocalInput) {
-      Unit unit = getFirstUnitUsingInput(input, body);
-      if (unit instanceof JInvokeStmt) {
-        JInvokeStmt stmt = ((JInvokeStmt) unit);
-        int index = getIndexForValue(stmt, input.getValue());
-        return stmt.getInvokeExpr().getMethod().getParameterType(index);
-      } else {
-        return input.getValue().getType();
-      }
-    } else if (input instanceof ConstantInput) {
-      return input.getValue().getType();
-    }
-    throw new IllegalArgumentException("Input type not supported: "+input.getClass().getName());
-  }
-
-  /**
-   * Get first Unit using the input
-   * @param input Input to search
-   * @param body Body to search
-   * @return First unit using the input
-   */
-  public static Unit getFirstUnitUsingInput(Input input, Body body) {
-    for (Unit ut : body.getUnits()) {
-      for (ValueBox vb : ut.getUseBoxes()) {
-        if (vb.getValue().equals(input.getValue())) {
-          if (ut instanceof JInvokeStmt) {
-            // Avoid the constructions of the given local
-            JInvokeStmt stmt = ((JInvokeStmt) ut);
-            if (isConstructorCall(stmt, input.getValue())) continue;
-            return ut;
-          } else if (ut instanceof JAssignStmt) {
-            // Avoid the definition of the given local
-            JAssignStmt stmt = ((JAssignStmt) ut);
-            if (stmt.getLeftOp().equals(input.getValue())) continue;
-            return ut;
-          }
-        }
-      }
-    }
-    throw new IllegalArgumentException("Unable to find unit using Input " + input + ". Is it used?");
   }
 
   /**

@@ -1,5 +1,6 @@
 package org.imdea.fixcheck.prefix;
 
+import com.github.javaparser.ast.expr.Expression;
 import soot.Value;
 
 import java.util.Objects;
@@ -32,6 +33,6 @@ public abstract class Input {
    * Get the value of the input
    * @return Value of the input
    */
-  public abstract Value getValue();
+  public abstract Expression getExpression();
 
 }
