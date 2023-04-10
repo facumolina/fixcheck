@@ -1,6 +1,8 @@
 package org.imdea.fixcheck.transform.input;
 
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.*;
+import org.imdea.fixcheck.Properties;
 import org.imdea.fixcheck.transform.input.provider.*;
 import soot.*;
 
@@ -48,26 +50,8 @@ public class InputHelper {
    * Search for inputs in the test suite under analysis.
    */
   private static void searchForInputs() {
-    /*SootClass sootTestClass = Properties.SOOT_TEST_CLASS;
-    // Search for constant inputs used in the methods of the soot test class
-    for (SootMethod method : sootTestClass.getMethods()) {
-      // We don't want to process init methods
-      if (method.getName().equals("<init>")) continue;
-      for (ValueBox valueBox : method.retrieveActiveBody().getUseBoxes()) {
-        Value value = valueBox.getValue();
-        if (!(value instanceof Constant)) continue;
-        // Print value and type
-        if (value.getType().toString().equals("java.lang.Integer") || value.getType().toString().equals("int")) {
-          PROVIDERS.get(Integer.class).addInput(value);
-        } else if (value.getType().toString().equals("java.lang.Long") || value.getType().toString().equals("long")) {
-          PROVIDERS.get(Long.class).addInput(value);
-        } else if (value.getType().toString().equals("java.lang.String")) {
-          PROVIDERS.get(String.class).addInput(value);
-        } else if (value.getType().toString().equals("java.lang.Boolean") || value.getType().toString().equals("boolean")) {
-          PROVIDERS.get(Boolean.class).addInput(value);
-        }
-      }
-    }*/
+    CompilationUnit cu = Properties.TEST_CLASS_SRC;
+    cu.findAll(StringLiteralExpr.class).forEach(stringLiteralExpr -> PROVIDERS.get(StringLiteralExpr.class).addInput(stringLiteralExpr.getValue()));
   }
 
   /**
