@@ -12,7 +12,7 @@ public class LongProvider implements InputProvider {
 
   @Override
   public Object getInput() {
-    return random.nextLong();
+    return (long) random.nextInt();
   }
 
   @Override
