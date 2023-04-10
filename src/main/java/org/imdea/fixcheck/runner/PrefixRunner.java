@@ -72,7 +72,7 @@ public class PrefixRunner {
 
     }
 
-    return null;
+    throw new IllegalStateException("Compilation failed, unable to run test");
   }
 
 }
