@@ -1,7 +1,5 @@
 package org.imdea.fixcheck.transform.input.provider;
 
-import soot.Value;
-import soot.jimple.LongConstant;
 import java.util.Random;
 
 /**
@@ -13,12 +11,12 @@ public class LongProvider implements InputProvider {
   private final Random random = new Random();
 
   @Override
-  public Value getInput() {
-    return LongConstant.v(random.nextLong());
+  public Object getInput() {
+    return random.nextLong();
   }
 
   @Override
-  public void addInput(Value value) {
+  public void addInput(Object value) {
     // Nothing to do
   }
 

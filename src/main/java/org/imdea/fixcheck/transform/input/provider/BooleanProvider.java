@@ -1,8 +1,5 @@
 package org.imdea.fixcheck.transform.input.provider;
 
-import soot.Value;
-import soot.jimple.IntConstant;
-
 import java.util.Random;
 
 /**
@@ -13,13 +10,13 @@ public class BooleanProvider implements InputProvider {
   private final Random random = new Random();
 
   @Override
-  public Value getInput() {
+  public Object getInput() {
     boolean b = random.nextBoolean();
-    return IntConstant.v(b ? 1 : 0);
+    return b ? 1 : 0;
   }
 
   @Override
-  public void addInput(Value value) {
+  public void addInput(Object value) {
     // Nothing to do
   }
 

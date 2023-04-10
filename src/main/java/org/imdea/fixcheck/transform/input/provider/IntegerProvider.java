@@ -1,6 +1,5 @@
 package org.imdea.fixcheck.transform.input.provider;
 
-import soot.Value;
 import soot.jimple.IntConstant;
 
 import java.util.Random;
@@ -11,20 +10,20 @@ import java.util.Random;
  */
 public class IntegerProvider implements InputProvider {
 
-    private final Random random = new Random();
+  private final Random random = new Random();
 
-    @Override
-    public Value getInput() {
-        return IntConstant.v(random.nextInt(100));
-    }
+  @Override
+  public Object getInput() {
+    return random.nextInt(100);
+  }
 
-    @Override
-    public void addInput(Value value) {
-        // Nothing to do
-    }
+  @Override
+  public void addInput(Object value) {
+    // Nothing to do
+  }
 
-    @Override
-    public String toString() {
-        return "values: [0 .. 100]";
-    }
+  @Override
+  public String toString() {
+    return "values: [0 .. 100]";
+  }
 }
