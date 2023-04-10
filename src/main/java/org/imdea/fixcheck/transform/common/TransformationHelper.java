@@ -1,10 +1,13 @@
 package org.imdea.fixcheck.transform.common;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParseResult;
+import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.IntegerLiteralExpr;
+import com.github.javaparser.ast.expr.*;
 import org.imdea.fixcheck.prefix.Input;
 import soot.*;
 import soot.jimple.InvokeExpr;
@@ -190,52 +193,62 @@ public class TransformationHelper {
     return false;
   }
 
-  /**
-   * Return the list of inputs of a given type in a body
-   * @param methodDecl is the method to search
-   * @param typeName Type of the local to search
-   * @return List of Inputs of the given type, empty if not found
-   */
-  public static List<Input> getInputsWithType(MethodDeclaration methodDecl, String typeName) {
-    return new ArrayList<>();
-    /*List<Input> inputs = new ArrayList<>();
-    // First, search for locals
-    for (Local local : body.getLocals()) {
-      if (local.getType().toString().equals(typeName)) {
-        if (isLocalUsed(local, body))
-          inputs.add(new LocalInput(typeName, local));
+  public static void replace(Input input, Class<? extends Expression> type, Object value) {
+    Expression expression = input.getExpression();
+    if (input.isBasic()) {
+      if (type.equals(IntegerLiteralExpr.class)) {
+        IntegerLiteralExpr integerLiteralExpr = (IntegerLiteralExpr) expression;
+        integerLiteralExpr.setValue(value.toString());
+        return;
       }
-    }
-    // Second, search for constants if applicable
-    if (canBeConstant(typeName)) {
-      List<ValueBox> useBoxes = body.getUseBoxes();
-      for (ValueBox vb : useBoxes) {
-        if (vb.getValue().getType().toString().equals(typeName)) {
-          List<Unit> usingConstant = getUnitsUsingConstant(vb.getValue(), body);
-          if (usingConstant.isEmpty()) continue;
-          inputs.add(new ConstantInput(typeName, vb.getValue()));
-        }
+      if (type.equals(LongLiteralExpr.class)) {
+        LongLiteralExpr longLiteralExpr = (LongLiteralExpr) expression;
+        longLiteralExpr.setValue(value.toString());
+        return;
       }
-    }
-    return inputs;*/
-  }
-
-  public static boolean canBeConstant(String typeName) {
-    return typeName.equals("java.lang.String")
-        || typeName.equals("int")
-        || typeName.equals("long")
-        || typeName.equals("float")
-        || typeName.equals("double")
-        || typeName.equals("boolean");
-  }
-
-  public static void replace(Expression expression, Object value) {
-    if (expression instanceof IntegerLiteralExpr) {
-      IntegerLiteralExpr integerLiteralExpr = (IntegerLiteralExpr) expression;
-      integerLiteralExpr.setValue(value.toString());
     } else {
-      throw new IllegalArgumentException("Don't know how to replace expression of type " + expression.getClass().getName());
+      Node parent = expression.getParentNode().get();
+      if (expression.getClass().equals(ObjectCreationExpr.class)) {
+        // In the original expression, an object is created. Thus, we need to replace the whole expression
+        ObjectCreationExpr newObjectCreationExpr = buildObjectCreationExpr(type, value);
+        parent.replace(expression, newObjectCreationExpr);
+        return;
+      }
     }
+
+    throw new IllegalArgumentException("Don't know how to replace expression of type " + expression.getClass().getName());
+  }
+
+  private static ObjectCreationExpr buildObjectCreationExpr(Class<? extends Expression> type, Object value) {
+    if (type.equals(BooleanLiteralExpr.class)) {
+      CompilationUnit cu = StaticJavaParser.parse("class X{void x(){" +
+          "new Boolean(" + value + ");" +
+          "}}");
+      ObjectCreationExpr objectCreationExpr = cu.findFirst(ObjectCreationExpr.class).get();
+      return objectCreationExpr;
+    }
+    if (type.equals(IntegerLiteralExpr.class)) {
+      CompilationUnit cu = StaticJavaParser.parse("class X{void x(){" +
+          "new Integer(" + value + ");" +
+          "}}");
+      ObjectCreationExpr objectCreationExpr = cu.findFirst(ObjectCreationExpr.class).get();
+      return objectCreationExpr;
+    }
+    if (type.equals(LongLiteralExpr.class)) {
+      CompilationUnit cu = StaticJavaParser.parse("class X{void x(){" +
+          "new Long(" + value + ");" +
+          "}}");
+      ObjectCreationExpr objectCreationExpr = cu.findFirst(ObjectCreationExpr.class).get();
+      return objectCreationExpr;
+    }
+    if (type.equals(StringLiteralExpr.class)) {
+      CompilationUnit cu = StaticJavaParser.parse("class X{void x(){" +
+          "new String(" + value + ");" +
+          "}}");
+      ObjectCreationExpr objectCreationExpr = cu.findFirst(ObjectCreationExpr.class).get();
+      return objectCreationExpr;
+    }
+    throw new IllegalArgumentException("Don't know how to create constructor of expression of type" + type.getName());
   }
 
   /**

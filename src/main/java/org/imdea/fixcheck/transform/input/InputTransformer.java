@@ -1,15 +1,9 @@
 package org.imdea.fixcheck.transform.input;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithType;
-import com.github.javaparser.resolution.TypeSolver;
-import com.github.javaparser.resolution.model.SymbolReference;
-import com.github.javaparser.symbolsolver.javaparsermodel.JavaParserFacade;
-import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import org.imdea.fixcheck.Properties;
 import org.imdea.fixcheck.prefix.BasicInput;
 import org.imdea.fixcheck.prefix.Input;
@@ -73,19 +67,21 @@ public class InputTransformer extends PrefixTransformer {
     Input input;
     Class<? extends Expression> classToSearch;
     if (InputHelper.isKnownClass(Properties.INPUTS_CLASS)) {
-      classToSearch = getClassForInput();
+      classToSearch = getClassForNewInput(Properties.INPUTS_CLASS);
       input = getRandomInputKnownType(methodDecl, classToSearch);
     } else {
-      input = getRandomInputUnknownType(methodDecl);
-      SymbolReference ref = getTypeInDeclaration(input.getExpression());
-      classToSearch = input.getType();
+      ObjectInput objInput = getRandomInputUnknownType(methodDecl);
+      String typeName = objInput.getTypeInDeclaration();
+      classToSearch = getClassForNewInput(typeName);
+      input = objInput;
     }
+
     Expression inputExpr = input.getExpression();
     String previousExpr = input.getExpression().toString();
     // Get a value for the new input
-    Object value = InputHelper.getValueForType(input.getType());
+    Object value = InputHelper.getValueForType(classToSearch);
     // Replace the value in the expression
-    TransformationHelper.replace(inputExpr, value);
+    TransformationHelper.replace(input, classToSearch, value);
     lastTransformation = "[" + previousExpr + ":" + classToSearch.getSimpleName() +"] replaced by [" + inputExpr + ":" + value.getClass().getSimpleName()+"]";
     transformationsApplied++;
   }
@@ -110,7 +106,7 @@ public class InputTransformer extends PrefixTransformer {
    * @param methodDecl method to search
    * @return Random input for the unknown class
    */
-  private Input getRandomInputUnknownType(MethodDeclaration methodDecl) {
+  private ObjectInput getRandomInputUnknownType(MethodDeclaration methodDecl) {
     List<Expression> expressionsWithType = methodDecl.findAll(Expression.class).stream().filter(NodeWithType.class::isInstance).collect(Collectors.toList());
     if (expressionsWithType.isEmpty()) throw new IllegalArgumentException("No expressions with type");
     List<Expression> expressionsWithInputType = new ArrayList<>();
@@ -130,35 +126,18 @@ public class InputTransformer extends PrefixTransformer {
   }
 
   /**
-   * Get the type in which the given expression is being used
-   * @param expr Expression to get the type
-   * @return Type in which the expression is being used
-   */
-  private SymbolReference getTypeInDeclaration(Expression expr) {
-    Node parent = expr.getParentNode().get();
-    if (parent instanceof ObjectCreationExpr) {
-      ObjectCreationExpr objectCreationExpr = (ObjectCreationExpr) parent;
-      TypeSolver typeSolver = new ReflectionTypeSolver();
-      JavaParserFacade javaParserFacade = JavaParserFacade.get(typeSolver);
-      SymbolReference resolution = javaParserFacade.solve(objectCreationExpr);
-      System.out.println(resolution.getCorrespondingDeclaration());
-      return resolution;
-    }
-    throw new IllegalArgumentException("Don't know how to get the actual type for expression: " + expr.getClass().getName());
-  }
-
-  /**
    * Get the class for the given type
-   * @return Class for the current input type
+   * @param typeName Type to get the class for
+   * @return Class for the given type
    */
-  private Class<? extends Expression> getClassForInput() {
-    if (InputHelper.INPUTS_BY_TYPE.containsKey(Properties.INPUTS_CLASS)) {
-      List<Class<? extends Expression>> possibleInputs = InputHelper.INPUTS_BY_TYPE.get(Properties.INPUTS_CLASS);
+  private Class<? extends Expression> getClassForNewInput(String typeName) {
+    if (InputHelper.INPUTS_BY_TYPE.containsKey(typeName)) {
+      List<Class<? extends Expression>> possibleInputs = InputHelper.INPUTS_BY_TYPE.get(typeName);
       Random random = new Random();
       int index = random.nextInt(possibleInputs.size());
       return possibleInputs.get(index);
     }
-    throw new IllegalArgumentException("Input type not supported: " + Properties.INPUTS_CLASS);
+    throw new IllegalArgumentException("Type not supported: " + typeName);
   }
 
 }
