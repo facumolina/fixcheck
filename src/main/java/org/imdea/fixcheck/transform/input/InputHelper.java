@@ -32,7 +32,7 @@ public class InputHelper {
     //INPUTS_BY_TYPE.put("java.lang.Float", Collections.singletonList(FloatLi));
     INPUTS_BY_TYPE.put("java.lang.Double", Collections.singletonList(DoubleLiteralExpr.class));
     INPUTS_BY_TYPE.put("java.lang.String", Collections.singletonList(StringLiteralExpr.class));
-    INPUTS_BY_TYPE.put("java.lang.Object", Arrays.asList(BooleanLiteralExpr.class, IntegerLiteralExpr.class, LongLiteralExpr.class, StringLiteralExpr.class));
+    INPUTS_BY_TYPE.put("Object", Arrays.asList(BooleanLiteralExpr.class, IntegerLiteralExpr.class, LongLiteralExpr.class, StringLiteralExpr.class));
     // Feed providers with inputs that can be obtained from the test suite under analysis
     searchForInputs();
   }
