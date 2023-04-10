@@ -1,7 +1,6 @@
 package org.imdea.fixcheck.prefix;
 
 import com.github.javaparser.ast.expr.Expression;
-import soot.Value;
 
 import java.util.Objects;
 
@@ -11,22 +10,22 @@ import java.util.Objects;
  */
 public abstract class Input {
 
-  protected String typeName;
+  Class<? extends Expression> type;
 
   /**
    * Constructor
-   * @param typeName Type of the input
+   * @param type Type of the input
    */
-  public Input(String typeName) {
-    this.typeName = Objects.requireNonNull(typeName, "typeName cannot be null");
+  public Input(Class<? extends Expression> type) {
+    this.type = Objects.requireNonNull(type, "type cannot be null");
   }
 
   /**
    * Get the type of the input
    * @return Type of the input
    */
-  public String getType() {
-    return typeName;
+  public Class<? extends Expression> getType() {
+    return type;
   }
 
   /**

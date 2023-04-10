@@ -12,8 +12,8 @@ public class ObjectInput extends Input {
 
   private final Expression expr; //
 
-  public ObjectInput(String typeName, Expression expr) {
-    super(typeName);
+  public ObjectInput(Class<? extends Expression> type, Expression expr) {
+    super(type);
     this.expr = Objects.requireNonNull(expr, "expr cannot be null");
   }
 
@@ -22,7 +22,7 @@ public class ObjectInput extends Input {
     if (this == o) return true;
     if (!(o instanceof ObjectInput)) return false;
     ObjectInput that = (ObjectInput) o;
-    return typeName.equals(that.getType()) && expr.equals(that.expr);
+    return type.equals(that.getType()) && expr.equals(that.expr);
   }
 
   @Override

@@ -78,12 +78,12 @@ public class InputTransformer extends PrefixTransformer {
     } else {
       input = getRandomInputUnknownType(methodDecl);
       SymbolReference ref = getTypeInDeclaration(input.getExpression());
-      classToSearch = input.getExpression().getClass();
+      classToSearch = input.getType();
     }
     Expression inputExpr = input.getExpression();
     String previousExpr = input.getExpression().toString();
     // Get a value for the new input
-    Object value = InputHelper.getValueForType(inputExpr.getClass());
+    Object value = InputHelper.getValueForType(input.getType());
     // Replace the value in the expression
     TransformationHelper.replace(inputExpr, value);
     lastTransformation = "[" + previousExpr + ":" + classToSearch.getSimpleName() +"] replaced by [" + inputExpr + ":" + value.getClass().getSimpleName()+"]";
@@ -102,7 +102,7 @@ public class InputTransformer extends PrefixTransformer {
     if (allInputsOfType.isEmpty()) throw new IllegalArgumentException("No locals of type " + Properties.INPUTS_CLASS);
     Random random = new Random();
     int index = random.nextInt(allInputsOfType.size());
-    return new BasicInput(classToSearch.getSimpleName(),allInputsOfType.get(index));
+    return new BasicInput(classToSearch,allInputsOfType.get(index));
   }
 
   /**
@@ -125,7 +125,8 @@ public class InputTransformer extends PrefixTransformer {
     if (expressionsWithInputType.isEmpty()) throw new IllegalArgumentException("No expressions with type " + Properties.INPUTS_CLASS);
     Random random = new Random();
     int index = random.nextInt(expressionsWithInputType.size());
-    return new ObjectInput("",expressionsWithInputType.get(index));
+    Expression expr = expressionsWithInputType.get(index);
+    return new ObjectInput(expr.getClass(),expr);
   }
 
   /**

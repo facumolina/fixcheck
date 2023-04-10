@@ -10,8 +10,8 @@ public class BasicInput extends Input {
 
   private final Expression expr;
 
-  public BasicInput(String typeName, Expression expr) {
-    super(typeName);
+  public BasicInput(Class<? extends Expression> type, Expression expr) {
+    super(type);
     this.expr = expr;
   }
 
