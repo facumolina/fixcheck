@@ -11,8 +11,7 @@ public class BooleanProvider implements InputProvider {
 
   @Override
   public Object getInput() {
-    boolean b = random.nextBoolean();
-    return b ? 1 : 0;
+    return random.nextBoolean();
   }
 
   @Override
