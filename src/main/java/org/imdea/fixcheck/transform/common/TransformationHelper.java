@@ -62,6 +62,12 @@ public class TransformationHelper {
         longLiteralExpr.setValue(value.toString());
         return;
       }
+      if (type.equals(StringLiteralExpr.class)) {
+        StringLiteralExpr stringLiteralExpr = (StringLiteralExpr) expression;
+        stringLiteralExpr.setString(value.toString());
+        return;
+      }
+      throw new IllegalArgumentException("Don't know how to replace basic expression of type " + expression.getClass().getName());
     } else {
       Node parent = expression.getParentNode().get();
       if (expression.getClass().equals(ObjectCreationExpr.class)) {
@@ -70,9 +76,10 @@ public class TransformationHelper {
         parent.replace(expression, newObjectCreationExpr);
         return;
       }
+      throw new IllegalArgumentException("Don't know how to replace non basic expression of type " + expression.getClass().getName());
     }
 
-    throw new IllegalArgumentException("Don't know how to replace expression of type " + expression.getClass().getName());
+
   }
 
   private static ObjectCreationExpr buildObjectCreationExpr(Class<? extends Expression> type, Object value) {
