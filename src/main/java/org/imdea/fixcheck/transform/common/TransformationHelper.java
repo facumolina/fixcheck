@@ -64,7 +64,8 @@ public class TransformationHelper {
       }
       if (type.equals(StringLiteralExpr.class)) {
         StringLiteralExpr stringLiteralExpr = (StringLiteralExpr) expression;
-        stringLiteralExpr.setString(value.toString());
+        // Remove quotes from value
+        stringLiteralExpr.setString(value.toString().substring(1, value.toString().length() - 1));
         return;
       }
       throw new IllegalArgumentException("Don't know how to replace basic expression of type " + expression.getClass().getName());
@@ -106,7 +107,7 @@ public class TransformationHelper {
     }
     if (type.equals(StringLiteralExpr.class)) {
       CompilationUnit cu = StaticJavaParser.parse("class X{void x(){" +
-          "new String(\"" + value + "\");" +
+          "new String(" + value + ");" +
           "}}");
       ObjectCreationExpr objectCreationExpr = cu.findFirst(ObjectCreationExpr.class).get();
       return objectCreationExpr;

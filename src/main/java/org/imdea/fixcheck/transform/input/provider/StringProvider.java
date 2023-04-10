@@ -16,9 +16,9 @@ public class StringProvider implements InputProvider {
   public Object getInput() {
     if (usedInputs.size() > 0) {
       int i = random.nextInt(usedInputs.size());
-      return usedInputs.get(i);
+      return "\"" + usedInputs.get(i) + "\"";
     }
-    return "test";
+    return "\"test\"";
   }
 
   @Override
