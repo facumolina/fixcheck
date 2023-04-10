@@ -1,8 +1,6 @@
 package org.imdea.fixcheck.prefix;
 
 import com.github.javaparser.ast.expr.Expression;
-import soot.Local;
-import soot.Value;
 
 import java.util.Objects;
 
@@ -18,11 +16,6 @@ public class ObjectInput extends Input {
     super(typeName);
     this.expr = Objects.requireNonNull(expr, "expr cannot be null");
   }
-
-  /**
-   * Get the Soot local
-   * @return Soot local
-   */
 
   @Override
   public boolean equals(Object o) {
