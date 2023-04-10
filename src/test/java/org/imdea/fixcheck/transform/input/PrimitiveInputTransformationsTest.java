@@ -67,7 +67,7 @@ public class PrimitiveInputTransformationsTest {
     Prefix transformedPrefix = INPUT_TRANSFORMER.transform(targetPrefix);
     String lastTransformation = INPUT_TRANSFORMER.getLastTransformation();
     // The last transformation should match: [digit:IntegerLiteralExpr] replaced by [digit:IntegerLiteralExpr]
-    assertTrue(lastTransformation.matches("\\[\\d+:int\\] replaced by \\[\\d+:Integer\\]"));
+    assertTrue(lastTransformation.matches("\\[\\d+:int\\] replaced by \\[\\d+:java.lang.Integer\\]"));
   }
 
   @Test
