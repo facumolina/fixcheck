@@ -34,4 +34,9 @@ public abstract class Input {
    */
   public abstract Expression getExpression();
 
+  /**
+   * Check if the input is basic
+   */
+  public abstract boolean isBasic();
+
 }

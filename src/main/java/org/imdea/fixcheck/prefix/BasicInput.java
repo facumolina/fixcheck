@@ -19,6 +19,11 @@ public class BasicInput extends Input {
   public Expression getExpression() { return expr; }
 
   @Override
+  public boolean isBasic() {
+    return true;
+  }
+
+  @Override
   public String toString() {
     return "BasicInput: "+expr;
   }
