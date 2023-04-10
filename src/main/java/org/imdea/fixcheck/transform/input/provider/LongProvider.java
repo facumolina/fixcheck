@@ -22,7 +22,7 @@ public class LongProvider implements InputProvider {
 
   @Override
   public String toString() {
-    return "values: Random.nextLong()";
+    return "values: (long) Random.nextInt()";
   }
 
 }
