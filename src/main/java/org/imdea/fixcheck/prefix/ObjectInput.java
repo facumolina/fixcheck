@@ -57,7 +57,6 @@ public class ObjectInput extends Input {
       TypeSolver typeSolver = new ReflectionTypeSolver();
       JavaParserFacade javaParserFacade = JavaParserFacade.get(typeSolver);
       SymbolReference resolution = javaParserFacade.solve(objectCreationExpr);
-      System.out.println(resolution.getCorrespondingDeclaration());
       ResolvedDeclaration resolvedDeclaration = resolution.getCorrespondingDeclaration();
       if (resolvedDeclaration instanceof JavaParserConstructorDeclaration) {
         JavaParserConstructorDeclaration javaParserConstructorDeclaration = (JavaParserConstructorDeclaration) resolvedDeclaration;
