@@ -82,7 +82,7 @@ public class InputTransformer extends PrefixTransformer {
     Object value = InputHelper.getValueForType(classToSearch);
     // Replace the value in the expression
     TransformationHelper.replace(input, classToSearch, value);
-    lastTransformation = "[" + previousExpr + ":" + Properties.INPUTS_CLASS +"] replaced by [" + inputExpr + ":" + value.getClass().getSimpleName() +"]";
+    lastTransformation = "[" + previousExpr + ":" + Properties.INPUTS_CLASS +"] replaced by [" + value + ":" + value.getClass().getName() +"]";
     transformationsApplied++;
   }
 

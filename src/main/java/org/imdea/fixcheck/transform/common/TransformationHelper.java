@@ -99,7 +99,7 @@ public class TransformationHelper {
     }
     if (type.equals(StringLiteralExpr.class)) {
       CompilationUnit cu = StaticJavaParser.parse("class X{void x(){" +
-          "new String(" + value + ");" +
+          "new String(\"" + value + "\");" +
           "}}");
       ObjectCreationExpr objectCreationExpr = cu.findFirst(ObjectCreationExpr.class).get();
       return objectCreationExpr;
