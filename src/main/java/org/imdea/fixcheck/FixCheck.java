@@ -97,15 +97,17 @@ public class FixCheck {
         System.out.println("---> transformation: " + prefixTransformer.getLastTransformation());
         long elapsedTime = System.currentTimeMillis() - start;
         System.out.println("---> time: " + elapsedTime + "ms");
+        System.out.println();
         Stats.MS_PREFIXES_GENERATION += elapsedTime;
 
         // Generate the assertions for the prefix
-        System.out.println();
+
         start = System.currentTimeMillis();
         System.out.println("---> assertion generator: " + assertionGenerator.getClass().getSimpleName());
         assertionGenerator.generateAssertions(newPrefix);
         elapsedTime = System.currentTimeMillis() - start;
         System.out.println("---> time: " + elapsedTime + "ms");
+        System.out.println();
         Stats.MS_ASSERTIONS_GENERATION += elapsedTime;
 
         // Run the transformed prefix
