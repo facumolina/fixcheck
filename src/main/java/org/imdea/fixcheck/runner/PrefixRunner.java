@@ -4,7 +4,9 @@ import org.imdea.fixcheck.Properties;
 import org.imdea.fixcheck.compilation.InMemoryFileManager;
 import org.imdea.fixcheck.compilation.JavaSourceFromString;
 import org.imdea.fixcheck.prefix.Prefix;
+import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
+import org.junit.runner.Request;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
@@ -56,11 +58,14 @@ public class PrefixRunner {
     } else {
       ClassLoader classLoader = manager.getClassLoader(null);
       Class<?> justCreatedClass = classLoader.loadClass(prefix.getFullClassName());
-      System.out.println("---> running test: " + justCreatedClass.getName());
+      System.out.println("---> running test class: " + justCreatedClass.getName());
 
-      // Use JUnit core to run the just created test class
+      // Use JUnit core to run the prefix test
       JUnitCore jUnitCore = new JUnitCore();
-      Result testResult = jUnitCore.run(justCreatedClass);
+      Description description = Description.createTestDescription(justCreatedClass, prefix.getMethod().getNameAsString());
+      Request req = Request.aClass(justCreatedClass).filterWith(description);
+      System.out.println("---> description: " + description);
+      Result testResult = jUnitCore.run(req);
       System.out.printf("---> test ran: %s, Failed: %s%n", testResult.getRunCount(), testResult.getFailureCount());
       if (testResult.getFailureCount() > 0) {
         System.out.println("---> failures:");
