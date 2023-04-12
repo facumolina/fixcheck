@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 public class InputTransformer extends PrefixTransformer {
 
   private static final String baseClassName = "SimilarPrefixInputTransformer"; // Base name for the new prefix class
-  private static final String basePrefixName = "similarPrefix"; // Base name for the new prefix method
 
   private int transformationsApplied; // Number of transformations applied
 
