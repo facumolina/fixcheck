@@ -35,6 +35,8 @@ public class TransformationHelper {
     String className = newCompilationUnit.getPrimaryTypeName().get();
     Optional<ClassOrInterfaceDeclaration> classDeclarationOpt = newCompilationUnit.getClassByName(className);
     classDeclarationOpt.get().setName(newClassName);
+    // Ensure that the new compilation unit has the import: import static org.junit.Assert.*;
+    newCompilationUnit.addImport("static org.junit.Assert.*");
     return newCompilationUnit;
   }
 
