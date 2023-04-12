@@ -75,8 +75,7 @@ public class InputTransformer extends PrefixTransformer {
       classToSearch = getClassForNewInput(typeName);
       input = objInput;
     }
-
-    Expression inputExpr = input.getExpression();
+    // Save the previous expression
     String previousExpr = input.getExpression().toString();
     // Get a value for the new input
     Object value = InputHelper.getValueForType(classToSearch);
