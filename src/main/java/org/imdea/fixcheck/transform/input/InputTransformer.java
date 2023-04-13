@@ -106,7 +106,7 @@ public class InputTransformer extends PrefixTransformer {
    */
   private ObjectInput getRandomInputUnknownType(MethodDeclaration methodDecl) {
     List<Expression> expressionsWithType = methodDecl.findAll(Expression.class).stream().filter(NodeWithType.class::isInstance).collect(Collectors.toList());
-    if (expressionsWithType.isEmpty()) throw new IllegalArgumentException("No expressions with type");
+    if (expressionsWithType.isEmpty()) throw new IllegalArgumentException("The method declaration has no typed expressions");
     List<Expression> expressionsWithInputType = new ArrayList<>();
     for (Expression expr : expressionsWithType) {
       if (expr instanceof NodeWithType) {
