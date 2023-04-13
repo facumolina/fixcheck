@@ -64,6 +64,11 @@ public class TransformationHelper {
         longLiteralExpr.setValue(value.toString());
         return;
       }
+      if (type.equals(DoubleLiteralExpr.class)) {
+        DoubleLiteralExpr doubleLiteralExpr = (DoubleLiteralExpr) expression;
+        doubleLiteralExpr.setValue(value.toString());
+        return;
+      }
       if (type.equals(StringLiteralExpr.class)) {
         StringLiteralExpr stringLiteralExpr = (StringLiteralExpr) expression;
         // Remove quotes from value
