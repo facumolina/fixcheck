@@ -4,7 +4,6 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.*;
 import org.imdea.fixcheck.Properties;
 import org.imdea.fixcheck.transform.input.provider.*;
-import soot.*;
 
 import java.util.*;
 
@@ -31,7 +30,7 @@ public class InputHelper {
     INPUTS_BY_TYPE.put("int", Collections.singletonList(IntegerLiteralExpr.class));
     INPUTS_BY_TYPE.put("java.lang.Integer", Collections.singletonList(IntegerLiteralExpr.class));
     INPUTS_BY_TYPE.put("java.lang.Long", Collections.singletonList(LongLiteralExpr.class));
-    //INPUTS_BY_TYPE.put("java.lang.Float", Collections.singletonList(FloatLi));
+    INPUTS_BY_TYPE.put("double", Collections.singletonList(DoubleLiteralExpr.class));
     INPUTS_BY_TYPE.put("java.lang.Double", Collections.singletonList(DoubleLiteralExpr.class));
     INPUTS_BY_TYPE.put("java.lang.String", Collections.singletonList(StringLiteralExpr.class));
     INPUTS_BY_TYPE.put("Object", Arrays.asList(BooleanLiteralExpr.class, IntegerLiteralExpr.class, LongLiteralExpr.class, StringLiteralExpr.class));
@@ -52,23 +51,6 @@ public class InputHelper {
   private static void searchForInputs() {
     CompilationUnit cu = Properties.TEST_CLASS_SRC;
     cu.findAll(StringLiteralExpr.class).forEach(stringLiteralExpr -> PROVIDERS.get(StringLiteralExpr.class).addInput(stringLiteralExpr.getValue()));
-  }
-
-  /**
-   * Get the constructor method for the given type.
-   * @param type Type of the input
-   * @return Constructor method
-   */
-  public static SootMethod getConstructorForType(Class<?> type) {
-    if (type.equals(Boolean.class))
-      return Scene.v().getMethod("<java.lang.Boolean: void <init>(boolean)>");
-    if (type.equals(Integer.class))
-      return Scene.v().getMethod("<java.lang.Integer: void <init>(int)>");
-    if (type.equals(Long.class))
-      return Scene.v().getMethod("<java.lang.Long: void <init>(long)>");
-    if (type.equals(String.class))
-      return Scene.v().getMethod("<java.lang.String: void <init>(java.lang.String)>");
-    throw new IllegalArgumentException("Type not supported: " + type);
   }
 
   /**
