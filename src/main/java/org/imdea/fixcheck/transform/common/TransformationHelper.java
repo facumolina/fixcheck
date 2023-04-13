@@ -4,6 +4,7 @@ import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.*;
 import org.imdea.fixcheck.prefix.Input;
@@ -37,6 +38,11 @@ public class TransformationHelper {
     classDeclarationOpt.get().setName(newClassName);
     // Ensure that the new compilation unit has the import: import static org.junit.Assert.*;
     newCompilationUnit.addImport("static org.junit.Assert.*");
+    // If the original class had a constructor, then rename it to the new class name
+    newCompilationUnit.findAll(ConstructorDeclaration.class).forEach(constructorDeclaration -> {
+      if (constructorDeclaration.getNameAsString().equals(className))
+        constructorDeclaration.setName(newClassName);
+    });
     return newCompilationUnit;
   }
 
