@@ -17,9 +17,10 @@ public class InputHelper {
   public static Map<Class<? extends Expression>, InputProvider> PROVIDERS;
   static {
     PROVIDERS = new HashMap<>();
-    PROVIDERS.put(IntegerLiteralExpr.class, new IntegerProvider());
     PROVIDERS.put(BooleanLiteralExpr.class, new BooleanProvider());
+    PROVIDERS.put(IntegerLiteralExpr.class, new IntegerProvider());
     PROVIDERS.put(LongLiteralExpr.class, new LongProvider());
+    PROVIDERS.put(DoubleLiteralExpr.class, new DoubleProvider());
     PROVIDERS.put(StringLiteralExpr.class, new StringProvider());
   }
 
