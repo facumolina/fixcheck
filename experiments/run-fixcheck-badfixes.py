@@ -24,7 +24,10 @@ subject_base_dir = os.path.join(dataset_base_dir, subject_id+'/badfix/'+project)
 main_dep = subject_data['main_dep'].values[0]
 test_classes = subject_data['tests_classes'].values[0]
 test_classes_path = os.path.join(subject_base_dir, test_classes)
-subject_cp = os.path.join(subject_base_dir, main_dep)+':'+test_classes_path
+# Split main deps, and append base dir to each dep
+main_deps = main_dep.split(':')
+main_deps = [os.path.join(subject_base_dir, dep) for dep in main_deps]
+subject_cp = ':'.join(main_deps)+':'+test_classes_path
 # Classes
 target_test = subject_data['target_test'].values[0]
 target_test_methods = subject_data['target_test_methods'].values[0]
