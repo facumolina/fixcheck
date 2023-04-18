@@ -12,10 +12,7 @@ import org.imdea.fixcheck.writer.ReportWriter;
 import org.junit.runner.Result;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * FixCheck class: main class.
@@ -81,6 +78,9 @@ public class FixCheck {
 
   public static List<Prefix> generateSimilarPrefixes(List<Prefix> prefixes, int n) throws ClassNotFoundException, IOException {
     List<Prefix> generatedPrefixes = new ArrayList<>();
+    List<PrefixTransformer> transformers = Arrays.asList(
+        new InputTransformer()
+    );
     PrefixTransformer prefixTransformer = new InputTransformer();
     //AssertionGenerator assertionGenerator = new TextDavinci003();
     AssertionGenerator assertionGenerator = new AssertTrueGenerator();
@@ -101,7 +101,6 @@ public class FixCheck {
         Stats.MS_PREFIXES_GENERATION += elapsedTime;
 
         // Generate the assertions for the prefix
-
         start = System.currentTimeMillis();
         System.out.println("---> assertion generator: " + assertionGenerator.getClass().getSimpleName());
         assertionGenerator.generateAssertions(newPrefix);
@@ -128,6 +127,19 @@ public class FixCheck {
     Stats.TOTAL_PASSING_PREFIXES = passingPrefixes.size();
 
     return generatedPrefixes;
+  }
+
+  /**
+   * Return a list of transformer randomly chosen from the given list
+   */
+  public List<PrefixTransformer> getTransformersToApply(List<PrefixTransformer> transformers) {
+    List<PrefixTransformer> transformersToApply = new ArrayList<>();
+    int n = (int) (Math.random() * transformers.size());
+    Collections.shuffle(transformers);
+    for (int i=0; i < n; i++) {
+      transformersToApply.add(transformers.get(i));
+    }
+    return transformersToApply;
   }
 
   /**
