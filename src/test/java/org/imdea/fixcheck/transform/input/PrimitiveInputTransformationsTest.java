@@ -77,7 +77,7 @@ public class PrimitiveInputTransformationsTest {
     Prefix transformedPrefix = INPUT_TRANSFORMER.transform(targetPrefix);
     String lastTransformation = INPUT_TRANSFORMER.getLastTransformation();
     // The last transformation should match: [word:int] replaced by [0:boolean]
-    assertTrue(lastTransformation.matches("\\[\\w+:int\\] replaced by \\[\\d+:boolean\\]"));
+    assertTrue(lastTransformation.matches("\\[\\w+:boolean\\] replaced by \\[\\w+:java.lang.Boolean\\]"));
   }
 
 }
