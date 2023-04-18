@@ -1,14 +1,11 @@
 package org.imdea.fixcheck.transform.input;
 
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import org.imdea.fixcheck.Properties;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.common.TransformationHelper;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
