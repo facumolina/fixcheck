@@ -45,6 +45,8 @@ public class PrimitiveInputTransformationsTest {
     return b ? "true" : "false";
   }
 
+  private boolean basicDoubleMethodIsPositive(double d) { return d > 0; }
+
   private class TargetClass {
     @Test
     public void testIntMethod() {
@@ -58,6 +60,12 @@ public class PrimitiveInputTransformationsTest {
       String result = basicBooleanMethodToString(b);
       assertEquals("true", result);
     }
+    @Test
+    public void testDoubleMethod() {
+      double d = 1.0;
+      boolean result = basicDoubleMethodIsPositive(d);
+      assertTrue(result);
+    }
   }
 
   @Test
@@ -66,7 +74,7 @@ public class PrimitiveInputTransformationsTest {
     Prefix targetPrefix = getTargetPrefix("testIntMethod");
     Prefix transformedPrefix = INPUT_TRANSFORMER.transform(targetPrefix);
     String lastTransformation = INPUT_TRANSFORMER.getLastTransformation();
-    // The last transformation should match: [digit:IntegerLiteralExpr] replaced by [digit:IntegerLiteralExpr]
+    // The last transformation should match: [digit:IntegerLiteralExpr] replaced by [digit:java.lang.Integer]
     assertTrue(lastTransformation.matches("\\[\\d+:int\\] replaced by \\[\\d+:java.lang.Integer\\]"));
   }
 
@@ -76,8 +84,18 @@ public class PrimitiveInputTransformationsTest {
     Prefix targetPrefix = getTargetPrefix("testBooleanMethod");
     Prefix transformedPrefix = INPUT_TRANSFORMER.transform(targetPrefix);
     String lastTransformation = INPUT_TRANSFORMER.getLastTransformation();
-    // The last transformation should match: [word:int] replaced by [0:boolean]
+    // The last transformation should match: [word:boolean] replaced by [word:java.lang.Boolean]
     assertTrue(lastTransformation.matches("\\[\\w+:boolean\\] replaced by \\[\\w+:java.lang.Boolean\\]"));
+  }
+
+  @Test
+  public void testDoubleTransformation() {
+    Properties.INPUTS_CLASS = "double";
+    Prefix targetPrefix = getTargetPrefix("testDoubleMethod");
+    Prefix transformedPrefix = INPUT_TRANSFORMER.transform(targetPrefix);
+    String lastTransformation = INPUT_TRANSFORMER.getLastTransformation();
+    // The last transformation should match: [digit:double] replaced by [digit:java.lang.Double]
+    assertTrue(lastTransformation.matches("\\[.*:double\\] replaced by \\[.*:java.lang.Double\\]"));
   }
 
 }
