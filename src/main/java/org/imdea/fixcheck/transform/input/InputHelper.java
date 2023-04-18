@@ -27,6 +27,7 @@ public class InputHelper {
   public static void initializeHelper() {
     // Initialize the map of inputs by type
     INPUTS_BY_TYPE = new HashMap<>();
+    INPUTS_BY_TYPE.put("boolean", Collections.singletonList(BooleanLiteralExpr.class));
     INPUTS_BY_TYPE.put("java.util.Boolean", Collections.singletonList(BooleanLiteralExpr.class));
     INPUTS_BY_TYPE.put("int", Collections.singletonList(IntegerLiteralExpr.class));
     INPUTS_BY_TYPE.put("java.lang.Integer", Collections.singletonList(IntegerLiteralExpr.class));
