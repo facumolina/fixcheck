@@ -18,7 +18,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
- * Input Transformer class: transform a prefix by changing its 'input'.
+ * InputTransformer class: transform a prefix by changing its 'input'.
  * @author Facundo Molina
  */
 public class InputTransformer extends PrefixTransformer {
