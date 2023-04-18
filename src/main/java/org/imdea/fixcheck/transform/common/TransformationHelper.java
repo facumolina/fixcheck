@@ -60,6 +60,11 @@ public class TransformationHelper {
   public static void replace(Input input, Class<? extends Expression> type, Object value) {
     Expression expression = input.getExpression();
     if (input.isBasic()) {
+      if (type.equals(BooleanLiteralExpr.class)) {
+        BooleanLiteralExpr booleanLiteralExpr = (BooleanLiteralExpr) expression;
+        booleanLiteralExpr.setValue((Boolean) value);
+        return;
+      }
       if (type.equals(IntegerLiteralExpr.class)) {
         IntegerLiteralExpr integerLiteralExpr = (IntegerLiteralExpr) expression;
         integerLiteralExpr.setValue(value.toString());
