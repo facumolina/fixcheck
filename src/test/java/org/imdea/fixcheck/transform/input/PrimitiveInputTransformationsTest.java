@@ -65,6 +65,7 @@ public class PrimitiveInputTransformationsTest {
     }
   }
 
+  // Actual tests
   @Test
   public void testIntTransformation() {
     Properties.INPUTS_CLASS = "int";
