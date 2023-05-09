@@ -5,7 +5,7 @@ import pandas as pd
 
 # Config variables
 FIXCHECK = os.getenv('FIXCHECK')
-#BADFIXES_DATASET = os.getenv('BADFIXES_DATASET')
+DEFECT_REPAIRING_DATASET = os.getenv('DEFECT_REPAIRING_DATASET')
 
 dataset_csv = 'experiments/defect-repairing-subjects.csv'
 outputs_dir = 'fixcheck-output'
@@ -18,7 +18,13 @@ subject_data = df[df['id'] == subject_id]
 
 # Get and setup the subject data
 project = subject_data['project'].values[0]
+bug = subject_data['bug'].values[0]
 subject_base_dir = os.path.join('/tmp', subject_data['base_dir'].values[0])
+
+patch_base_dir = project+str(bug)+"b"
+subject_base_dir = os.path.join(DEFECT_REPAIRING_DATASET, f'tmp/{subject_id}/{patch_base_dir}')
+
+
 # Dependencies
 main_dep = 'build'
 test_classes = 'build-tests'
