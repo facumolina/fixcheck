@@ -5,7 +5,7 @@ import pandas as pd
 
 # Config variables
 FIXCHECK = os.getenv('FIXCHECK')
-BADFIXES_DATASET = os.getenv('BADFIXES_DATASET')
+BF4J_DATASET = os.getenv('BF4J_DATASET')
 
 dataset_csv = 'experiments/badfixes.csv'
 outputs_dir = 'fixcheck-output'
@@ -17,7 +17,7 @@ df = pd.read_csv(dataset_csv)
 subject_data = df[df['id'] == subject_id]
 
 # Get and setup the subject data
-dataset_base_dir = os.path.join(BADFIXES_DATASET, 'tmp')
+dataset_base_dir = os.path.join(BF4J_DATASET, 'tmp')
 project = subject_data['project'].values[0]
 subject_base_dir = os.path.join(dataset_base_dir, subject_id+'/badfix/'+project)
 # Dependencies

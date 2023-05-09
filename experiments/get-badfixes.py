@@ -7,11 +7,11 @@ import json
 
 # Config variables
 FIXCHECK = os.getenv('FIXCHECK')
-BADFIXES_DATASET = os.getenv('BADFIXES_DATASET')
+BF4J_DATASET = os.getenv('BF4J_DATASET')
 
 output_file = 'experiments/badfixes-to-analyze.csv'
 
-subjects_folder = BADFIXES_DATASET+"/data/"
+subjects_folder = BF4J_DATASET+"/data/"
 subjects = os.listdir(subjects_folder)
 
 # Get the badfixes
