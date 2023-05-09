@@ -46,18 +46,23 @@ if not os.path.isdir(working_dir):
 	subprocess.call(cmd, shell=True)
 	print()
 	# Apply the patch
-    patch_file = os.path.join(DEFECT_REPAIRING_DATASET, f'tool/patches/{subject_id}')
-    # Move to the subject working dir
-    subject_dir = os.path.join(DEFECT_REPAIRING_DATASET, f'tmp/{subject_id}')
-    os.chdir(subject_dir)
-    cmd = f'patch -u -p0 < {patch_file}'
-    print(f'---> applying patch with command: {cmd}')
-    subprocess.call(cmd, shell=True)
-    print()
+	patch_file = os.path.join(DEFECT_REPAIRING_DATASET, f'tool/patches/{subject_id}')
+	# Move to the subject working dir
+	subject_dir = os.path.join(DEFECT_REPAIRING_DATASET, f'tmp/{subject_id}')
+	os.chdir(subject_dir)
+	cmd = f'patch -u -p0 < {patch_file}'
+	print(f'---> applying patch with command: {cmd}')
+	subprocess.call(cmd, shell=True)
+	print()
 else:
     print(f'---> working dir already exists: {working_dir}')
     print()
 
 
 # Compile the project
-print(f'--> compiling with defects4j: {defects4j_project}')
+os.chdir(working_dir)
+cmd = f'defects4j compile'
+print(f'--> compiling with cmd: {cmd}')
+subprocess.call(cmd, shell=True)
+print()
+print('Setup finished!')
