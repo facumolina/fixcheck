@@ -1,2 +1,11 @@
 id,tool,correctness,project,bug,base_dir,target_test,target_test_methods,target_class,input_class
-Patch1,jGenprog,incorrect,Chart,1,Chart1b,org.jfree.chart.renderer.category.junit.AbstractCategoryItemRendererTests,test2947660,org.jfree.chart.renderer.category.LineAndShapeRenderer,java.lang.String
+Patch1,jGenprog,Incorrect,Chart,1,Chart1b,org.jfree.chart.renderer.category.junit.AbstractCategoryItemRendererTests,test2947660,org.jfree.chart.renderer.category.LineAndShapeRenderer,java.lang.String
+Patch2,jKali,Incorrect,Chart,1,Chart1b,org.jfree.chart.renderer.category.junit.AbstractCategoryItemRendererTests,test2947660,org.jfree.chart.renderer.category.LineAndShapeRenderer,java.lang.String
+Patch3,jGenprog,Correct,Chart,3,Chart3b,org.jfree.data.time.junit.TimeSeriesTests,testCreateCopy3,org.jfree.data.time.TimeSeries,int
+Patch4,Nopol2015,Incorrect,Chart,3,Chart3b,org.jfree.data.time.junit.TimeSeriesTests,testCreateCopy3,org.jfree.data.time.TimeSeries,int
+Patch5,jGenprog,Incorrect,Chart,5,Chart5b,org.jfree.data.xy.junit.XYSeriesTests,testBug1955483,org.jfree.data.xy.XYSeries,double
+Patch6,jKali,Incorrect,Chart,5,Chart5b,org.jfree.data.xy.junit.XYSeriesTests,testBug1955483,org.jfree.data.xy.XYSeries,double
+Patch7,Nopol2015,Correct,Chart,5,Chart5b,org.jfree.data.xy.junit.XYSeriesTests,testBug1955483,org.jfree.data.xy.XYSeries,double
+Patch8,jGenprog,Incorrect,Chart,7,Chart7b,org.jfree.data.time.junit.TimePeriodValuesTests,testGetMaxMiddleIndex,org.jfree.data.time.TimePeriodValues,long
+Patch9,jGenprog,Incorrect,Chart,13,Chart13b,org.jfree.chart.block.junit.BorderArrangementTests,testSizingWithWidthConstraint,org.jfree.chart.block.BorderArrangement,double
+Patch10,jKali,Incorrect,Chart,13,Chart13b,org.jfree.chart.block.junit.BorderArrangementTests,testSizingWithWidthConstraint,org.jfree.chart.block.BorderArrangement,double
