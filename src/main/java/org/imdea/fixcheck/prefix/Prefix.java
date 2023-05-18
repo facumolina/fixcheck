@@ -17,6 +17,7 @@ public class Prefix {
   CompilationUnit methodCompilationUnit;
   Prefix parent;
   String className;
+  boolean methodHasTestAnnotation; // True if the method has a @Test annotation
 
   /**
    * Constructor
@@ -37,6 +38,8 @@ public class Prefix {
     this.method = Objects.requireNonNull(method, "method cannot be null");
     this.methodCompilationUnit = Objects.requireNonNull(methodCompilationUnit, "methodClass cannot be null");
     this.parent = parent;
+    // Check if the method has a @Test annotation
+    methodHasTestAnnotation = method.getAnnotations().stream().anyMatch(a -> a.getNameAsString().equals("Test"));
   }
 
   /**
@@ -71,6 +74,11 @@ public class Prefix {
    * @return Parent prefix
    */
   public Prefix getParent() { return parent; }
+
+  /**
+   * Check if the method has a @Test annotation
+   */
+  public boolean methodHasTestAnnotation() { return methodHasTestAnnotation; }
 
   @Override
   public boolean equals(Object o) {

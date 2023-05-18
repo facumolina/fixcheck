@@ -62,9 +62,14 @@ public class PrefixRunner {
 
       // Use JUnit core to run the prefix test
       JUnitCore jUnitCore = new JUnitCore();
-      Description description = Description.createTestDescription(justCreatedClass, prefix.getMethod().getNameAsString());
-      Request req = Request.aClass(justCreatedClass).filterWith(description);
-      System.out.println("---> description: " + description);
+      Request req = Request.aClass(justCreatedClass);
+      if (prefix.methodHasTestAnnotation()) {
+        Description description = Description.createTestDescription(justCreatedClass, prefix.getMethod().getNameAsString());
+        req = req.filterWith(description);
+        System.out.println("---> using description: " + description);
+      } else {
+        System.out.println("---> no @Test annotation found, running all tests");
+      }
       Result testResult = jUnitCore.run(req);
       System.out.printf("---> test ran: %s, Failed: %s%n", testResult.getRunCount(), testResult.getFailureCount());
       if (testResult.getFailureCount() > 0) {
@@ -74,7 +79,6 @@ public class PrefixRunner {
         }
       }
       return testResult;
-
     }
 
     throw new IllegalStateException("Compilation failed, unable to run test");
