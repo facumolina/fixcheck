@@ -47,7 +47,9 @@ public class TransformationHelper {
   }
 
   /**
-   * Get the method declaration of a method in a class.
+   * Get the method declaration of a method in a compilation unit
+   * @param compilationUnit is the compilation unit
+   * @param methodName is the name of the method
    */
   public static MethodDeclaration getMethodDeclFromCompilationUnit(CompilationUnit compilationUnit, String methodName) {
     // Find the method declaration which name is methodName
