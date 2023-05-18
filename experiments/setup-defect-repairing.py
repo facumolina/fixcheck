@@ -4,7 +4,7 @@ import json
 import subprocess
 
 # Script to setup a DefectsRepairing subject to run FixCheck
-# The script will perform the following steps:
+# The script performs the following steps:
 #   1. Extract the corresponding defects4j project from the subject config file
 #   2. Checkout and compile the project
 #
