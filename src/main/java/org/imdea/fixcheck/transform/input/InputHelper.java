@@ -31,6 +31,7 @@ public class InputHelper {
     INPUTS_BY_TYPE.put("java.util.Boolean", Collections.singletonList(BooleanLiteralExpr.class));
     INPUTS_BY_TYPE.put("int", Collections.singletonList(IntegerLiteralExpr.class));
     INPUTS_BY_TYPE.put("java.lang.Integer", Collections.singletonList(IntegerLiteralExpr.class));
+    INPUTS_BY_TYPE.put("long", Collections.singletonList(LongLiteralExpr.class));
     INPUTS_BY_TYPE.put("java.lang.Long", Collections.singletonList(LongLiteralExpr.class));
     INPUTS_BY_TYPE.put("double", Collections.singletonList(DoubleLiteralExpr.class));
     INPUTS_BY_TYPE.put("java.lang.Double", Collections.singletonList(DoubleLiteralExpr.class));
