@@ -9,3 +9,12 @@ Patch7,Nopol2015,Correct,Chart,5,Chart5b,org.jfree.data.xy.junit.XYSeriesTests,t
 Patch8,jGenprog,Incorrect,Chart,7,Chart7b,org.jfree.data.time.junit.TimePeriodValuesTests,testGetMaxMiddleIndex,org.jfree.data.time.TimePeriodValues,long
 Patch9,jGenprog,Incorrect,Chart,13,Chart13b,org.jfree.chart.block.junit.BorderArrangementTests,testSizingWithWidthConstraint,org.jfree.chart.block.BorderArrangement,double
 Patch10,jKali,Incorrect,Chart,13,Chart13b,org.jfree.chart.block.junit.BorderArrangementTests,testSizingWithWidthConstraint,org.jfree.chart.block.BorderArrangement,double
+Patch11,Nopol2015,Incorrect,Chart,13,Chart13b,org.jfree.chart.block.junit.BorderArrangementTests,testSizingWithWidthConstraint,org.jfree.chart.block.BorderArrangement,double
+Patch12,jGenprog,Incorrect,Chart,15,Chart15b,org.jfree.chart.plot.junit.PiePlot3DTests,testDrawWithNullDataset,org.jfree.chart.plot.PiePlot,int
+Patch13,jKali,Incorrect,Chart,15,Chart15b,org.jfree.chart.plot.junit.PiePlot3DTests,testDrawWithNullDataset,org.jfree.chart.plot.PiePlot,int
+Patch14,Nopol2015,Incorrect,Chart,21,Chart15b,org.jfree.data.statistics.junit.DefaultBoxAndWhiskerCategoryDatasetTests,testGetRangeBounds,org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset,double
+Patch15,jGenprog,Incorrect,Chart,25,Chart25b,org.jfree.chart.renderer.category.junit.StatisticalBarRendererTests,testDrawWithNullMeanVertical:testDrawWithNullDeviationVertical:testDrawWithNullMeanHorizontal:testDrawWithNullDeviationHorizontal,org.jfree.chart.renderer.category.StatisticalBarRenderer,double
+Patch16,jKali,Incorrect,Chart,25,Chart25b,org.jfree.chart.renderer.category.junit.StatisticalBarRendererTests,testDrawWithNullMeanVertical:testDrawWithNullDeviationVertical:testDrawWithNullMeanHorizontal:testDrawWithNullDeviationHorizontal,org.jfree.chart.renderer.category.StatisticalBarRenderer,double
+Patch17,Nopol2015,Incorrect,Chart,25,Chart25b,org.jfree.chart.renderer.category.junit.StatisticalBarRendererTests,testDrawWithNullMeanVertical:testDrawWithNullDeviationVertical:testDrawWithNullMeanHorizontal:testDrawWithNullDeviationHorizontal,org.jfree.chart.renderer.category.StatisticalBarRenderer,double
+Patch18,jKali,Incorrect,Chart,26,Chart26b,org.jfree.chart.junit.AreaChartTests,testDrawWithNullInfo,org.jfree.chart.axis.Axis,int
+Patch19,Nopol2015,Incorrect,Chart,26,Chart26b,org.jfree.chart.junit.AreaChartTests,testDrawWithNullInfo,org.jfree.chart.axis.Axis,int
