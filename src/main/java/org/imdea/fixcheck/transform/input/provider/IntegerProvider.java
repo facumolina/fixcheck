@@ -1,7 +1,5 @@
 package org.imdea.fixcheck.transform.input.provider;
 
-import soot.jimple.IntConstant;
-
 import java.util.Random;
 
 /**

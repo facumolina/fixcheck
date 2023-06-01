@@ -11,7 +11,6 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    implementation "org.soot-oss:soot:4.4.0"
     implementation "junit:junit:4.12"
     implementation group: 'org.bitbucket.mstrobel', name: 'procyon-compilertools', version: '0.6.0'
     implementation group: 'org.json', name: 'json', version: '20230227'
