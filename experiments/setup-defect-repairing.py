@@ -45,9 +45,17 @@ if not os.path.isdir(working_dir):
 	print(f'---> checking out with command: {cmd}')
 	subprocess.call(cmd, shell=True)
 	print()
+	# Compile and run the defects4j test command to preserve the current test failure
+	os.chdir(working_dir)
+	cmd = f'defects4j compile'
+	print(f'---> compiling with command: {cmd}')
+	subprocess.call(cmd, shell=True)
+	cmd = f'defects4j test'
+	print(f'---> generating test report with command: {cmd}')
+	subprocess.call(cmd, shell=True)
+	print()
 	# Apply the patch
 	patch_file = os.path.join(DEFECT_REPAIRING_DATASET, f'tool/patches/{subject_id}')
-	# Move to the subject working dir
 	subject_dir = os.path.join(DEFECT_REPAIRING_DATASET, f'tmp/{subject_id}')
 	os.chdir(subject_dir)
 	cmd = f'patch -u -p0 < {patch_file}'
