@@ -30,16 +30,17 @@ main_dep = 'build'
 test_classes = 'build-tests'
 test_classes_path = os.path.join(subject_base_dir, test_classes)
 subject_cp = os.path.join(subject_base_dir, main_dep)+':'+test_classes_path
-# Classes
+# Classes and methods
 target_test = subject_data['target_test'].values[0]
 target_test_methods = subject_data['target_test_methods'].values[0]
 tests_src_dir = 'tests'
 target_test_dir = os.path.join(subject_base_dir, tests_src_dir)
 target_class = subject_data['target_class'].values[0]
 input_class = subject_data['input_class'].values[0]
+failure_log = os.path.join(subject_base_dir, 'failing_tests')
 
 # Run FixCheck
-subprocess.run(f'./fixcheck.sh {subject_cp} {test_classes_path} {target_test} {target_test_methods} {target_test_dir} {target_class} {input_class}', shell=True)
+subprocess.run(f'./fixcheck.sh {subject_cp} {test_classes_path} {target_test} {target_test_methods} {target_test_dir} {target_class} {input_class} {failure_log}', shell=True)
 
 output_file = os.path.join(outputs_dir, subject_id+'-report.csv')
 print(f'Renaming output file to: {output_file}')

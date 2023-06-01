@@ -4,13 +4,10 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
-import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.utils.SourceRoot;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.input.InputHelper;
-import soot.*;
 
 import java.nio.file.Paths;
 import java.util.*;
@@ -33,6 +30,7 @@ public class Properties {
   public static CompilationUnit TEST_CLASS_SRC; // Source file of test class
   public static String[] TEST_CLASS_METHODS; // Methods in the test class to analyze
   public static int PREFIXES_IN_TEST_CLASS = 0; // Number of prefixes in the test class
+  public static String ORIGINAL_FAILURE_LOG;
 
   // Properties related to the target class
   public static String TARGET_CLASS; // Full name of the target class
@@ -42,7 +40,6 @@ public class Properties {
 
   // Properties related to inputs
   public static String INPUTS_CLASS; // Full name of the inputs class
-  public static SootClass SOOT_INPUTS_CLASS; // Soot class of the inputs class
 
   // Output files
   public static String OUTPUT_DIR = "fixcheck-output"; // Output directory

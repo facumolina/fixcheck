@@ -31,7 +31,8 @@ public class FixCheck {
     Properties.TEST_CLASS_SRC_DIR = args[3];
     Properties.TARGET_CLASS = args[4];
     Properties.INPUTS_CLASS = args[5];
-    Properties.PREFIX_VARIATIONS = Integer.parseInt(args[6]);
+    Properties.ORIGINAL_FAILURE_LOG = args[6];
+    Properties.PREFIX_VARIATIONS = Integer.parseInt(args[7]);
     System.out.println("classpath: " + Properties.FULL_CLASSPATH);
     System.out.println("test classes path: " + Properties.TEST_CLASSES_PATH);
     System.out.println("test class: " + Properties.TEST_CLASS);
@@ -39,6 +40,7 @@ public class FixCheck {
     System.out.println("test classes sources: " + Properties.TEST_CLASS_SRC_DIR);
     System.out.println("target class: " + Properties.TARGET_CLASS);
     System.out.println("inputs class: " + Properties.INPUTS_CLASS);
+    System.out.println("original failure log: " + Properties.ORIGINAL_FAILURE_LOG);
     System.out.println();
   }
 
