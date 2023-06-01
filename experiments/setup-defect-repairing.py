@@ -67,7 +67,7 @@ else:
     print()
 
 
-# Compile the project
+# Compile the project including the patch
 os.chdir(working_dir)
 cmd = f'defects4j compile'
 print(f'--> compiling with cmd: {cmd}')
