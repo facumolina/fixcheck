@@ -77,8 +77,6 @@ public class Properties {
       if (method.getNameAsString().equals("<init>")) continue;
       // We don't want to process methods that are not test methods
       if (!isTestMethod(method.getNameAsString())) continue;
-      // Remove assert statements from the method containing org.junit.Assert or org.junit.TestCase*assert
-      removeAssertionsFromMethod(method);
       // Create the prefix
       prefixes.add(new Prefix(method, TEST_CLASS_SRC));
     }
@@ -88,26 +86,6 @@ public class Properties {
     }
     PREFIXES_IN_TEST_CLASS = prefixes.size();
     return prefixes;
-  }
-
-  /**
-   * Remove assert statements from the method containing org.junit.Assert
-   */
-  private static void removeAssertionsFromMethod(MethodDeclaration methodDecl) {
-    // Remove the assertion statements from the method declaration
-    methodDecl.getBody().get().getStatements().removeIf(stmt -> {
-      if (stmt instanceof ExpressionStmt) {
-        ExpressionStmt exprStmt = (ExpressionStmt) stmt;
-        if (exprStmt.getExpression() instanceof MethodCallExpr) {
-          MethodCallExpr methodCallExpr = (MethodCallExpr) exprStmt.getExpression();
-          return methodCallExpr.getNameAsString().equals("assertNotNull")
-              || methodCallExpr.getNameAsString().equals("assertTrue")
-              || methodCallExpr.getNameAsString().equals("assertFalse")
-              || methodCallExpr.getNameAsString().equals("assertEquals");
-        }
-      }
-      return false;
-    });
   }
 
   /**

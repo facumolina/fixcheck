@@ -3,7 +3,9 @@ package org.imdea.fixcheck.transform.input;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithType;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
 import org.imdea.fixcheck.Properties;
 import org.imdea.fixcheck.prefix.BasicInput;
 import org.imdea.fixcheck.prefix.Input;
@@ -43,12 +45,34 @@ public class InputTransformer extends PrefixTransformer {
     CompilationUnit newCompilationUnit = TransformationHelper.initializeTransformedClass(className, prefixCompilationUnit);
     // Prepare the new method body
     MethodDeclaration newMethod = TransformationHelper.getMethodDeclFromCompilationUnit(newCompilationUnit, prefixMethod.getNameAsString());
+    // Remove assert statements from the method containing org.junit.Assert or org.junit.TestCase*assert
+    removeAssertionsFromMethod(newMethod);
     // Replace the input
     replaceInput(newMethod);
     // Transformed prefix
     Prefix transformedPrefix = new Prefix(newMethod, newCompilationUnit, prefix);
     transformedPrefix.setClassName(className);
     return transformedPrefix;
+  }
+
+  /**
+   * Remove assert statements from the method containing org.junit.Assert
+   */
+  private static void removeAssertionsFromMethod(MethodDeclaration methodDecl) {
+    // Remove the assertion statements from the method declaration
+    methodDecl.getBody().get().getStatements().removeIf(stmt -> {
+      if (stmt instanceof ExpressionStmt) {
+        ExpressionStmt exprStmt = (ExpressionStmt) stmt;
+        if (exprStmt.getExpression() instanceof MethodCallExpr) {
+          MethodCallExpr methodCallExpr = (MethodCallExpr) exprStmt.getExpression();
+          return methodCallExpr.getNameAsString().equals("assertNotNull")
+              || methodCallExpr.getNameAsString().equals("assertTrue")
+              || methodCallExpr.getNameAsString().equals("assertFalse")
+              || methodCallExpr.getNameAsString().equals("assertEquals");
+        }
+      }
+      return false;
+    });
   }
 
   @Override
