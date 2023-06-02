@@ -1,5 +1,6 @@
 package org.imdea.fixcheck.assertion;
 
+import com.github.javaparser.ast.body.MethodDeclaration;
 import org.imdea.fixcheck.assertion.common.AssertionsHelper;
 import org.imdea.fixcheck.prefix.Prefix;
 
@@ -7,6 +8,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -56,16 +59,15 @@ public class TextDavinci003 extends AssertionGenerator {
   @Override
   public void generateAssertions(Prefix prefix) {
     // Prepare the prompt
-    //System.out.println("---> prefix: " + prefix.getMethodClass().getName());
     String prompt = generatePrompt(prefix);
     System.out.println("prompt:");
     System.out.println(prompt);
     // Perform the call to the OpenAI API
-    String assertions = performCall(prompt);
-    System.out.println("---> assertions: " + assertions);
+    String responseText = performCall(prompt);
+    List<String> assertionsStr = getAssertionsFromResponseText(responseText);
+    System.out.println("---> assertions: " + assertionsStr);
     System.out.println();
-    AssertionsHelper.appendAssertionsToPrefix(assertions, prefix);
-    // TODO: append the assertions to the prefix
+    AssertionsHelper.appendAssertionsToPrefix(assertionsStr, prefix);
   }
 
   /**
@@ -120,5 +122,26 @@ public class TextDavinci003 extends AssertionGenerator {
       throw new RuntimeException(e);
     }
   }
+
+  /**
+   * Get assertions as strings from response text
+   * @param text the response
+   * @return a list of assertion strings
+   */
+  private List<String> getAssertionsFromResponseText(String text) {
+    List<String> assertionsStr = new ArrayList<>();
+    String[] lines = text.split("\\r?\\n"); // Split by lines
+    for (String possibleAssertion : lines) {
+      if (possibleAssertion.startsWith("//")) continue; // It's a comment
+      if (possibleAssertion.trim().isEmpty()) continue; // It's an empty line
+      assertionsStr.add(possibleAssertion);
+    }
+    return assertionsStr;
+  }
+
+  /**
+   * Valid/fix the given assertion string
+   */
+  private String validateOrFixAssertionStr(String assertionStr) { return ""; }
 
 }
