@@ -12,6 +12,7 @@ target_test_methods=$4
 target_test_dir=$5
 target_class=$6
 inputs_class=$7
+original_failure_log=$8
 full_cp='build/libs/fixcheck-all-1.0.0.jar:'$subject_cp
 
-java -cp $full_cp org.imdea.fixcheck.FixCheck $test_classes_path $target_test $target_test_methods $target_test_dir $target_class $inputs_class 2
+java -cp $full_cp org.imdea.fixcheck.FixCheck $test_classes_path $target_test $target_test_methods $target_test_dir $target_class $inputs_class $original_failure_log 1
