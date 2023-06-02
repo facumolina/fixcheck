@@ -35,9 +35,21 @@ tests_src_dir = subject_data['test_src_dir'].values[0]
 target_test_dir = os.path.join(subject_base_dir, tests_src_dir)
 target_class = subject_data['target_class'].values[0]
 input_class = subject_data['input_class'].values[0]
+# Failure log
+
+failure_dir = os.path.join(BF4J_DATASET, 'data/'+subject_id+'/failures')
+failure_log = ""
+if os.path.exists(failure_dir):
+    for filename in os.listdir(failure_dir):
+        if filename.endswith(".log"):
+            f = os.path.join(failure_dir, filename)
+            failure_log += f+":"
+    failure_log = failure_log[:-1]
+else:
+    failure_log = "log"
 
 # Run FixCheck
-subprocess.run(f'./fixcheck.sh {subject_cp} {test_classes_path} {target_test} {target_test_methods} {target_test_dir} {target_class} {input_class}', shell=True)
+subprocess.run(f'./fixcheck.sh {subject_cp} {test_classes_path} {target_test} {target_test_methods} {target_test_dir} {target_class} {input_class} {failure_log}', shell=True)
 
 # Rename output file for this subject
 output_file = os.path.join(outputs_dir, subject_id+'-report.csv')
