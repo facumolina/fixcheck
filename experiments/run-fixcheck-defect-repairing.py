@@ -26,14 +26,14 @@ subject_base_dir = os.path.join(DEFECT_REPAIRING_DATASET, f'tmp/{subject_id}/{pa
 
 
 # Dependencies
-main_dep = 'build'
-test_classes = 'build-tests'
+main_dep = subject_data['main_dep'].values[0]
+test_classes = subject_data['tests_build'].values[0]
 test_classes_path = os.path.join(subject_base_dir, test_classes)
 subject_cp = os.path.join(subject_base_dir, main_dep)+':'+test_classes_path
 # Classes and methods
 target_test = subject_data['target_test'].values[0]
 target_test_methods = subject_data['target_test_methods'].values[0]
-tests_src_dir = 'tests'
+tests_src_dir = subject_data['tests_src_dir'].values[0]
 target_test_dir = os.path.join(subject_base_dir, tests_src_dir)
 target_class = subject_data['target_class'].values[0]
 input_class = subject_data['input_class'].values[0]
