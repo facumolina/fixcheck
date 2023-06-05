@@ -3,8 +3,6 @@ package org.imdea.fixcheck;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.utils.SourceRoot;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.input.InputHelper;
