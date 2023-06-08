@@ -43,6 +43,9 @@ public class Properties {
   public static String OUTPUT_DIR = "fixcheck-output"; // Output directory
   public static String OUTPUT_REPORT = "report.csv"; // Output file for stats
 
+  public static String OUTPUT_PASSING_PREFIXES_DIR = "passing-tests"; // Output dir for passing tests
+  public static String OUTPUT_FAILING_PREFIXES_DIR = "failing-tests"; // Output dir for failing tests
+
   /**
    * Setup all Properties.
    */
@@ -117,6 +120,20 @@ public class Properties {
    */
   public static String getReportFileName() {
     return OUTPUT_DIR + "/" + OUTPUT_REPORT;
+  }
+
+  /**
+   * Get the folder name for passing prefixes
+   */
+  public static String getPassingTestsDir() {
+    return OUTPUT_DIR + "/" + OUTPUT_PASSING_PREFIXES_DIR;
+  }
+
+  /**
+   * Get the folder name for failing prefixes
+   */
+  public static String getFailingTestsDir() {
+    return OUTPUT_DIR + "/" + OUTPUT_FAILING_PREFIXES_DIR;
   }
 
 }
