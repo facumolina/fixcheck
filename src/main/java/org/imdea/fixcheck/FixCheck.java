@@ -8,6 +8,7 @@ import org.imdea.fixcheck.transform.PrefixTransformer;
 import org.imdea.fixcheck.transform.input.InputHelper;
 import org.imdea.fixcheck.transform.input.InputTransformer;
 import org.imdea.fixcheck.utils.Stats;
+import org.imdea.fixcheck.writer.PrefixWriter;
 import org.imdea.fixcheck.writer.ReportWriter;
 import org.junit.runner.Result;
 
@@ -113,10 +114,10 @@ public class FixCheck {
 
         // Run the transformed prefix
         start = System.currentTimeMillis();
-        Result result = PrefixRunner.runPrefix(newPrefix);
+        PrefixRunner.runPrefix(newPrefix);
         elapsedTime = System.currentTimeMillis() - start;
         Stats.MS_RUNNING_PREFIXES += elapsedTime;
-        savePrefix(newPrefix, result);
+        savePrefix(newPrefix);
         generatedPrefixes.add(newPrefix);
         System.out.println();
       }
@@ -147,9 +148,9 @@ public class FixCheck {
   /**
    * Save the prefix in the corresponding set
    * @param prefix Prefix to save
-   * @param result Result of the prefix execution
    */
-  private static void savePrefix(Prefix prefix, Result result) {
+  private static void savePrefix(Prefix prefix) {
+    Result result = prefix.getExecutionResult();
     if (result.getFailureCount() > 0) {
       // If some failure is an assertion error, then the prefix failed the assertion
       if (result.getFailures().stream().anyMatch(f -> f.getException() instanceof AssertionError)) {
@@ -172,6 +173,13 @@ public class FixCheck {
     String reportFile = Properties.getReportFileName();
     System.out.println("report file: " + reportFile);
     ReportWriter.writeReport(reportFile);
+    String passingPrefixesDir = Properties.getPassingTestsDir();
+    System.out.println("passing prefixes: "+passingPrefixesDir);
+    PrefixWriter.savePassingPrefixes(passingPrefixes, passingPrefixesDir);
+    String failingPrefixesDir = Properties.getFailingTestsDir();
+    System.out.println("failing prefixes: "+failingPrefixesDir);
+    PrefixWriter.saveFailingPrefixes(crashingPrefixes, failingPrefixesDir);
+    PrefixWriter.saveFailingPrefixes(assertionFailingPrefixes, failingPrefixesDir);
   }
 
 }

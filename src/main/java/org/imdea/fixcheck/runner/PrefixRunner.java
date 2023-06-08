@@ -31,7 +31,7 @@ public class PrefixRunner {
    * @param prefix Prefix to run
    * @return Result of the execution
    */
-  public static Result runPrefix(Prefix prefix) throws ClassNotFoundException, IOException {
+  public static void runPrefix(Prefix prefix) throws ClassNotFoundException, IOException {
     System.out.println("---> prefix: ");
     System.out.println(prefix.getMethod());
 
@@ -78,7 +78,9 @@ public class PrefixRunner {
           System.out.println("\t"+failure.toString());
         }
       }
-      return testResult;
+
+      prefix.setExecutionResult(testResult);
+      return;
     }
 
     throw new IllegalStateException("Compilation failed, unable to run test");
