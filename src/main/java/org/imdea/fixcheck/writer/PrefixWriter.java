@@ -1,13 +1,17 @@
 package org.imdea.fixcheck.writer;
 
+import com.opencsv.CSVWriter;
+import org.imdea.fixcheck.Properties;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -53,6 +57,31 @@ public class PrefixWriter {
     } catch (IOException e) {
       e.printStackTrace();
       System.out.println("Error writing passing prefixes to folder: " + outputFolder);
+    }
+  }
+
+  /**
+   * Save a report containing each failing prefix with its corresponding score
+   * @param scores is the set of failing prefixes with their corresponding scores
+   * @param scoresFileName is the corresponding file name
+   */
+  public static void saveScores(Map<Prefix, Double> scores, String scoresFileName) {
+    try {
+      Files.createDirectories(Paths.get(Properties.OUTPUT_DIR));
+      String[] header = {"prefix","score"};
+      File file = new File(scoresFileName);
+      try (CSVWriter writer = new CSVWriter(new FileWriter(file), CSVWriter.DEFAULT_SEPARATOR, CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END)) {
+        writer.writeNext(header);
+        scores.entrySet()
+            .stream()
+            .sorted(Map.Entry.comparingByValue())
+            .forEach(entry ->
+                writer.writeNext(new String[]{ entry.getKey().getClassName(), entry.getValue().toString()})
+            );
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.out.println("Error writing report file: " + scoresFileName);
     }
   }
 

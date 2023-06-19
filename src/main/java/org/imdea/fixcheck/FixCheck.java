@@ -2,6 +2,7 @@ package org.imdea.fixcheck;
 
 import org.imdea.fixcheck.assertion.AssertTrueGenerator;
 import org.imdea.fixcheck.assertion.AssertionGenerator;
+import org.imdea.fixcheck.checker.FailureChecker;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.runner.PrefixRunner;
 import org.imdea.fixcheck.transform.PrefixTransformer;
@@ -11,6 +12,7 @@ import org.imdea.fixcheck.utils.Stats;
 import org.imdea.fixcheck.writer.PrefixWriter;
 import org.imdea.fixcheck.writer.ReportWriter;
 import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
 
 import java.io.*;
 import java.util.*;
@@ -24,6 +26,7 @@ public class FixCheck {
   private static Set<Prefix> crashingPrefixes = new HashSet<>(); // Built prefixes that crash when executed
   private static Set<Prefix> assertionFailingPrefixes = new HashSet<>(); // Built prefixes that fail the assertion when executed
   private static Set<Prefix> passingPrefixes = new HashSet<>(); // Built prefixes that pass the assertion when executed
+  private static Map<Prefix, Double> failingPrefixesScores = new HashMap<>(); // Failing prefixes with their scores (similarity to the original failure)
 
   private static void readArgs(String[] args) {
     Properties.TEST_CLASSES_PATH = args[0];
@@ -160,10 +163,25 @@ public class FixCheck {
         System.out.println("---> prefix crashed");
         crashingPrefixes.add(prefix);
       }
+      measureFailureReason(prefix, result);
     } else {
       System.out.println("---> prefix passed");
       passingPrefixes.add(prefix);
     }
+  }
+
+  /**
+   * Measure the similarity of the given failing result with the original failure
+   * @param prefix is the executed prefix
+   * @param result is a failing result
+   */
+  private static void measureFailureReason(Prefix prefix, Result result) {
+    double max=0;
+    for (Failure failure : result.getFailures()) {
+      max = Math.max(FailureChecker.similarity(failure, Properties.ORIGINAL_FAILURE_STR),max);
+    }
+    System.out.println("---> failure similarity: "+max);
+    failingPrefixesScores.put(prefix, max);
   }
 
   /**
@@ -180,6 +198,9 @@ public class FixCheck {
     System.out.println("failing prefixes: "+failingPrefixesDir);
     PrefixWriter.saveFailingPrefixes(crashingPrefixes, failingPrefixesDir);
     PrefixWriter.saveFailingPrefixes(assertionFailingPrefixes, failingPrefixesDir);
+    String scoresFile = Properties.geScoresFileName();
+    System.out.println("scores file: "+scoresFile);
+    PrefixWriter.saveScores(failingPrefixesScores, scoresFile);
   }
 
 }

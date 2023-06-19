@@ -45,9 +45,9 @@ public class Properties {
   // Output files
   public static String OUTPUT_DIR = "fixcheck-output"; // Output directory
   public static String OUTPUT_REPORT = "report.csv"; // Output file for stats
-
   public static String OUTPUT_PASSING_PREFIXES_DIR = "passing-tests"; // Output dir for passing tests
   public static String OUTPUT_FAILING_PREFIXES_DIR = "failing-tests"; // Output dir for failing tests
+  public static String OUTPUT_SCORES = "scores-failing-tests.csv"; // Output file for score of each failing prefix
 
   /**
    * Setup all Properties.
@@ -128,7 +128,11 @@ public class Properties {
     try {
       List<String> allLines = Files.readAllLines(Paths.get(ORIGINAL_FAILURE_LOG));
       allLines.remove(0);
-      allLines.forEach(s -> ORIGINAL_FAILURE_STR += s+"\n");
+      for (String line : allLines) {
+        if (line.contains("at sun.reflect.NativeMethodAccessorImpl.invoke0")) // Everything after this line is not related to the actual test
+            break;
+        ORIGINAL_FAILURE_STR += line+"\n";
+      }
     } catch (IOException e) {
       System.out.println("Error opening file: "+ORIGINAL_FAILURE_LOG);
       System.out.println(e.getMessage());
@@ -140,6 +144,13 @@ public class Properties {
    */
   public static String getReportFileName() {
     return OUTPUT_DIR + "/" + OUTPUT_REPORT;
+  }
+
+  /**
+   * Get the scores file name
+   */
+  public static String geScoresFileName() {
+    return OUTPUT_DIR + "/" + OUTPUT_SCORES;
   }
 
   /**
