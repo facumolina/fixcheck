@@ -46,7 +46,8 @@ subprocess.run(f'./fixcheck.sh {subject_cp} {test_classes_path} {target_test} {t
 output_file = os.path.join(outputs_dir, subject_id+'-report.csv')
 subject_output_folder = os.path.join(outputs_dir, f'defects-repairing/{subject_id}')
 print(f'Moving all outputs to dir: {subject_output_folder}')
-os.makedirs(subject_output_folder)
+if not os.path.exists(subject_output_folder):
+    os.makedirs(subject_output_folder)
 subprocess.run(f'mv {outputs_dir}/report.csv {subject_output_folder}', shell=True)
 subprocess.run(f'mv {outputs_dir}/failing-tests {subject_output_folder}', shell=True)
 subprocess.run(f'mv {outputs_dir}/passing-tests {subject_output_folder}', shell=True)
