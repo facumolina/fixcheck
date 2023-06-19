@@ -49,5 +49,6 @@ print(f'Moving all outputs to dir: {subject_output_folder}')
 if not os.path.exists(subject_output_folder):
     os.makedirs(subject_output_folder)
 subprocess.run(f'mv {outputs_dir}/report.csv {subject_output_folder}', shell=True)
+subprocess.run(f'mv {outputs_dir}/scores-failing-tests.csv {subject_output_folder}', shell=True)
 subprocess.run(f'mv {outputs_dir}/failing-tests {subject_output_folder}', shell=True)
 subprocess.run(f'mv {outputs_dir}/passing-tests {subject_output_folder}', shell=True)
