@@ -7,6 +7,8 @@ import com.github.javaparser.utils.SourceRoot;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.input.InputHelper;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -28,7 +30,8 @@ public class Properties {
   public static CompilationUnit TEST_CLASS_SRC; // Source file of test class
   public static String[] TEST_CLASS_METHODS; // Methods in the test class to analyze
   public static int PREFIXES_IN_TEST_CLASS = 0; // Number of prefixes in the test class
-  public static String ORIGINAL_FAILURE_LOG;
+  public static String ORIGINAL_FAILURE_LOG; // Log file with the original failure
+  public static String ORIGINAL_FAILURE_STR; // String wht the original failure file content
 
   // Properties related to the target class
   public static String TARGET_CLASS; // Full name of the target class
@@ -54,6 +57,8 @@ public class Properties {
     loadTestClassSourceCode();
     // Initialize the possible input classes for each type
     InputHelper.initializeHelper();
+    // Load the original failure content
+    loadFailureLog();
   }
 
   /**
@@ -112,6 +117,21 @@ public class Properties {
       TEST_CLASS_SIMPLE_NAME = classParts[classParts.length - 1];
       TEST_CLASS_PACKAGE_NAME = TEST_CLASS.substring(0, TEST_CLASS.length() - TEST_CLASS_SIMPLE_NAME.length() - 1);
       TEST_CLASS_SRC = sourceRoot.parse(TEST_CLASS_PACKAGE_NAME, TEST_CLASS_SIMPLE_NAME + ".java");
+    }
+  }
+
+  /**
+   * Load the content of the original failure.
+   */
+  private static void loadFailureLog() {
+    ORIGINAL_FAILURE_STR = "";
+    try {
+      List<String> allLines = Files.readAllLines(Paths.get(ORIGINAL_FAILURE_LOG));
+      allLines.remove(0);
+      allLines.forEach(s -> ORIGINAL_FAILURE_STR += s+"\n");
+    } catch (IOException e) {
+      System.out.println("Error opening file: "+ORIGINAL_FAILURE_LOG);
+      System.out.println(e.getMessage());
     }
   }
 
