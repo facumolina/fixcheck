@@ -42,7 +42,7 @@ public class TextDavinci003 extends AssertionGenerator {
    * Default constructor
    */
   public TextDavinci003() {
-    maxTokens = 300;
+    maxTokens = 500;
     temperature = 0.5;
   }
 
