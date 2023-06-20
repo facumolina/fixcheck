@@ -1,15 +1,27 @@
 import csv
 import os
 import json
+import re
 
 # This script gets the badfixes from the defects repairing and saves them to a file
 # to be later processed before passing it to the FixCheck script
+
+def atoi(text):
+    return int(text) if text.isdigit() else text
+
+def natural_keys(text):
+    '''
+    alist.sort(key=natural_keys) sorts in human order
+    http://nedbatchelder.com/blog/200712/human_sorting.html
+    (See Toothy's implementation in the comments)
+    '''
+    return [ atoi(c) for c in re.split(r'(\d+)', text) ]
 
 DEFECTS_REPAIRING = os.getenv('DEFECT_REPAIRING_DATASET')
 patches_folder = DEFECTS_REPAIRING+"/tool/patches/INFO"
 patches_file = 'experiments/patches-dr.csv'
 patches = os.listdir(patches_folder)
-patches.sort()
+patches.sort(key=natural_keys)
 
 headers = ['id','tool','correctness','project','bug','base_dir','main_dep','tests_build','tests_src_dir','target_test','target_test_methods','target_class','input_class']
 
