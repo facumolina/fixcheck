@@ -45,11 +45,11 @@ Patch43,Nopol2015,Incorrect,Math,49,Math49b,target/classes,target/test-classes,s
 Patch44,jGenprog,Correct,Math,50,Math50b,target/classes,target/test-classes,src/test/java,org.apache.commons.math.analysis.solvers.RegulaFalsiSolverTest,testIssue631,org.apache.commons.math.analysis.solvers.BaseSecantSolver,int
 Patch45,jKali,Correct,Math,50,Math50b,target/classes,target/test-classes,src/test/java,org.apache.commons.math.analysis.solvers.RegulaFalsiSolverTest,testIssue631,org.apache.commons.math.analysis.solvers.BaseSecantSolver,int
 Patch46,Nopol2015,Correct,Math,50,Math50b,target/classes,target/test-classes,src/test/java,org.apache.commons.math.analysis.solvers.RegulaFalsiSolverTest,testIssue631,org.apache.commons.math.analysis.solvers.BaseSecantSolver,int
-Patch47,jGenprog,Correct,Math,53,Math53b,target/classes,target/test-classes,src/test/java,,,,
-Patch48,Nopol2015,Incorrect,Math,57,Math57b,target/classes,target/test-classes,src/test/java,,,,
-Patch49,Nopol2015,Incorrect,Math,58,Math58b,target/classes,target/test-classes,src/test/java,,,,
-Patch50,Nopol2015,Unknown,Math,69,Math69b,target/classes,target/test-classes,src/test/java,,,,
-Patch51,jGenprog,Correct,Math,70,Math70b,target/classes,target/test-classes,src/test/java,,,,
+Patch47,jGenprog,Correct,Math,53,Math53b,target/classes,target/test-classes,src/test/java,org.apache.commons.math.complex.ComplexTest,testAddNaN,org.apache.commons.math.complex.Complex,double
+Patch48,Nopol2015,Incorrect,Math,57,Math57b,target/classes,target/test-classes,src/test/java,org.apache.commons.math.stat.clustering.KMeansPlusPlusClustererTest,testSmallDistances,org.apache.commons.math.stat.clustering.EuclideanIntegerPoint,int
+Patch49,Nopol2015,Incorrect,Math,58,Math58b,target/classes,target/test-classes,src/test/java,org.apache.commons.math.optimization.fitting.GaussianFitterTest,testMath519,org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizer,double
+Patch50,Nopol2015,Unknown,Math,69,Math69b,target/classes,target/test-classes,src/test/java,org.apache.commons.math.stat.correlation.PearsonsCorrelationTest,testPValueNearZero,org.apache.commons.math.stat.correlation.PearsonsCorrelation,int
+Patch51,jGenprog,Correct,Math,70,Math70b,target/classes,target/test-classes,src/test/java,org.apache.commons.math.analysis.solvers.BisectionSolverTest,testMath369,org.apache.commons.math.analysis.solvers.BisectionSolver,double
 Patch52,jGenprog,Unknown,Math,71,Math71b,target/classes,target/test-classes,src/test/java,,,,
 Patch53,Nopol2015,Incorrect,Math,71,Math71b,target/classes,target/test-classes,src/test/java,,,,
 Patch54,jGenprog,Correct,Math,73,Math73b,target/classes,target/test-classes,src/test/java,,,,
