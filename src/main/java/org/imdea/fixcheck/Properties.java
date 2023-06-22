@@ -126,12 +126,14 @@ public class Properties {
   private static void loadFailureLog() {
     ORIGINAL_FAILURE_STR = "";
     try {
-      List<String> allLines = Files.readAllLines(Paths.get(ORIGINAL_FAILURE_LOG));
-      allLines.remove(0);
-      for (String line : allLines) {
-        if (line.contains("at sun.reflect.NativeMethodAccessorImpl.invoke0")) // Everything after this line is not related to the actual test
+      if (ORIGINAL_FAILURE_LOG != null) {
+        List<String> allLines = Files.readAllLines(Paths.get(ORIGINAL_FAILURE_LOG));
+        allLines.remove(0);
+        for (String line : allLines) {
+          if (line.contains("at sun.reflect.NativeMethodAccessorImpl.invoke0")) // Everything after this line is not related to the actual test
             break;
-        ORIGINAL_FAILURE_STR += line+"\n";
+          ORIGINAL_FAILURE_STR += line + "\n";
+        }
       }
     } catch (IOException e) {
       System.out.println("Error opening file: "+ORIGINAL_FAILURE_LOG);
