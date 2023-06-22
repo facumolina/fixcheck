@@ -24,12 +24,18 @@ subject_base_dir = os.path.join('/tmp', subject_data['base_dir'].values[0])
 patch_base_dir = project+str(bug)+"b"
 subject_base_dir = os.path.join(DEFECT_REPAIRING_DATASET, f'tmp/{subject_id}/{patch_base_dir}')
 
+def build_classpath(subject_base_dir,main_dep,test_classes_path):
+    # Split main dep in char ':' and join each part with subject_base_dir
+    subject_cp = ':'.join([os.path.join(subject_base_dir, dep) for dep in main_dep.split(':')])
+    subject_cp = subject_cp+':'+test_classes_path
+    return subject_cp
+
 
 # Dependencies
 main_dep = subject_data['main_dep'].values[0]
 test_classes = subject_data['tests_build'].values[0]
 test_classes_path = os.path.join(subject_base_dir, test_classes)
-subject_cp = os.path.join(subject_base_dir, main_dep)+':'+test_classes_path
+subject_cp = build_classpath(subject_base_dir,main_dep,test_classes_path)
 # Classes and methods
 target_test = subject_data['target_test'].values[0]
 target_test_methods = subject_data['target_test_methods'].values[0]
