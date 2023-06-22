@@ -13,6 +13,8 @@ FixCheck is a tool for patch correctness analysis. It uses random testing to gen
 1. Clone the repository and build the project:
 ```bash
 git clone https://github.com/facumolina/fixcheck
+```
+```bash
 ./gradlew shadowJar
 ```
 2. Install the python requirements:
