@@ -2,6 +2,7 @@ package org.imdea.fixcheck;
 
 import org.imdea.fixcheck.assertion.AssertTrueGenerator;
 import org.imdea.fixcheck.assertion.AssertionGenerator;
+import org.imdea.fixcheck.assertion.TextDavinci003;
 import org.imdea.fixcheck.checker.FailureChecker;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.runner.PrefixRunner;
@@ -82,6 +83,12 @@ public class FixCheck {
     System.out.println("Done!");
   }
 
+  /**
+   * Generate a list of similar prefixes for each prefix in the list.
+   * @param prefixes list of prefixes to generate similar prefixes
+   * @param n number of similar prefixes to generate for each prefix
+   * @return list of similar prefixes
+   */
   public static List<Prefix> generateSimilarPrefixes(List<Prefix> prefixes, int n) throws ClassNotFoundException, IOException {
     List<Prefix> generatedPrefixes = new ArrayList<>();
     List<PrefixTransformer> transformers = Arrays.asList(
@@ -106,23 +113,32 @@ public class FixCheck {
         System.out.println();
         Stats.MS_PREFIXES_GENERATION += elapsedTime;
 
-        // Generate the assertions for the prefix
-        start = System.currentTimeMillis();
-        System.out.println("---> assertion generator: " + assertionGenerator.getClass().getSimpleName());
-        assertionGenerator.generateAssertions(newPrefix);
-        elapsedTime = System.currentTimeMillis() - start;
-        System.out.println("---> time: " + elapsedTime + "ms");
-        System.out.println();
-        Stats.MS_ASSERTIONS_GENERATION += elapsedTime;
-
-        // Run the transformed prefix
+        // Run the prefix.
+        System.out.println("---> prefix execution without assertions");
         start = System.currentTimeMillis();
         PrefixRunner.runPrefix(newPrefix);
         elapsedTime = System.currentTimeMillis() - start;
         Stats.MS_RUNNING_PREFIXES += elapsedTime;
+        Result result = newPrefix.getExecutionResult();
+        if (result.getFailureCount() == 0) {
+          // If it doesn't crash, generate the assertions
+          start = System.currentTimeMillis();
+          System.out.println("---> assertion generator: " + assertionGenerator.getClass().getSimpleName());
+          assertionGenerator.generateAssertions(newPrefix);
+          elapsedTime = System.currentTimeMillis() - start;
+          System.out.println("---> time: " + elapsedTime + "ms");
+          System.out.println();
+          Stats.MS_ASSERTIONS_GENERATION += elapsedTime;
+
+          // Run the transformed prefix
+          System.out.println("---> prefix execution with assertions");
+          start = System.currentTimeMillis();
+          PrefixRunner.runPrefix(newPrefix);
+          elapsedTime = System.currentTimeMillis() - start;
+          Stats.MS_RUNNING_PREFIXES += elapsedTime;
+        }
         savePrefix(newPrefix);
         generatedPrefixes.add(newPrefix);
-        System.out.println();
       }
     }
 
@@ -168,6 +184,7 @@ public class FixCheck {
       System.out.println("---> prefix passed");
       passingPrefixes.add(prefix);
     }
+    System.out.println();
   }
 
   /**
