@@ -14,7 +14,6 @@ import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.ToolProvider;
-import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,7 +30,7 @@ public class PrefixRunner {
    * @param prefix Prefix to run
    * @return Result of the execution
    */
-  public static void runPrefix(Prefix prefix) throws ClassNotFoundException, IOException {
+  public static void runPrefix(Prefix prefix) throws ClassNotFoundException {
     System.out.println("---> prefix: ");
     System.out.println(prefix.getMethod());
 
