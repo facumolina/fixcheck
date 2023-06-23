@@ -5,8 +5,8 @@ FixCheck is a tool for patch correctness analysis. It uses random testing to gen
 
 ### Requirements
 
-- Java >= 1.8
-- Python3
+- Java >= 1.8 (tested with 1.8)
+- Python3 (tested with 3.10.10)
 
 ### Steps
 
