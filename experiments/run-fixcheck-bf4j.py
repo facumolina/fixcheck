@@ -52,7 +52,13 @@ else:
 # Run FixCheck
 subprocess.run(f'./fixcheck.sh {subject_cp} {test_classes_path} {target_test} {target_test_methods} {target_test_dir} {target_class} {input_class} {failure_log}', shell=True)
 
-# Rename output file for this subject
+# Move all outputs to a folder specific to the current subject
 output_file = os.path.join(outputs_dir, subject_id+'-report.csv')
-print(f'Renaming output file to: {output_file}')
-subprocess.run(f'mv {outputs_dir}/report.csv {output_file}', shell=True)
+subject_output_folder = os.path.join(outputs_dir, f'bf4j/{subject_id}')
+print(f'Moving all outputs to dir: {subject_output_folder}')
+if not os.path.exists(subject_output_folder):
+    os.makedirs(subject_output_folder)
+subprocess.run(f'mv {outputs_dir}/report.csv {subject_output_folder}', shell=True)
+subprocess.run(f'mv {outputs_dir}/scores-failing-tests.csv {subject_output_folder}', shell=True)
+subprocess.run(f'mv {outputs_dir}/failing-tests {subject_output_folder}', shell=True)
+subprocess.run(f'mv {outputs_dir}/passing-tests {subject_output_folder}', shell=True)
