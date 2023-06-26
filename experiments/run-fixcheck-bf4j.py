@@ -46,7 +46,8 @@ if os.path.exists(failure_dir):
             failure_log += f+":"
     failure_log = failure_log[:-1]
 else:
-    failure_log = "log"
+    print(f'No failure log found for subject: {subject_id}')
+    sys.exit(0)
 
 # Run FixCheck
 subprocess.run(f'./fixcheck.sh {subject_cp} {test_classes_path} {target_test} {target_test_methods} {target_test_dir} {target_class} {input_class} {failure_log}', shell=True)
