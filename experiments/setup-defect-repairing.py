@@ -17,7 +17,7 @@ DEFECT_REPAIRING_DATASET = os.getenv('DEFECT_REPAIRING_DATASET')
 
 subject_id = sys.argv[1]
 print(f'> Setup for DefectsRepairing subject: {subject_id}')
-subject_config_file = os.path.join(DEFECT_REPAIRING_DATASET, 'tool/patches/Info/', subject_id+'.json')
+subject_config_file = os.path.join(DEFECT_REPAIRING_DATASET, 'tool/patches/INFO/', subject_id+'.json')
 
 if not os.path.exists(subject_config_file):
     print(f'subject {subject_id} does not exist in the dataset')
