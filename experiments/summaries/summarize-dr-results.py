@@ -9,6 +9,7 @@ DEFECT_REPAIRING_DATASET = os.getenv('DEFECT_REPAIRING_DATASET')
 correct_patches_reports = pd.DataFrame(columns=['project','test_class','input_prefixes','inputs_class','target_class','prefixes_gen_time','assertions_gen_time','prefixes_running_time','output_prefixes','passing_prefixes','crashing_prefixes','assertion_failing_prefixes','max_score'])
 incorrect_patches_reports = pd.DataFrame(columns=['project','test_class','input_prefixes','inputs_class','target_class','prefixes_gen_time','assertions_gen_time','prefixes_running_time','output_prefixes','passing_prefixes','crashing_prefixes','assertion_failing_prefixes','max_score'])
 no_report = []
+patches_with_score_greater_than_90 = []
 for subject_id in os.listdir(results_dir):
     if subject_id == 'correct_patches_reports.csv' or subject_id == 'incorrect_patches_reports.csv':
         continue
@@ -30,6 +31,8 @@ for subject_id in os.listdir(results_dir):
     report_df['project'] = project
     report_df['max_score'] = max_score
     print(f'Max score: {max_score}')
+    if max_score >= 0.90:
+        patches_with_score_greater_than_90.append(subject_id)
     if patch_json["correctness"] == "Correct":
         correct_patches_reports = pd.concat([correct_patches_reports, report_df], ignore_index=True)
     else:
@@ -55,7 +58,7 @@ def print_results_for_project(patches,project):
 correct_patches_reports.to_csv(results_dir+'/correct_patches_reports.csv', index=False)
 incorrect_patches_reports.to_csv(results_dir+'/incorrect_patches_reports.csv', index=False)
 
-print(f'No report for: {no_report}')
+
 print('----------------------------------')
 print(f'Correct patches: {correct_patches_reports.shape[0]}')
 print_results_for_project(correct_patches_reports,'Chart')
@@ -70,3 +73,8 @@ print_results_for_project(incorrect_patches_reports,'Chart')
 print_results_for_project(incorrect_patches_reports,'Math')
 print_results_for_project(incorrect_patches_reports,'Lang')
 print_results_for_project(incorrect_patches_reports,'Time')
+
+print()
+print('----------------------------------')
+print(f'No report for: {no_report}')
+print(f'Patches with score > 0.90: {patches_with_score_greater_than_90}')
