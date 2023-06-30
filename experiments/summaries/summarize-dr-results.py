@@ -62,16 +62,16 @@ incorrect_patches_reports.to_csv(results_dir+'/incorrect_patches_reports.csv', i
 print('----------------------------------')
 print(f'Correct patches: {correct_patches_reports.shape[0]}')
 print_results_for_project(correct_patches_reports,'Chart')
-print_results_for_project(correct_patches_reports,'Math')
 print_results_for_project(correct_patches_reports,'Lang')
+print_results_for_project(correct_patches_reports,'Math')
 print_results_for_project(correct_patches_reports,'Time')
 
 print()
 print('----------------------------------')
 print(f'Incorrect patches: {incorrect_patches_reports.shape[0]}')
 print_results_for_project(incorrect_patches_reports,'Chart')
-print_results_for_project(incorrect_patches_reports,'Math')
 print_results_for_project(incorrect_patches_reports,'Lang')
+print_results_for_project(incorrect_patches_reports,'Math')
 print_results_for_project(incorrect_patches_reports,'Time')
 
 print()
