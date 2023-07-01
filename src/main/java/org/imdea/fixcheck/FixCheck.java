@@ -3,6 +3,7 @@ package org.imdea.fixcheck;
 import org.imdea.fixcheck.assertion.AssertTrueGenerator;
 import org.imdea.fixcheck.assertion.AssertionGenerator;
 import org.imdea.fixcheck.assertion.TextDavinci003;
+import org.imdea.fixcheck.assertion.UsePreviousAssertGenerator;
 import org.imdea.fixcheck.checker.FailureChecker;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.runner.PrefixRunner;
@@ -38,6 +39,7 @@ public class FixCheck {
     Properties.INPUTS_CLASS = args[5];
     Properties.ORIGINAL_FAILURE_LOG = args[6];
     Properties.PREFIX_VARIATIONS = Integer.parseInt(args[7]);
+    Properties.ASSERTIONS_GENERATION = args[8];
     System.out.println("classpath: " + Properties.FULL_CLASSPATH);
     System.out.println("test classes path: " + Properties.TEST_CLASSES_PATH);
     System.out.println("test class: " + Properties.TEST_CLASS);
@@ -58,6 +60,7 @@ public class FixCheck {
     List<Prefix> prefixes = Properties.getPrefixes();
     System.out.println("loaded prefixes: " + prefixes.size());
     System.out.println("prefixes to produce: " + Properties.PREFIX_VARIATIONS);
+    System.out.println("assertions generation: " + Properties.ASSERTIONS_GENERATION);
     System.out.println("inputs used in the prefixes:");
     // Show the inputs collected in the providers
     InputHelper.PROVIDERS.forEach((k,v) -> { System.out.println("  " + k + ": " + v);});
@@ -95,8 +98,7 @@ public class FixCheck {
         new InputTransformer()
     );
     PrefixTransformer prefixTransformer = new InputTransformer();
-    //AssertionGenerator assertionGenerator = new TextDavinci003();
-    AssertionGenerator assertionGenerator = new AssertTrueGenerator();
+    AssertionGenerator assertionGenerator = getAssertionGenerator();
     for (Prefix prefix : prefixes) {
       // Generate n similar prefixes
       for (int i=1; i <= n; i++) {
@@ -149,6 +151,19 @@ public class FixCheck {
     Stats.TOTAL_PASSING_PREFIXES = passingPrefixes.size();
 
     return generatedPrefixes;
+  }
+
+  /**
+   * Get the assertion generator to use
+   */
+  private static AssertionGenerator getAssertionGenerator() {
+    if ("no-assertion".equals(Properties.ASSERTIONS_GENERATION))
+      return new AssertTrueGenerator();
+    if ("previous-assertion".equals(Properties.ASSERTIONS_GENERATION))
+      return new UsePreviousAssertGenerator();
+    if ("llm-assertion".equals(Properties.ASSERTIONS_GENERATION))
+      return new TextDavinci003();
+    throw new IllegalArgumentException("Unknown assertion generator: " + Properties.ASSERTIONS_GENERATION);
   }
 
   /**

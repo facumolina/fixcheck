@@ -38,6 +38,7 @@ public class Properties {
 
   // Properties related to prefixes
   public static int PREFIX_VARIATIONS = 1; // Total number of prefix variations to generate
+  public static String ASSERTIONS_GENERATION = "no-assertion"; // Assertion mechanism to use
 
   // Properties related to inputs
   public static String INPUTS_CLASS; // Full name of the inputs class
