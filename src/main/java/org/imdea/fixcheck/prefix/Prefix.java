@@ -19,7 +19,7 @@ public class Prefix {
   Prefix parent;
   String className;
   boolean methodHasTestAnnotation; // True if the method has a @Test annotation
-  Result executionResult;
+  Result executionResult; // Result of the execution of the test prefix
 
   /**
    * Constructor
