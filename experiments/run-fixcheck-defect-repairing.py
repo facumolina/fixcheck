@@ -12,7 +12,9 @@ outputs_dir = 'fixcheck-output'
 
 # Get the arguments
 subject_id = sys.argv[1]
+assertion_generation = sys.argv[2] # One of no-assertion, previous-assertion or llm-assertion
 print(f'Running FixCheck for subject: {subject_id}')
+print(f'assertion generation: {assertion_generation}')
 df = pd.read_csv(dataset_csv)
 subject_data = df[df['id'] == subject_id]
 
@@ -46,7 +48,7 @@ input_class = subject_data['input_class'].values[0]
 failure_log = os.path.join(subject_base_dir, 'failing_tests')
 
 # Run FixCheck
-subprocess.run(f'./fixcheck.sh {subject_cp} {test_classes_path} {target_test} {target_test_methods} {target_test_dir} {target_class} {input_class} {failure_log}', shell=True)
+subprocess.run(f'./fixcheck.sh {subject_cp} {test_classes_path} {target_test} {target_test_methods} {target_test_dir} {target_class} {input_class} {failure_log} {assertion_generation}', shell=True)
 
 # Move all outputs to a folder specific to the current subject
 output_file = os.path.join(outputs_dir, subject_id+'-report.csv')
