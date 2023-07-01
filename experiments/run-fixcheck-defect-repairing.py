@@ -52,7 +52,7 @@ subprocess.run(f'./fixcheck.sh {subject_cp} {test_classes_path} {target_test} {t
 
 # Move all outputs to a folder specific to the current subject
 output_file = os.path.join(outputs_dir, subject_id+'-report.csv')
-subject_output_folder = os.path.join(outputs_dir, f'defects-repairing/{subject_id}')
+subject_output_folder = os.path.join(outputs_dir, f'defects-repairing/{subject_id}/{assertion_generation}')
 print(f'Moving all outputs to dir: {subject_output_folder}')
 if not os.path.exists(subject_output_folder):
     os.makedirs(subject_output_folder)
