@@ -38,12 +38,31 @@ public class TransformationHelper {
     classDeclarationOpt.get().setName(newClassName);
     // Ensure that the new compilation unit has the import: import static org.junit.Assert.*;
     newCompilationUnit.addImport("static org.junit.Assert.*");
+    // Ensure that the new compilation unit is consistent with the new class name
+    updateCompilationUnitNames(newCompilationUnit, className, newClassName);
+    return newCompilationUnit;
+  }
+
+  /**
+   * Update compilation unit elements after a class name change
+   * @param compilationUnit is the compilation unit
+   * @param oldClassName is the old class name
+   * @param newClassName is the new class name
+   */
+  public static void updateCompilationUnitNames(CompilationUnit compilationUnit, String oldClassName, String newClassName) {
     // If the original class had a constructor, then rename it to the new class name
-    newCompilationUnit.findAll(ConstructorDeclaration.class).forEach(constructorDeclaration -> {
-      if (constructorDeclaration.getNameAsString().equals(className))
+    compilationUnit.findAll(ConstructorDeclaration.class).forEach(constructorDeclaration -> {
+      if (constructorDeclaration.getNameAsString().equals(oldClassName))
         constructorDeclaration.setName(newClassName);
     });
-    return newCompilationUnit;
+    // If the original class has the method suite, then replace its body
+    compilationUnit.findAll(MethodDeclaration.class).forEach(methodDeclaration -> {
+      if (methodDeclaration.getNameAsString().equals("suite")) {
+        methodDeclaration.setBody(StaticJavaParser.parseBlock("{\n" +
+            "        return new TestSuite(" + newClassName + ".class);\n" +
+            "    }"));
+      }
+    });
   }
 
   /**
