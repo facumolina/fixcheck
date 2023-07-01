@@ -58,7 +58,7 @@ public class InputTransformer extends PrefixTransformer {
   /**
    * Remove assert statements from the method containing org.junit.Assert
    */
-  private static void removeAssertionsFromMethod(MethodDeclaration methodDecl) {
+  private void removeAssertionsFromMethod(MethodDeclaration methodDecl) {
     // Remove the assertion statements from the method declaration
     methodDecl.getBody().get().getStatements().removeIf(stmt -> {
       if (stmt instanceof ExpressionStmt) {
