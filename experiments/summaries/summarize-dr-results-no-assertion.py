@@ -11,7 +11,7 @@ incorrect_patches_reports = pd.DataFrame(columns=['project','test_class','input_
 no_report = []
 patches_with_score_greater_than_90 = []
 for subject_id in os.listdir(results_dir):
-    if subject_id == 'correct_patches_reports.csv' or subject_id == 'incorrect_patches_reports.csv':
+    if subject_id.endswith('.csv'):
         continue
     base_folder = os.path.join(subject_id,"no-assertion")
     report_csv = os.path.join(results_dir, base_folder, 'report.csv')
@@ -40,7 +40,12 @@ for subject_id in os.listdir(results_dir):
         incorrect_patches_reports = pd.concat([incorrect_patches_reports, report_df], ignore_index=True)
 
 
-def print_results_for_project(patches,project):
+chart_row_latex = ['chart']
+lang_row_latex = ['lang']
+math_row_latex = ['math']
+time_row_latex = ['time']
+
+def print_results_for_project(patches,project,row_latex):
     proj_rows = patches[patches['project'] == project]
     proj_passing_rows = proj_rows[(proj_rows['passing_prefixes'] > 0)].count()
     passing_tests_sum = proj_rows['passing_prefixes'].sum()
@@ -54,6 +59,12 @@ def print_results_for_project(patches,project):
     print(f'with failing tests: {proj_failing_rows[0]}')
     print(f'failing tests: {failing_tests_sum}')
     print(f'scores > 0.90: {scores_greater_thatn_90[0]}')
+    row_latex.append(proj_rows.shape[0])
+    row_latex.append(proj_passing_rows[0])
+    row_latex.append(passing_tests_sum)
+    row_latex.append(proj_failing_rows[0])
+    row_latex.append(failing_tests_sum)
+    row_latex.append(scores_greater_thatn_90[0])
 
 # Save correct_patches_reports
 correct_patches_reports.to_csv(results_dir+'/correct_patches_reports-no-assertion.csv', index=False)
@@ -62,20 +73,29 @@ incorrect_patches_reports.to_csv(results_dir+'/incorrect_patches_reports-no-asse
 
 print('----------------------------------')
 print(f'Correct patches: {correct_patches_reports.shape[0]}')
-print_results_for_project(correct_patches_reports,'Chart')
-print_results_for_project(correct_patches_reports,'Lang')
-print_results_for_project(correct_patches_reports,'Math')
-print_results_for_project(correct_patches_reports,'Time')
+print_results_for_project(correct_patches_reports,'Chart', chart_row_latex)
+print_results_for_project(correct_patches_reports,'Lang', lang_row_latex)
+print_results_for_project(correct_patches_reports,'Math', math_row_latex)
+print_results_for_project(correct_patches_reports,'Time', time_row_latex)
 
 print()
 print('----------------------------------')
 print(f'Incorrect patches: {incorrect_patches_reports.shape[0]}')
-print_results_for_project(incorrect_patches_reports,'Chart')
-print_results_for_project(incorrect_patches_reports,'Lang')
-print_results_for_project(incorrect_patches_reports,'Math')
-print_results_for_project(incorrect_patches_reports,'Time')
+print_results_for_project(incorrect_patches_reports,'Chart', chart_row_latex)
+print_results_for_project(incorrect_patches_reports,'Lang', lang_row_latex)
+print_results_for_project(incorrect_patches_reports,'Math', math_row_latex)
+print_results_for_project(incorrect_patches_reports,'Time', time_row_latex)
 
 print()
 print('----------------------------------')
 print(f'No report for: {no_report}')
 print(f'Patches with score > 0.90: {patches_with_score_greater_than_90}')
+print()
+
+print('----------------------------------')
+print('Latex table')
+# Print latex rows for chart with each element in the list interleaved with &
+print(' & '.join([str(elem) for elem in chart_row_latex]) + ' \\\\')
+print(' & '.join([str(elem) for elem in lang_row_latex]) + ' \\\\')
+print(' & '.join([str(elem) for elem in math_row_latex]) + ' \\\\')
+print(' & '.join([str(elem) for elem in time_row_latex]) + ' \\\\')
