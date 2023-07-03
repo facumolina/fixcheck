@@ -56,8 +56,8 @@ def print_results_for_project(patches,project):
     print(f'scores > 0.90: {scores_greater_thatn_90[0]}')
 
 # Save correct_patches_reports
-correct_patches_reports.to_csv(results_dir+'/correct_patches_reports.csv', index=False)
-incorrect_patches_reports.to_csv(results_dir+'/incorrect_patches_reports.csv', index=False)
+correct_patches_reports.to_csv(results_dir+'/correct_patches_reports-no-assertion.csv', index=False)
+incorrect_patches_reports.to_csv(results_dir+'/incorrect_patches_reports-no-assertion.csv', index=False)
 
 
 print('----------------------------------')
