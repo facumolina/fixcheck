@@ -13,7 +13,8 @@ patches_with_score_greater_than_90 = []
 for subject_id in os.listdir(results_dir):
     if subject_id == 'correct_patches_reports.csv' or subject_id == 'incorrect_patches_reports.csv':
         continue
-    report_csv = os.path.join(results_dir, subject_id, 'report.csv')
+    base_folder = os.path.join(subject_id,"no-assertion")
+    report_csv = os.path.join(results_dir, base_folder, 'report.csv')
     subject_config_json = os.path.join(DEFECT_REPAIRING_DATASET, f'tool/patches/INFO/{subject_id}.json')
     # Load json
     with open(subject_config_json) as f:
@@ -24,7 +25,7 @@ for subject_id in os.listdir(results_dir):
         no_report.append(subject_id)
         continue
     project = patch_json["project"]
-    score_file = os.path.join(results_dir, subject_id, 'scores-failing-tests.csv')
+    score_file = os.path.join(results_dir, base_folder, 'scores-failing-tests.csv')
     score_df = pd.read_csv(score_file)
     max_score = score_df['score'].max()
     report_df = pd.read_csv(report_csv)
