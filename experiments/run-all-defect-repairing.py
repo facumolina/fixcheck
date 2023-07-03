@@ -1,6 +1,7 @@
 import sys
 import pandas as pd
 import subprocess
+import os
 
 assertion_generation = sys.argv[1] # One of no-assertion, previous-assertion or llm-assertion
 
