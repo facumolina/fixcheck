@@ -10,5 +10,10 @@ target_patches = ['Patch' + str(id) for id in target_ids]
 
 # Run the script run-fixcheck-defect-repairing.py for each patch
 for patch in target_patches:
+    # Do not run if report exits
+    report_file = f'fixcheck-output/defects-repairing/{patch}/{assertion_generation}/report.csv'
+    if os.path.exists(report_file):
+        print(f'Report already exists for patch: {patch}')
+        continue
     print(f'Running setup for patch: {patch}')
     subprocess.run(f'python3 experiments/run-fixcheck-defect-repairing.py {patch} {assertion_generation}', shell=True)
