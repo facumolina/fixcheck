@@ -35,5 +35,6 @@ for subject_id in os.listdir(results_dir):
 
 print(f'Exception type count: {len(exception_type_count)}')
 print(f'Total exceptions: {sum(exception_type_count.values())}')
-# Print exception_type_count
-print(exception_type_count)
+# Print exception counts sorted by value
+sorted_exception_type_count = {k: v for k, v in sorted(exception_type_count.items(), key=lambda item: item[1], reverse=True)}
+print(sorted_exception_type_count)
