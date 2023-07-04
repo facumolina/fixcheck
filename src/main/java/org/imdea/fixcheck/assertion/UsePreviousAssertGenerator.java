@@ -44,7 +44,11 @@ public class UsePreviousAssertGenerator extends AssertionGenerator {
           return methodCallExpr.getNameAsString().equals("assertNotNull")
               || methodCallExpr.getNameAsString().equals("assertTrue")
               || methodCallExpr.getNameAsString().equals("assertFalse")
-              || methodCallExpr.getNameAsString().equals("assertEquals");
+              || methodCallExpr.getNameAsString().equals("assertEquals")
+              || methodCallExpr.getNameAsString().equals("assertNotEquals")
+              // Used in JUnit 3
+              || methodCallExpr.getNameAsString().equals("fail")
+              || methodCallExpr.getNameAsString().equals("check");
         })
         .collect(Collectors.toList());
   }
