@@ -60,18 +60,16 @@ public class InputTransformer extends PrefixTransformer {
    */
   private void removeAssertionsFromMethod(MethodDeclaration methodDecl) {
     // Remove the assertion statements from the method declaration
-    methodDecl.getBody().get().getStatements().removeIf(stmt -> {
-      if (stmt instanceof ExpressionStmt) {
-        ExpressionStmt exprStmt = (ExpressionStmt) stmt;
-        if (exprStmt.getExpression() instanceof MethodCallExpr) {
-          MethodCallExpr methodCallExpr = (MethodCallExpr) exprStmt.getExpression();
-          return methodCallExpr.getNameAsString().equals("assertNotNull")
-              || methodCallExpr.getNameAsString().equals("assertTrue")
-              || methodCallExpr.getNameAsString().equals("assertFalse")
-              || methodCallExpr.getNameAsString().equals("assertEquals");
+    methodDecl.getBody().get().findAll(ExpressionStmt.class).forEach(stmt -> {
+      if (stmt.getExpression() instanceof MethodCallExpr) {
+        MethodCallExpr methodCallExpr = (MethodCallExpr) stmt.getExpression();
+        if (methodCallExpr.getNameAsString().equals("assertNotNull")
+            || methodCallExpr.getNameAsString().equals("assertTrue")
+            || methodCallExpr.getNameAsString().equals("assertFalse")
+            || methodCallExpr.getNameAsString().equals("assertEquals")) {
+          stmt.remove();
         }
       }
-      return false;
     });
   }
 
