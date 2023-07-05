@@ -43,7 +43,7 @@ print(sorted_exception_type_count)
 
 failure_types = ['Crashes','Assertion Failure']
 failures_by_type = [0,0]
-assertion_failure_types = ['junit.framework.AssertionFailedError', 'java.lang.AssertionError']
+assertion_failure_types = ['junit.framework.AssertionFailedError', 'java.lang.AssertionError', 'junit.framework.ComparisonFailure']
 crashes_types = []
 assertion_failure_values = []
 crashes_values = []
@@ -61,13 +61,16 @@ for exception_type in sorted_exception_type_count:
 print(f'Failures by type: {failures_by_type}')
 outer_values = failures_by_type
 failure_reasons = list(crashes_types) + assertion_failure_types
-# Inner values is the join of crashes_values and assertion_failure_values
+# Create a list of 'navajowhite' colors for the same of crashes_types
+crashes_colors = ['navajowhite' for i in range(len(crashes_types))]
+assertion_colors = ['darksalmon' for i in range(len(assertion_failure_types))]
+all_colors = crashes_colors + assertion_colors
 inner_values = crashes_values + assertion_failure_values
 
 # Get the string after the dot for each failure reason element
 failure_reasons = [failure_reason.split('.')[-1] for failure_reason in failure_reasons]
-# Remove the word Exception or Error for each failure reason
-failure_reasons = [failure_reason.replace('Exception', '') for failure_reason in failure_reasons]
+# Remove the word Exception for each failure reason only if it is distinct of the word 'Exception'
+failure_reasons = [failure_reason.replace('Exception', '') if failure_reason != 'Exception' else failure_reason for failure_reason in failure_reasons]
 failure_reasons = [failure_reason.replace('Error', '') for failure_reason in failure_reasons]
 
 trace1 = go.Pie(
@@ -78,9 +81,9 @@ trace1 = go.Pie(
     labels=failure_reasons,
     textinfo='label',
     textposition='inside',
-    textfont={'color': 'black', 'size': 12},
+    textfont={'color': 'black', 'size': 20},
     marker={
-    'colors': ['navajowhite', 'navajowhite', 'navajowhite', 'navajowhite', 'navajowhite', 'darksalmon'],
+    'colors': all_colors,
     'line': {'color': 'white', 'width': 1}}
 )
 
@@ -93,13 +96,13 @@ trace2 = go.Pie(
     labels=failure_types,
     textinfo='label',
     textposition='inside',
-    textfont={'color': 'black', 'size': 12},
+    textfont={'color': 'black', 'size': 20},
     marker={'colors': ['orange', 'red'],
             'line': {'color': 'white', 'width': 1}}
 )
 
 fig = go.FigureWidget(data=[trace1, trace2])
-fig.update_traces(textposition='inside', textinfo='percent+label', insidetextorientation='horizontal')
+fig.update_traces(textposition='inside', textinfo='percent+label', insidetextorientation='horizontal', textfont_size=20)
 # Do not show legend
 fig.update_layout(showlegend=False)
 # Save the plot
