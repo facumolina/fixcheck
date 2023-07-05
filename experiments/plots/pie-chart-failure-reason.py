@@ -1,6 +1,9 @@
 import plotly.graph_objs as go
 import sys
 import os
+import plotly.io as pio
+
+pio.kaleido.scope.mathjax = None
 
 assertion_generation = sys.argv[1] # Assertion generation
 
@@ -27,6 +30,7 @@ for subject_id in os.listdir(results_dir):
             with open(failing_test_log_file) as f:
                 first_line = f.readline()
                 exception_type = first_line.split(':')[0]
+                exception_type = exception_type.replace('\n', '')
                 print(f'Exception type: {exception_type}')
                 print()
                 if exception_type in exception_type_count:
@@ -60,29 +64,43 @@ failure_reasons = list(crashes_types) + assertion_failure_types
 # Inner values is the join of crashes_values and assertion_failure_values
 inner_values = crashes_values + assertion_failure_values
 
+# Get the string after the dot for each failure reason element
+failure_reasons = [failure_reason.split('.')[-1] for failure_reason in failure_reasons]
+# Remove the word Exception or Error for each failure reason
+failure_reasons = [failure_reason.replace('Exception', '') for failure_reason in failure_reasons]
+failure_reasons = [failure_reason.replace('Error', '') for failure_reason in failure_reasons]
+
 trace1 = go.Pie(
-    hole=0.5,
+    hole=0.7,
     sort=False,
     direction='clockwise',
-    domain={'x': [0.15, 0.85], 'y': [0.15, 0.85]},
     values=inner_values,
     labels=failure_reasons,
     textinfo='label',
     textposition='inside',
-    marker={'line': {'color': 'white', 'width': 1}}
+    textfont={'color': 'black', 'size': 12},
+    marker={
+    'colors': ['navajowhite', 'navajowhite', 'navajowhite', 'navajowhite', 'navajowhite', 'darksalmon'],
+    'line': {'color': 'white', 'width': 1}}
 )
 
 trace2 = go.Pie(
-    hole=0.7,
+    #hole=0.5,
     sort=False,
     direction='clockwise',
+    domain={'x': [0.15, 0.85], 'y': [0.15, 0.85]},
     values=outer_values,
     labels=failure_types,
     textinfo='label',
-    textposition='outside',
-    marker={'colors': ['green', 'red'],
+    textposition='inside',
+    textfont={'color': 'black', 'size': 12},
+    marker={'colors': ['orange', 'red'],
             'line': {'color': 'white', 'width': 1}}
 )
 
 fig = go.FigureWidget(data=[trace1, trace2])
-fig.show()
+fig.update_traces(textposition='inside', textinfo='percent+label', insidetextorientation='horizontal')
+# Do not show legend
+fig.update_layout(showlegend=False)
+# Save the plot
+fig.write_image(f'experiments/plots/pie-chart-failure-reason-{assertion_generation}.pdf')
