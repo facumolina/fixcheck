@@ -21,7 +21,12 @@ public class AssertionsHelper {
     MethodDeclaration method = prefix.getMethod();
     for (String assertion : assertions) {
       // Add the assertTrue at the end of the prefix
+      try {
       method.getBody().get().addStatement(assertion);
+      } catch (Exception e) {
+        System.out.println("Error adding assertion: " + assertion);
+        System.out.println("Error: " + e.getMessage());
+      }
     }
   }
 
