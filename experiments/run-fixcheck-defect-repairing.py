@@ -60,4 +60,5 @@ subprocess.run(f'mv {outputs_dir}/report.csv {subject_output_folder}', shell=Tru
 subprocess.run(f'mv {outputs_dir}/scores-failing-tests.csv {subject_output_folder}', shell=True)
 subprocess.run(f'mv {outputs_dir}/failing-tests {subject_output_folder}', shell=True)
 subprocess.run(f'mv {outputs_dir}/passing-tests {subject_output_folder}', shell=True)
+subprocess.run(f'mv {outputs_dir}/non-compiling-tests {subject_output_folder}', shell=True)
 subprocess.run(f'mv log.out {subject_output_folder}', shell=True)

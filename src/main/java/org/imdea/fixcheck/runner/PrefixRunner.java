@@ -81,8 +81,8 @@ public class PrefixRunner {
       prefix.setExecutionResult(testResult);
       return;
     }
-
-    throw new IllegalStateException("Compilation failed, unable to run test");
+    System.out.println("---> compilation failed, unable to run tests");
+    prefix.setExecutionResult(null);
   }
 
 }

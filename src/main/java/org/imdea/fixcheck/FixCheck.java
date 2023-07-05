@@ -28,6 +28,8 @@ public class FixCheck {
   private static Set<Prefix> crashingPrefixes = new HashSet<>(); // Built prefixes that crash when executed
   private static Set<Prefix> assertionFailingPrefixes = new HashSet<>(); // Built prefixes that fail the assertion when executed
   private static Set<Prefix> passingPrefixes = new HashSet<>(); // Built prefixes that pass the assertion when executed
+  private static Set<Prefix> nonCompilingPrefixes = new HashSet<>(); // Built prefixes that do not compile
+
   private static Map<Prefix, Double> failingPrefixesScores = new HashMap<>(); // Failing prefixes with their scores (similarity to the original failure)
 
   private static void readArgs(String[] args) {
@@ -76,6 +78,7 @@ public class FixCheck {
 
     System.out.println("====== OUTPUT ======");
     System.out.println("total prefixes: " + Stats.TOTAL_PREFIXES);
+    System.out.println("non-compiling: " + Stats.TOTAL_NON_COMPILING_PREFIXES);
     System.out.println("passing: " + Stats.TOTAL_PASSING_PREFIXES);
     System.out.println("crashing: " + Stats.TOTAL_CRASHING_PREFIXES);
     System.out.println("assertion failing: " + Stats.TOTAL_ASSERTION_FAILING_PREFIXES);
@@ -149,6 +152,7 @@ public class FixCheck {
     Stats.TOTAL_CRASHING_PREFIXES = crashingPrefixes.size();
     Stats.TOTAL_ASSERTION_FAILING_PREFIXES = assertionFailingPrefixes.size();
     Stats.TOTAL_PASSING_PREFIXES = passingPrefixes.size();
+    Stats.TOTAL_NON_COMPILING_PREFIXES = nonCompilingPrefixes.size();
 
     return generatedPrefixes;
   }
@@ -185,19 +189,24 @@ public class FixCheck {
    */
   private static void savePrefix(Prefix prefix) {
     Result result = prefix.getExecutionResult();
-    if (result.getFailureCount() > 0) {
-      // If some failure is an assertion error, then the prefix failed the assertion
-      if (result.getFailures().stream().anyMatch(f -> f.getException() instanceof AssertionError)) {
-        System.out.println("---> prefix failed assertion");
-        assertionFailingPrefixes.add(prefix);
-      } else {
-        System.out.println("---> prefix crashed");
-        crashingPrefixes.add(prefix);
-      }
-      measureFailureReason(prefix, result);
+    if (result == null) {
+      System.out.println("---> prefix did not compile");
+      nonCompilingPrefixes.add(prefix);
     } else {
-      System.out.println("---> prefix passed");
-      passingPrefixes.add(prefix);
+      if (result.getFailureCount() > 0) {
+        // If some failure is an assertion error, then the prefix failed the assertion
+        if (result.getFailures().stream().anyMatch(f -> f.getException() instanceof AssertionError)) {
+          System.out.println("---> prefix failed assertion");
+          assertionFailingPrefixes.add(prefix);
+        } else {
+          System.out.println("---> prefix crashed");
+          crashingPrefixes.add(prefix);
+        }
+        measureFailureReason(prefix, result);
+      } else {
+        System.out.println("---> prefix passed");
+        passingPrefixes.add(prefix);
+      }
     }
     System.out.println();
   }
@@ -223,6 +232,9 @@ public class FixCheck {
     String reportFile = Properties.getReportFileName();
     System.out.println("report file: " + reportFile);
     ReportWriter.writeReport(reportFile);
+    String nonCompilingPrefixesDir = Properties.getNonCompilingTestsDir();
+    System.out.println("non compiling prefixes: "+nonCompilingPrefixesDir);
+    PrefixWriter.saveNonCompilingPrefixes(nonCompilingPrefixes, nonCompilingPrefixesDir);
     String passingPrefixesDir = Properties.getPassingTestsDir();
     System.out.println("passing prefixes: "+passingPrefixesDir);
     PrefixWriter.savePassingPrefixes(passingPrefixes, passingPrefixesDir);

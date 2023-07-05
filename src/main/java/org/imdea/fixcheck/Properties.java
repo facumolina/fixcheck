@@ -48,6 +48,7 @@ public class Properties {
   public static String OUTPUT_REPORT = "report.csv"; // Output file for stats
   public static String OUTPUT_PASSING_PREFIXES_DIR = "passing-tests"; // Output dir for passing tests
   public static String OUTPUT_FAILING_PREFIXES_DIR = "failing-tests"; // Output dir for failing tests
+  public static String OUTPUT_NONCOMPILING_PREFIXES_DIR = "non-compiling-tests"; // Output dir for non compiling tests
   public static String OUTPUT_SCORES = "scores-failing-tests.csv"; // Output file for score of each failing prefix
 
   /**
@@ -168,6 +169,13 @@ public class Properties {
    */
   public static String getFailingTestsDir() {
     return OUTPUT_DIR + "/" + OUTPUT_FAILING_PREFIXES_DIR;
+  }
+
+  /**
+   * Get the folder name for non compiling prefixes
+   */
+  public static String getNonCompilingTestsDir() {
+    return OUTPUT_DIR + "/" + OUTPUT_NONCOMPILING_PREFIXES_DIR;
   }
 
 }

@@ -61,6 +61,23 @@ public class PrefixWriter {
   }
 
   /**
+   * Save the given set of non-compiling prefixes to the specified folder
+   * @param nonCompilingPrefixes the set of non-compiling prefixes
+   * @param outputFolder the set output folder
+   */
+  public static void saveNonCompilingPrefixes(Set<Prefix> nonCompilingPrefixes, String outputFolder) {
+    try {
+      Files.createDirectories(Paths.get(outputFolder));
+      for (Prefix prefix : nonCompilingPrefixes) {
+        savePrefix(prefix, outputFolder);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.out.println("Error writing non compiling prefixes to folder: " + outputFolder);
+    }
+  }
+
+  /**
    * Save a report containing each failing prefix with its corresponding score
    * @param scores is the set of failing prefixes with their corresponding scores
    * @param scoresFileName is the corresponding file name
