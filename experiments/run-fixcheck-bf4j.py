@@ -12,7 +12,9 @@ outputs_dir = 'fixcheck-output'
 
 # Get the arguments
 subject_id = sys.argv[1]
+assertion_generation = sys.argv[2] # One of no-assertion, previous-assertion or llm-assertion
 print(f'Running FixCheck for subject: {subject_id}')
+print(f'assertion generation: {assertion_generation}')
 df = pd.read_csv(dataset_csv)
 subject_data = df[df['id'] == subject_id]
 
@@ -50,11 +52,11 @@ else:
     sys.exit(0)
 
 # Run FixCheck
-subprocess.run(f'./fixcheck.sh {subject_cp} {test_classes_path} {target_test} {target_test_methods} {target_test_dir} {target_class} {input_class} {failure_log}', shell=True)
+subprocess.run(f'./fixcheck.sh {subject_cp} {test_classes_path} {target_test} {target_test_methods} {target_test_dir} {target_class} {input_class} {failure_log} {assertion_generation}', shell=True)
 
 # Move all outputs to a folder specific to the current subject
 output_file = os.path.join(outputs_dir, subject_id+'-report.csv')
-subject_output_folder = os.path.join(outputs_dir, f'bf4j/{subject_id}')
+subject_output_folder = os.path.join(outputs_dir, f'bf4j/{subject_id}/{assertion_generation}')
 print(f'Moving all outputs to dir: {subject_output_folder}')
 if not os.path.exists(subject_output_folder):
     os.makedirs(subject_output_folder)
@@ -62,3 +64,5 @@ subprocess.run(f'mv {outputs_dir}/report.csv {subject_output_folder}', shell=Tru
 subprocess.run(f'mv {outputs_dir}/scores-failing-tests.csv {subject_output_folder}', shell=True)
 subprocess.run(f'mv {outputs_dir}/failing-tests {subject_output_folder}', shell=True)
 subprocess.run(f'mv {outputs_dir}/passing-tests {subject_output_folder}', shell=True)
+subprocess.run(f'mv {outputs_dir}/non-compiling-tests {subject_output_folder}', shell=True)
+subprocess.run(f'mv log.out {subject_output_folder}', shell=True)
