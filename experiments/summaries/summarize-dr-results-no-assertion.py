@@ -9,7 +9,8 @@ DEFECT_REPAIRING_DATASET = os.getenv('DEFECT_REPAIRING_DATASET')
 correct_patches_reports = pd.DataFrame(columns=['project','test_class','input_prefixes','inputs_class','target_class','prefixes_gen_time','assertions_gen_time','prefixes_running_time','output_prefixes','passing_prefixes','crashing_prefixes','assertion_failing_prefixes','max_score'])
 incorrect_patches_reports = pd.DataFrame(columns=['project','test_class','input_prefixes','inputs_class','target_class','prefixes_gen_time','assertions_gen_time','prefixes_running_time','output_prefixes','passing_prefixes','crashing_prefixes','assertion_failing_prefixes','max_score'])
 no_report = []
-patches_with_score_greater_than_90 = []
+patches_with_score_greater = []
+score_threshold = 0.80
 for subject_id in os.listdir(results_dir):
     if subject_id.endswith('.csv'):
         continue
@@ -32,8 +33,8 @@ for subject_id in os.listdir(results_dir):
     report_df['project'] = project
     report_df['max_score'] = max_score
     print(f'Max score: {max_score}')
-    if max_score >= 0.90:
-        patches_with_score_greater_than_90.append(subject_id)
+    if max_score >= score_threshold:
+        patches_with_score_greater.append(subject_id)
     if patch_json["correctness"] == "Correct":
         correct_patches_reports = pd.concat([correct_patches_reports, report_df], ignore_index=True)
     else:
@@ -51,20 +52,20 @@ def print_results_for_project(patches,project,row_latex):
     passing_tests_sum = proj_rows['passing_prefixes'].sum()
     proj_failing_rows = proj_rows[((proj_rows['crashing_prefixes'] > 0) | (proj_rows['assertion_failing_prefixes'] > 0))].count()
     failing_tests_sum = proj_rows['crashing_prefixes'].sum() + proj_rows['assertion_failing_prefixes'].sum()
-    scores_greater_thatn_90 = proj_rows[proj_rows['max_score'] >= 0.90].count()
+    scores_greater_than_threshold = proj_rows[proj_rows['max_score'] >= score_threshold].count()
     print(f'{project}')
     print(f'patches: {proj_rows.shape[0]}')
     print(f'with passing tests: {proj_passing_rows[0]}')
     print(f'passing tests: {passing_tests_sum}')
     print(f'with failing tests: {proj_failing_rows[0]}')
     print(f'failing tests: {failing_tests_sum}')
-    print(f'scores > 0.90: {scores_greater_thatn_90[0]}')
+    print(f'scores > {score_threshold}: {scores_greater_than_threshold[0]}')
     row_latex.append(proj_rows.shape[0])
     row_latex.append(proj_passing_rows[0])
     row_latex.append(passing_tests_sum)
     row_latex.append(proj_failing_rows[0])
     row_latex.append(failing_tests_sum)
-    row_latex.append(scores_greater_thatn_90[0])
+    row_latex.append(scores_greater_than_threshold[0])
 
 # Save correct_patches_reports
 correct_patches_reports.to_csv(results_dir+'/correct_patches_reports-no-assertion.csv', index=False)
@@ -89,7 +90,7 @@ print_results_for_project(incorrect_patches_reports,'Time', time_row_latex)
 print()
 print('----------------------------------')
 print(f'No report for: {no_report}')
-print(f'Patches with score > 0.90: {patches_with_score_greater_than_90}')
+print(f'Patches with score > {score_threshold}: {patches_with_score_greater}')
 print()
 
 print('----------------------------------')
