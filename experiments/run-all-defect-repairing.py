@@ -16,5 +16,5 @@ for patch in target_patches:
     if os.path.exists(report_file):
         print(f'Report already exists for patch: {patch}')
         continue
-    print(f'Running setup for patch: {patch}')
+    print(f'Running fixcheck for patch: {patch}')
     subprocess.run(f'python3 experiments/run-fixcheck-defect-repairing.py {patch} {assertion_generation}', shell=True)
