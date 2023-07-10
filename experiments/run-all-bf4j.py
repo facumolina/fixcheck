@@ -17,5 +17,4 @@ for subject in subjects_ids:
         if os.path.exists(report_file):
             print(f'Report already exists for patch: {subject}')
             continue
-        print(f'Running fixcheck for subject: {subject}')
         subprocess.run(f'python3 experiments/run-fixcheck-bf4j.py {subject} {assertion_generation}', shell=True)
