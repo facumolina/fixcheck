@@ -4,13 +4,16 @@ import json
 import pandas as pd
 
 results_dir = "fixcheck-output/defects-repairing"
+results_dir_2 = "fixcheck-output/bf4j"
 DEFECT_REPAIRING_DATASET = os.getenv('DEFECT_REPAIRING_DATASET')
+BF4J_DATASET = os.getenv('BF4J_DATASET')
 
 # Empty dataframe with columns project,patch_id,correctness,total_tests,discarded_tests,reported_tests,max_score,prediction
 patches_reports = pd.DataFrame(columns=['project','patch_id','correctness','failing_tests','discarded_tests','reported_tests','max_score','prediction'])
 score_threshold = 0.80
 assertion_generation = sys.argv[1]
 no_report = []
+# First save the results for DEFECT_REPAIRING_DATASET
 for subject_id in os.listdir(results_dir):
     if subject_id.endswith('.csv'):
         continue
@@ -41,11 +44,41 @@ for subject_id in os.listdir(results_dir):
     new_row = {'project': project, 'patch_id': subject_id, 'correctness': correctness, 'failing_tests': failing_tests, 'discarded_tests': discarded_tests, 'reported_tests': reported_tests, 'max_score': max_score, 'prediction': prediction}
     patches_reports = pd.concat([patches_reports, pd.DataFrame([new_row])])
 
+# Now save the results for BF4J_DATASET
+for subject_id in os.listdir(results_dir_2):
+    if subject_id.endswith('.csv'):
+        continue
+    base_folder = os.path.join(subject_id,assertion_generation)
+    report_csv = os.path.join(results_dir_2, base_folder, 'report.csv')
+    subject_config_json = os.path.join(BF4J_DATASET, f'data/{subject_id}/bad-fix.json')
+    # Load json
+    with open(subject_config_json) as f:
+        patch_json = json.load(f)
+    print(f'Processing report: {report_csv}')
+    if not os.path.exists(report_csv):
+        no_report.append(subject_id)
+        continue
+    project = 'bf4j'
+    correctness = 0
+    score_file = os.path.join(results_dir_2, base_folder, 'scores-failing-tests.csv')
+    score_df = pd.read_csv(score_file)
+    failing_tests = len(score_df)
+    # Discarded tests are the ones with score < 0.80
+    discarded_tests = len(score_df[score_df['score'] < score_threshold])
+    reported_tests = len(score_df[score_df['score'] >= score_threshold])
+    max_score = score_df['score'].max()
+    # Prediction is 0 if max_score >= 0.80 and 1 otherwise
+    prediction = 0 if max_score >= score_threshold else 1
+    print(f'Max score: {max_score}')
+    new_row = {'project': project, 'patch_id': subject_id, 'correctness': correctness, 'failing_tests': failing_tests, 'discarded_tests': discarded_tests, 'reported_tests': reported_tests, 'max_score': max_score, 'prediction': prediction}
+    patches_reports = pd.concat([patches_reports, pd.DataFrame([new_row])])
+
 
 chart_row_latex = ['chart']
 lang_row_latex = ['lang']
 math_row_latex = ['math']
 time_row_latex = ['time']
+bf4j_row_latex = ['bf4j']
 total_row_latex = ['total']
 
 def save_results_for_project(patches,project,row_latex):
@@ -101,6 +134,7 @@ save_results_for_project(patches_reports,'Chart',chart_row_latex)
 save_results_for_project(patches_reports,'Lang',lang_row_latex)
 save_results_for_project(patches_reports,'Math',math_row_latex)
 save_results_for_project(patches_reports,'Time',time_row_latex)
+save_results_for_project(patches_reports,'bf4j',bf4j_row_latex)
 save_results_for_project(patches_reports,'TOTAL',total_row_latex)
 print()
 print('----------------------------------')
@@ -114,5 +148,6 @@ print(' & '.join([str(elem) for elem in chart_row_latex]) + ' \\\\')
 print(' & '.join([str(elem) for elem in lang_row_latex]) + ' \\\\')
 print(' & '.join([str(elem) for elem in math_row_latex]) + ' \\\\')
 print(' & '.join([str(elem) for elem in time_row_latex]) + ' \\\\')
+print(' & '.join([str(elem) for elem in bf4j_row_latex]) + ' \\\\')
 print(' & '.join([str(elem) for elem in total_row_latex]) + ' \\\\')
 
