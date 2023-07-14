@@ -149,5 +149,6 @@ print(' & '.join([str(elem) for elem in lang_row_latex]) + ' \\\\')
 print(' & '.join([str(elem) for elem in math_row_latex]) + ' \\\\')
 print(' & '.join([str(elem) for elem in time_row_latex]) + ' \\\\')
 print(' & '.join([str(elem) for elem in bf4j_row_latex]) + ' \\\\')
+print('\midrule')
 print(' & '.join([str(elem) for elem in total_row_latex]) + ' \\\\')
 
