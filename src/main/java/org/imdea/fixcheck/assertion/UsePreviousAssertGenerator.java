@@ -24,9 +24,11 @@ public class UsePreviousAssertGenerator extends AssertionGenerator {
     List<ExpressionStmt> originalAssertions = getAssertions(parentMethod);
     System.out.println("---> Original assertions to use: " + originalAssertions.size());
     System.out.println(originalAssertions);
-    // Get the current method and append the assertions
-    MethodDeclaration method = prefix.getMethod();
-    originalAssertions.forEach(assertion -> method.getBody().get().addStatement(assertion));
+
+    // NOTE: Assertions are no longer appended in this step, since removal is not done when using previous assertions
+    //MethodDeclaration method = prefix.getMethod();
+    //originalAssertions.forEach(assertion -> method.getBody().get().addStatement(assertion));
+
     // Update the class name
     updateClassName(prefix);
   }

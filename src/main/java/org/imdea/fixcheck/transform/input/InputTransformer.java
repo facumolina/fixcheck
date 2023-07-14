@@ -46,7 +46,8 @@ public class InputTransformer extends PrefixTransformer {
     // Prepare the new method body
     MethodDeclaration newMethod = TransformationHelper.getMethodDeclFromCompilationUnit(newCompilationUnit, prefixMethod.getNameAsString());
     // Remove assert statements from the method containing org.junit.Assert or org.junit.TestCase*assert
-    removeAssertionsFromMethod(newMethod);
+    if (!("previous-assertion".equals(Properties.ASSERTIONS_GENERATION)))
+      removeAssertionsFromMethod(newMethod);
     // Replace the input
     replaceInput(newMethod);
     // Transformed prefix
@@ -61,20 +62,30 @@ public class InputTransformer extends PrefixTransformer {
   private void removeAssertionsFromMethod(MethodDeclaration methodDecl) {
     // Remove the assertion statements from the method declaration
     methodDecl.getBody().get().findAll(ExpressionStmt.class).forEach(stmt -> {
-      if (stmt.getExpression() instanceof MethodCallExpr) {
-        MethodCallExpr methodCallExpr = (MethodCallExpr) stmt.getExpression();
-        if (methodCallExpr.getNameAsString().equals("assertNotNull")
-            || methodCallExpr.getNameAsString().equals("assertTrue")
-            || methodCallExpr.getNameAsString().equals("assertFalse")
-            || methodCallExpr.getNameAsString().equals("assertEquals")
-            || methodCallExpr.getNameAsString().equals("assertNotEquals")
-            // Used in JUnit 3
-            || methodCallExpr.getNameAsString().equals("fail")
-            || methodCallExpr.getNameAsString().equals("check")) {
-          stmt.remove();
-        }
-      }
+      if (isAssertion(stmt))
+        stmt.remove();
     });
+  }
+
+  /**
+   * Returns true iff a statement is an assertion
+   * @return true iff a statement is an assertion
+   */
+  private boolean isAssertion(ExpressionStmt stmt) {
+    if (stmt.getExpression() instanceof MethodCallExpr) {
+      MethodCallExpr methodCallExpr = (MethodCallExpr) stmt.getExpression();
+      if (methodCallExpr.getNameAsString().equals("assertNotNull")
+          || methodCallExpr.getNameAsString().equals("assertTrue")
+          || methodCallExpr.getNameAsString().equals("assertFalse")
+          || methodCallExpr.getNameAsString().equals("assertEquals")
+          || methodCallExpr.getNameAsString().equals("assertNotEquals")
+          // Used in JUnit 3
+          || methodCallExpr.getNameAsString().equals("fail")
+          || methodCallExpr.getNameAsString().equals("check")) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override
@@ -118,7 +129,15 @@ public class InputTransformer extends PrefixTransformer {
    */
   private Input getRandomInputKnownType(MethodDeclaration methodDecl, Class<? extends Expression> classToSearch) {
     // Find the expressions that inherit the class NodeWithType
-    List<? extends Expression> allInputsOfType = methodDecl.findAll(classToSearch);
+    List<Expression> allInputsOfType = new ArrayList<>();
+    methodDecl.getBody().get().getStatements().forEach(stmt -> {
+      if (stmt instanceof ExpressionStmt) {
+        if (!isAssertion((ExpressionStmt) stmt)) {
+          List<? extends Expression> inputs = stmt.findAll(classToSearch);
+          allInputsOfType.addAll(inputs);
+        }
+      }
+    });
     if (allInputsOfType.isEmpty()) throw new IllegalArgumentException("No locals of type " + Properties.INPUTS_CLASS);
     Random random = new Random();
     int index = random.nextInt(allInputsOfType.size());
