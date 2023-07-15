@@ -72,18 +72,21 @@ public class InputTransformer extends PrefixTransformer {
    * Returns true iff a statement is an assertion
    * @return true iff a statement is an assertion
    */
-  private boolean isAssertion(ExpressionStmt stmt) {
-    if (stmt.getExpression() instanceof MethodCallExpr) {
-      MethodCallExpr methodCallExpr = (MethodCallExpr) stmt.getExpression();
-      if (methodCallExpr.getNameAsString().equals("assertNotNull")
-          || methodCallExpr.getNameAsString().equals("assertTrue")
-          || methodCallExpr.getNameAsString().equals("assertFalse")
-          || methodCallExpr.getNameAsString().equals("assertEquals")
-          || methodCallExpr.getNameAsString().equals("assertNotEquals")
-          // Used in JUnit 3
-          || methodCallExpr.getNameAsString().equals("fail")
-          || methodCallExpr.getNameAsString().equals("check")) {
-        return true;
+  private boolean isAssertion(Statement stmt) {
+    if (stmt instanceof ExpressionStmt) {
+      ExpressionStmt exprStmt = (ExpressionStmt) stmt;
+      if (exprStmt.getExpression() instanceof MethodCallExpr) {
+        MethodCallExpr methodCallExpr = (MethodCallExpr) exprStmt.getExpression();
+        if (methodCallExpr.getNameAsString().equals("assertNotNull")
+            || methodCallExpr.getNameAsString().equals("assertTrue")
+            || methodCallExpr.getNameAsString().equals("assertFalse")
+            || methodCallExpr.getNameAsString().equals("assertEquals")
+            || methodCallExpr.getNameAsString().equals("assertNotEquals")
+            // Used in JUnit 3
+            || methodCallExpr.getNameAsString().equals("fail")
+            || methodCallExpr.getNameAsString().equals("check")) {
+          return true;
+        }
       }
     }
     return false;
@@ -133,7 +136,7 @@ public class InputTransformer extends PrefixTransformer {
     List<Expression> allInputsOfType = new ArrayList<>();
     List<Statement> stmts = methodDecl.findAll(Statement.class);
     stmts.forEach(stmt -> {
-      if (!(stmt instanceof ExpressionStmt) || !isAssertion((ExpressionStmt) stmt)) {
+      if (!stmt.isBlockStmt() && !isAssertion(stmt)) {
         List<? extends Expression> inputs = stmt.findAll(classToSearch);
         allInputsOfType.addAll(inputs);
       }
@@ -153,7 +156,7 @@ public class InputTransformer extends PrefixTransformer {
     List<Expression> expressionsWithType = new ArrayList<>();
     List<Statement> stmts = methodDecl.findAll(Statement.class);
     stmts.forEach(stmt -> {
-      if (!(stmt instanceof ExpressionStmt) || !isAssertion((ExpressionStmt) stmt)) {
+      if (!stmt.isBlockStmt() && !isAssertion(stmt)) {
         List<Expression> stmtExprsWithType = stmt.findAll(Expression.class).stream().filter(NodeWithType.class::isInstance).collect(Collectors.toList());
         expressionsWithType.addAll(stmtExprsWithType);
       }
