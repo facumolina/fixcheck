@@ -6,6 +6,7 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithType;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
+import com.github.javaparser.ast.stmt.Statement;
 import org.imdea.fixcheck.Properties;
 import org.imdea.fixcheck.prefix.BasicInput;
 import org.imdea.fixcheck.prefix.Input;
@@ -130,12 +131,11 @@ public class InputTransformer extends PrefixTransformer {
   private Input getRandomInputKnownType(MethodDeclaration methodDecl, Class<? extends Expression> classToSearch) {
     // Find the expressions that inherit the class NodeWithType
     List<Expression> allInputsOfType = new ArrayList<>();
-    methodDecl.getBody().get().getStatements().forEach(stmt -> {
-      if (stmt instanceof ExpressionStmt) {
-        if (!isAssertion((ExpressionStmt) stmt)) {
-          List<? extends Expression> inputs = stmt.findAll(classToSearch);
-          allInputsOfType.addAll(inputs);
-        }
+    List<Statement> stmts = methodDecl.findAll(Statement.class);
+    stmts.forEach(stmt -> {
+      if (!(stmt instanceof ExpressionStmt) || !isAssertion((ExpressionStmt) stmt)) {
+        List<? extends Expression> inputs = stmt.findAll(classToSearch);
+        allInputsOfType.addAll(inputs);
       }
     });
     if (allInputsOfType.isEmpty()) throw new IllegalArgumentException("No locals of type " + Properties.INPUTS_CLASS);
@@ -150,7 +150,14 @@ public class InputTransformer extends PrefixTransformer {
    * @return Random input for the unknown class
    */
   private ObjectInput getRandomInputUnknownType(MethodDeclaration methodDecl) {
-    List<Expression> expressionsWithType = methodDecl.findAll(Expression.class).stream().filter(NodeWithType.class::isInstance).collect(Collectors.toList());
+    List<Expression> expressionsWithType = new ArrayList<>();
+    List<Statement> stmts = methodDecl.findAll(Statement.class);
+    stmts.forEach(stmt -> {
+      if (!(stmt instanceof ExpressionStmt) || !isAssertion((ExpressionStmt) stmt)) {
+        List<Expression> stmtExprsWithType = stmt.findAll(Expression.class).stream().filter(NodeWithType.class::isInstance).collect(Collectors.toList());
+        expressionsWithType.addAll(stmtExprsWithType);
+      }
+    });
     if (expressionsWithType.isEmpty()) throw new IllegalArgumentException("The method declaration has no typed expressions");
     List<Expression> expressionsWithInputType = new ArrayList<>();
     for (Expression expr : expressionsWithType) {
