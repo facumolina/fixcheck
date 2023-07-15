@@ -12,27 +12,27 @@ public class StringProvider implements InputProvider {
   List<Object> usedInputs = new ArrayList<>();
   Random random = new Random();
 
-  private static final String specialChars = "!@#$%^&*()_+-=[]{};':\",./<>?\\|`~";
+  private static final String specialChars = "!@#$%^&*()_+-=[]{};':,./<>?\\|`~";
 
   @Override
   public Object getInput() {
-    String input = "\"test\"";
+    String input = "test";
     if (usedInputs.size() > 0) {
       int i = random.nextInt(usedInputs.size());
       input = (String)usedInputs.get(i);
     }
     // Sometimes, include a special character
-    if (random.nextInt(5) == 0) {
+    if (random.nextInt(5) == 0 && input.length() > 0) {
       int j = random.nextInt(input.length());
       char randomChar = specialChars.charAt(random.nextInt(specialChars.length()));
       input = input.substring(0, j) + randomChar + input.substring(j);
     }
-    return input;
+    return "\""+input+"\"";
   }
 
   @Override
   public void addInput(Object value) {
-    usedInputs.add("\""+value+"\"");
+    usedInputs.add(value);
   }
 
   @Override
