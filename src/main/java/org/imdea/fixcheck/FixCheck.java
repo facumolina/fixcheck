@@ -1,9 +1,6 @@
 package org.imdea.fixcheck;
 
-import org.imdea.fixcheck.assertion.AssertTrueGenerator;
-import org.imdea.fixcheck.assertion.AssertionGenerator;
-import org.imdea.fixcheck.assertion.TextDavinci003;
-import org.imdea.fixcheck.assertion.UsePreviousAssertGenerator;
+import org.imdea.fixcheck.assertion.*;
 import org.imdea.fixcheck.checker.FailureChecker;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.runner.PrefixRunner;
@@ -167,6 +164,8 @@ public class FixCheck {
       return new UsePreviousAssertGenerator();
     if ("llm-assertion".equals(Properties.ASSERTIONS_GENERATION))
       return new TextDavinci003();
+    if ("replit-code-llm".equals(Properties.ASSERTIONS_GENERATION))
+      return new GPT4AllReplitCodeLLM();
     throw new IllegalArgumentException("Unknown assertion generator: " + Properties.ASSERTIONS_GENERATION);
   }
 
