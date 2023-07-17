@@ -130,7 +130,8 @@ public class Properties {
     try {
       if (ORIGINAL_FAILURE_LOG != null) {
         List<String> allLines = Files.readAllLines(Paths.get(ORIGINAL_FAILURE_LOG));
-        allLines.remove(0);
+        if (ORIGINAL_FAILURE_LOG.contains("DefectRepairing")) // Remove the first line if it is DefectRepairing subject
+          allLines.remove(0);
         for (String line : allLines) {
           if (line.contains("at sun.reflect.NativeMethodAccessorImpl.invoke0")) // Everything after this line is not related to the actual test
             break;
