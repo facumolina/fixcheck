@@ -18,10 +18,14 @@ app = flask.Flask(__name__)
 def complete():
     prompt = flask.request.json['prompt']
     print("### Prompt:")
+    print(prompt)
     x = tokenizer.encode(prompt, return_tensors='pt')
-    y = model.generate(x, max_length=48, temperature=0.2, top_p=0.9, top_k=4, num_return_sequences=1, eos_token_id=tokenizer.eos_token_id)
+    total_length = len(x[0])
+    max_l = total_length + 48
+    y = model.generate(x, max_length=max_l, temperature=0.2, top_p=0.9, top_k=4, num_return_sequences=1, eos_token_id=tokenizer.eos_token_id)
     print("### Model output:")
     output = tokenizer.decode(y[0], skip_special_tokens=True, clean_up_tokenization_spaces=False)
+    without_prompt = output.replace(prompt, '')
     print(output)
     return flask.jsonify({'completion': output})
 
