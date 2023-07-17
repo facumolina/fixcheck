@@ -30,3 +30,4 @@ def complete():
 port = 5100
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=port)
+    print("### Listening on port", port)
