@@ -1,5 +1,6 @@
 package org.imdea.fixcheck.assertion;
 
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import org.imdea.fixcheck.assertion.common.AssertionsHelper;
 import org.imdea.fixcheck.prefix.Prefix;
@@ -11,6 +12,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.imdea.fixcheck.transform.common.TransformationHelper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -68,6 +70,8 @@ public class TextDavinci003 extends AssertionGenerator {
     System.out.println("---> assertions: " + assertionsStr);
     System.out.println();
     AssertionsHelper.appendAssertionsToPrefix(assertionsStr, prefix);
+    // Update the class name
+    updateClassName(prefix);
   }
 
   /**
@@ -143,5 +147,18 @@ public class TextDavinci003 extends AssertionGenerator {
    * Valid/fix the given assertion string
    */
   private String validateOrFixAssertionStr(String assertionStr) { return ""; }
+
+  /**
+   * Update the class name with a new name
+   * @param prefix Prefix to update
+   */
+  private void updateClassName(Prefix prefix) {
+    String currentClassName = prefix.getClassName();
+    String newClassName = currentClassName + "withTextDavinci003";
+    prefix.setClassName(newClassName);
+    CompilationUnit compilationUnit = prefix.getMethodCompilationUnit();
+    compilationUnit.getClassByName(currentClassName).get().setName(newClassName);
+    TransformationHelper.updateCompilationUnitNames(compilationUnit, currentClassName, newClassName);
+  }
 
 }

@@ -1,7 +1,9 @@
 package org.imdea.fixcheck.assertion;
 
+import com.github.javaparser.ast.CompilationUnit;
 import org.imdea.fixcheck.assertion.common.AssertionsHelper;
 import org.imdea.fixcheck.prefix.Prefix;
+import org.imdea.fixcheck.transform.common.TransformationHelper;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -34,6 +36,8 @@ public class GPT4AllReplitCodeLLM extends AssertionGenerator {
     System.out.println("---> assertions: " + assertionsStr);
     System.out.println();
     AssertionsHelper.appendAssertionsToPrefix(assertionsStr, prefix);
+    // Update the class name
+    updateClassName(prefix);
   }
 
   /**
@@ -110,4 +114,18 @@ public class GPT4AllReplitCodeLLM extends AssertionGenerator {
     }
     return assertionsStr;
   }
+
+  /**
+   * Update the class name with a new name
+   * @param prefix Prefix to update
+   */
+  private void updateClassName(Prefix prefix) {
+    String currentClassName = prefix.getClassName();
+    String newClassName = currentClassName + "withReplitCodeLLM";
+    prefix.setClassName(newClassName);
+    CompilationUnit compilationUnit = prefix.getMethodCompilationUnit();
+    compilationUnit.getClassByName(currentClassName).get().setName(newClassName);
+    TransformationHelper.updateCompilationUnitNames(compilationUnit, currentClassName, newClassName);
+  }
+
 }
