@@ -106,12 +106,16 @@ public class GPT4AllReplitCodeLLM extends AssertionGenerator {
   private List<String> getAssertionsFromResponseText(String text) {
     List<String> assertionsStr = new ArrayList<>();
     String[] lines = text.split("\\r?\\n"); // Split by lines
-    for (String possibleAssertion : lines) {
-      if (possibleAssertion.startsWith("//")) continue; // It's a comment
-      if (possibleAssertion.trim().isEmpty()) continue; // It's an empty line
-      if (possibleAssertion.contains("}")) break; // It's an end of line, then finish
-      if (isAssertionString(possibleAssertion))
-        assertionsStr.add(possibleAssertion);
+    // Process the lines of Strings backwards, until the first assertion is found
+    boolean withinAssertions = false;
+    for (int i = lines.length - 1; i >= 0; i--) {
+      String line = lines[i];
+      if (isAssertionString(line)) {
+        withinAssertions = true;
+        assertionsStr.add(line);
+      } else if (withinAssertions) {
+        break;
+      }
     }
     return assertionsStr;
   }
