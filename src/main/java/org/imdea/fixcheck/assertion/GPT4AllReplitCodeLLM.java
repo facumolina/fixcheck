@@ -110,9 +110,18 @@ public class GPT4AllReplitCodeLLM extends AssertionGenerator {
       if (possibleAssertion.startsWith("//")) continue; // It's a comment
       if (possibleAssertion.trim().isEmpty()) continue; // It's an empty line
       if (possibleAssertion.contains("}")) break; // It's an end of line, then finish
-      assertionsStr.add(possibleAssertion);
+      if (isAssertionString(possibleAssertion))
+        assertionsStr.add(possibleAssertion);
     }
     return assertionsStr;
+  }
+
+  private boolean isAssertionString(String possibleAssertion) {
+    return possibleAssertion.contains("assertEquals") ||
+        possibleAssertion.contains("assertNotNull") ||
+        possibleAssertion.contains("assertNull") ||
+        possibleAssertion.contains("assertTrue") ||
+        possibleAssertion.contains("assertFalse");
   }
 
   /**
