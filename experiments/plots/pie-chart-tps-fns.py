@@ -26,7 +26,6 @@ true_positives_exceptions_count = {}
 false_negatives_exceptions_count = {}
 
 # First save the results for DEFECT_REPAIRING_DATASET
-
 for subject_id in os.listdir(results_dir):
     if subject_id.endswith('.csv'):
         continue
