@@ -103,6 +103,7 @@ def save_results_for_project(patches,project,row_latex):
     # True negatives are the patches that are correct and are predicted as correct
     # False negatives are the patches that are incorrect and are predicted as correct
     true_positives = len(proj_incorrect_patches[proj_incorrect_patches['prediction'] == 0])
+    true_positives_patches = proj_incorrect_patches[proj_incorrect_patches['prediction'] == 0]
     false_positives = len(proj_correct_patches[proj_correct_patches['prediction'] == 0])
     true_negatives = len(proj_correct_patches[proj_correct_patches['prediction'] == 1])
     false_negatives = len(proj_incorrect_patches[proj_incorrect_patches['prediction'] == 1])
@@ -131,6 +132,9 @@ def save_results_for_project(patches,project,row_latex):
     row_latex.append(recall)
     print(f'Summary project {project}')
     print(f'tps: {true_positives}')
+    print('True positives patches ids:')
+    true_positive_patches_list = true_positives_patches['patch_id'].tolist()
+    print(true_positive_patches_list)
     print(f'fps: {false_positives}')
     print(f'tns: {true_negatives}')
     print(f'fns: {false_negatives}')
