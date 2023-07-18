@@ -17,6 +17,9 @@ no_report = []
 score_threshold = 0.80
 
 # Initialize map of patch -> exception_type
+
+per_patches = pd.DataFrame(columns=['project','patch_id','correctness','original_failure','found_failure','same_reason'])
+
 patch_with_same_exceptions = {}
 patch_tests = {}
 for subject_id in os.listdir(results_dir):
@@ -78,8 +81,12 @@ for subject_id in os.listdir(results_dir):
             if exception_type == found_exception:
                 failing_same_reason.append(subject_id)
                 patch_with_same_exceptions[subject_id] = exception_type
+                same_reason = 1
             else:
                 failing_different_reason.append(subject_id)
+                same_reason = 0
+        new_row = {'project': project, 'patch_id': subject_id, 'correctness': 0, 'original_failure': exception_type, 'found_failure': found_exception, 'same_reason': same_reason}
+        per_patches = pd.concat([per_patches, pd.DataFrame([new_row])])
     else:
         print(f'Patch is predicted as correct for {subject_id}')
 
@@ -88,13 +95,47 @@ print('---------------------------------')
 print(f'No failure: {len(no_failure)}')
 print(f'No report: {len(no_report)}')
 print(no_report)
+
+chart_row_latex = ['chart']
+lang_row_latex = ['lang']
+math_row_latex = ['math']
+time_row_latex = ['time']
+total_row_latex = ['total']
+
+def save_results_for_project(patches,project,row_latex):
+    if project == 'TOTAL':
+        proj_rows = patches
+    else:
+        proj_rows = patches[patches['project'] == project]
+
+    total_patches = len(proj_rows)
+    total_same_reason_patches = len(proj_rows[proj_rows['same_reason'] == 1])
+    total_different_reason_patches = len(proj_rows[proj_rows['same_reason'] == 0])
+
+
+
+    row_latex.append(total_patches)
+    row_latex.append(total_same_reason_patches)
+    row_latex.append(total_different_reason_patches)
+    # Precision with 2 decimals
+    precision = round(total_same_reason_patches/total_patches,2)
+    row_latex.append(precision)
+
+
+save_results_for_project(per_patches,'Chart',chart_row_latex)
+save_results_for_project(per_patches,'Lang',lang_row_latex)
+save_results_for_project(per_patches,'Math',math_row_latex)
+save_results_for_project(per_patches,'Time',time_row_latex)
+save_results_for_project(per_patches,'TOTAL',total_row_latex)
 print()
-print(f'Failing same reason: {len(failing_same_reason)}')
-print(failing_same_reason)
-print('With failing reasons:')
-print(patch_with_same_exceptions)
-print('With failing tests:')
-print(patch_tests)
-print()
-print(f'Failing different reason: {len(failing_different_reason)}')
-print(failing_different_reason)
+
+print('----------------------------------')
+print('Latex table')
+# Print latex rows for chart with each element in the list interleaved with &
+print(' & '.join([str(elem) for elem in chart_row_latex]) + ' \\\\')
+print(' & '.join([str(elem) for elem in lang_row_latex]) + ' \\\\')
+print(' & '.join([str(elem) for elem in math_row_latex]) + ' \\\\')
+print(' & '.join([str(elem) for elem in time_row_latex]) + ' \\\\')
+print('\midrule')
+print(' & '.join([str(elem) for elem in total_row_latex]) + ' \\\\')
+
