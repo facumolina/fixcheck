@@ -123,8 +123,10 @@ def save_results_for_project(patches,project,row_latex):
     row_latex.append(proj_failing_tests)
     row_latex.append(proj_discarded)
     row_latex.append(proj_reported)
-    row_latex.append(len(proj_correct_predictions))
-    row_latex.append(len(proj_incorrect_predictions))
+    row_latex.append(true_positives)
+    row_latex.append(false_positives)
+    row_latex.append(true_negatives)
+    row_latex.append(false_negatives)
     # Format precision and recall to 2 decimal places
     precision = "{:.2f}".format(precision)
     recall = "{:.2f}".format(recall)
