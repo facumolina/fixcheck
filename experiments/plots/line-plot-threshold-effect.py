@@ -146,13 +146,13 @@ fig.update_layout(
     xaxis_tickmode = 'linear',
     xaxis_dtick = 0.1,
     yaxis_title="Performance Metric",
-    #yaxis_tickmode = 'linear',
-    #yaxis_dtick = 0.1,
+    yaxis_tickmode = 'linear',
+    yaxis_dtick = 0.1,
     template='plotly_white',
     autosize=False,
     margin = {'l':0,'r':0,'t':0,'b':0},
     width=600,
-    height=300
+    height=350
     #margin=dict(l=20, r=20, t=20, b=20),
 )
 
