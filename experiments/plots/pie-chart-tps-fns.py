@@ -79,7 +79,56 @@ for subject_id in os.listdir(results_dir):
             else:
                 false_negatives_exceptions_count[exception_type] = 1
 
+# Now save the results from BF4J_DATASET
+for subject_id in os.listdir(results_dir_2):
+    if subject_id.endswith('.csv'):
+        continue
+    base_folder = os.path.join(subject_id,assertion_generation)
+    report_csv = os.path.join(results_dir_2, base_folder, 'report.csv')
+    subject_config_json = os.path.join(BF4J_DATASET, f'data/{subject_id}/bad-fix.json')
+    # Load json
+    with open(subject_config_json) as f:
+        patch_json = json.load(f)
+    print(f'Processing report: {report_csv}')
+    if not os.path.exists(report_csv):
+        no_report.append(subject_id)
+        continue
+    project = 'bf4j'
+    score_file = os.path.join(results_dir_2, base_folder, 'scores-failing-tests.csv')
+    score_df = pd.read_csv(score_file)
+    max_score = score_df['score'].max()
+    prediction = 0 if max_score >= score_threshold else 1
 
+    # get the first line of the failure log
+    failures_files = patch_json['bug']['failures']
+    # Get failures which name ends in .failure
+    failures_files = [f['failure'] for f in failures_files]
+    if len(failures_files) == 0:
+        print(f'No failure log for {subject_id}')
+        no_failure.append(subject_id)
+        continue
+    # Get the first failure
+    failure_file = failures_files[0]
+    full_failure_filename = os.path.join(BF4J_DATASET, f'data/{subject_id}/{failure_file}')
+    with open(full_failure_filename, 'r') as f:
+        first_line = f.readline()
+        failing_reason = f.readline()
+        exception_type = failing_reason.split(':')[0]
+        exception_type = exception_type.replace('\n', '')
+        print(f'original exception: {exception_type}')
+
+    if (prediction==0):
+        true_positives_map[subject_id] = exception_type
+        if exception_type in true_positives_exceptions_count:
+            true_positives_exceptions_count[exception_type] += 1
+        else:
+            true_positives_exceptions_count[exception_type] = 1
+    else:
+        false_negatives_map[subject_id] = exception_type
+        if exception_type in false_negatives_exceptions_count:
+            false_negatives_exceptions_count[exception_type] += 1
+        else:
+            false_negatives_exceptions_count[exception_type] = 1
 
 
 # Show true positives / false negatives
