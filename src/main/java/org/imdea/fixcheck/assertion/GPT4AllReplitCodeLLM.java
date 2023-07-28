@@ -53,7 +53,6 @@ public class GPT4AllReplitCodeLLM extends AssertionGenerator {
   private String generatePrompt(Prefix prefix) {
     String prompt = prefix.getParent().getSourceCode() + "\n";
     prompt += prefix.getSourceCode();
-    // TODO: prompt needs to be cut by removing the last }, for the model
     // to properly understand it needs to complete the code
     prompt = replaceLast(prompt, "}", "");
     return prompt;
