@@ -166,6 +166,8 @@ public class FixCheck {
       return new TextDavinci003();
     if ("replit-code-llm".equals(Properties.ASSERTIONS_GENERATION))
       return new GPT4AllReplitCodeLLM();
+    if ("llama2-llm-13b".equals(Properties.ASSERTIONS_GENERATION))
+      return new LlamaLLM();
     throw new IllegalArgumentException("Unknown assertion generator: " + Properties.ASSERTIONS_GENERATION);
   }
 
