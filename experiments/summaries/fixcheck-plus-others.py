@@ -20,7 +20,11 @@ patch_sim_detected_ids = [1, 2, 4, 8, 9, 13, 15, 16, 17, 19, 22, 23, 32, 33, 34,
 patch_sim_detected = ['Patch' + str(id) for id in patch_sim_detected_ids]
 fixcheck_detected = []
 
-FIXCHECK_SCORE_THRESHOLD = 0.5
+# shibboleth detected patches
+shibboleth_detected_ids = [1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 36, 37, 38, 44, 45, 46, 47, 48, 49, 51, 53, 54, 55, 58, 59, 62, 63, 64, 65, 66, 67, 68, 69, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 88, 89, 90, 91, 92, 93, 150, 151, 152, 153, 154, 155, 157, 158, 159, 160, 161, 162, 163, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 191, 192, 193, 194, 195, 196, 197, 198, 199, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 'HDRepair1', 'HDRepair3', 'HDRepair4', 'HDRepair5', 'HDRepair6', 'HDRepair7', 'HDRepair8', 'HDRepair9', 'HDRepair10']
+shibboleth_detected = ['Patch' + str(id) for id in shibboleth_detected_ids]
+
+FIXCHECK_SCORE_THRESHOLD = 0.40
 
 for target_patch in target_patches:
     subject_data = df[df['id'] == target_patch]
@@ -30,6 +34,8 @@ for target_patch in target_patches:
     project = subject_data['project'].values[0]
     patch_sim_time = 180 # 3 minutes of Randoop generation, as specified in the paper
     patch_sim_pred = 1 if target_patch in patch_sim_detected else 0
+
+    shibboleth_pred = 1 if target_patch in shibboleth_detected else 0
 
     base_folder = os.path.join(target_patch,assertion_generation)
     report_csv = os.path.join(results_dir, base_folder, 'report.csv')
@@ -59,8 +65,12 @@ for target_patch in target_patches:
             fixcheck_detected.append(target_patch)
 
     both_pred = 1 if (patch_sim_pred == 1 or fixcheck_pred == 1) else 0
+    patch_sim_and_fixcheck = 1 if (patch_sim_pred == 1 and fixcheck_pred == 1) else 0
 
-    new_row = {'project': project, 'patch_id': target_patch, 'patch_sim_time': patch_sim_time, 'patch_sim_pred': patch_sim_pred, 'fixcheck_time_tg': fixcheck_time_tg, 'fixcheck_time_ag': fixcheck_time_ag, 'fixcheck_pred': fixcheck_pred, 'both_pred': both_pred}
+    both_pred_with_shibboleth = 1 if (shibboleth_pred == 1 or fixcheck_pred == 1) else 0
+    shiboletth_and_fixcheck = 1 if (shibboleth_pred == 1 and fixcheck_pred == 1) else 0
+
+    new_row = {'project': project, 'patch_id': target_patch, 'patch_sim_time': patch_sim_time, 'patch_sim_pred': patch_sim_pred, 'fixcheck_time_tg': fixcheck_time_tg, 'fixcheck_time_ag': fixcheck_time_ag, 'fixcheck_pred': fixcheck_pred, 'both_pred': both_pred, 'patch_sim_and_fixcheck': patch_sim_and_fixcheck, 'shibboleth_pred': shibboleth_pred ,'both_pred_with_shibboleth': both_pred_with_shibboleth, 'shiboletth_and_fixcheck': shiboletth_and_fixcheck}
     time_and_detection = pd.concat([time_and_detection, pd.DataFrame([new_row])])
 
 
@@ -85,14 +95,18 @@ def save_results_for_project(results,project,row_latex):
     fixcheck_pred = proj_rows['fixcheck_pred'].sum()
 
     both_pred = proj_rows['both_pred'].sum()
+    patch_sim_and_fixcheck = int(proj_rows['patch_sim_and_fixcheck'].sum())
 
     row_latex.append(incorrect_patches)
-    row_latex.append(patch_sim_time)
     row_latex.append(path_sim_pred)
-    row_latex.append(fixcheck_time_tg)
-    row_latex.append(fixcheck_time_ag)
-    row_latex.append(fixcheck_pred)
-    row_latex.append(both_pred)
+    percent = round((patch_sim_and_fixcheck / path_sim_pred) * 100, 1)
+    row_latex.append(str(patch_sim_and_fixcheck)+ ' (' + str(percent) + '\%)')
+
+    shibboleth_pred = int(proj_rows['shibboleth_pred'].sum())
+    shibboleth_and_fixcheck = int(proj_rows['shiboletth_and_fixcheck'].sum())
+    row_latex.append(shibboleth_pred)
+    percent = round((shibboleth_and_fixcheck / shibboleth_pred) * 100, 1)
+    row_latex.append(str(shibboleth_and_fixcheck)+ ' (' + str(percent) + '\%)')
 
 save_results_for_project(time_and_detection,'Chart',chart_row_latex)
 save_results_for_project(time_and_detection,'Lang',lang_row_latex)
@@ -111,6 +125,9 @@ only_by_fixcheck = [patch for patch in fixcheck_detected if patch not in patch_s
 print(f'detected only by FixCheck: {len(only_by_fixcheck)}')
 print(f'detected by both: {time_and_detection["both_pred"].sum()}')
 print()
+print(f'detected by Shibboleth: {time_and_detection["shibboleth_pred"].sum()}')
+print(f'detected by Shibboleth and also FixCheck: {time_and_detection["shiboletth_and_fixcheck"].sum()}')
+print(f'detected by both Shibboleth and FixCheck: {time_and_detection["both_pred_with_shibboleth"].sum()}')
 
 print('----------------------------------')
 print('Latex table')

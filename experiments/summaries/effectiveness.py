@@ -10,7 +10,7 @@ BF4J_DATASET = os.getenv('BF4J_DATASET')
 
 # Empty dataframe with columns project,patch_id,correctness,total_tests,discarded_tests,reported_tests,max_score,prediction
 patches_reports = pd.DataFrame(columns=['project','patch_id','correctness','failing_tests','discarded_tests','reported_tests','max_score','prediction'])
-score_threshold = 0.80
+score_threshold = 0.40
 assertion_generation = sys.argv[1]
 no_report = []
 # First save the results for DEFECT_REPAIRING_DATASET

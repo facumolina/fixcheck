@@ -158,7 +158,7 @@ target_patches = ["Patch" + str(id) for id in target_ids]
 prediction_dict = {"Patch ID": [], "FixCheck Prediction": []}
 
 for patch in target_patches:
-    score_file = os.path.join(result_dir, f"{patch}/{assertion_generation}/scores-failing-tests.csv")
+    score_file = os.path.join(results_dir, f'{patch}/{assertion_generation}/scores-failing-tests.csv')
 
     prediction_dict["Patch ID"].append(patch)
 
@@ -172,4 +172,4 @@ for patch in target_patches:
 
 
 df = pd.DataFrame(data=prediction_dict)
-df.to_csv(f'{result_dir}/{assertion_generation}-prediction-detection.csv')
+df.to_csv(f'{results_dir}/{assertion_generation}-prediction-detection.csv')

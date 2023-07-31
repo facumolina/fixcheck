@@ -14,7 +14,7 @@ assertion_generation = sys.argv[1] # One of no-assertion, previous-assertion or 
 # First save the results for DEFECT_REPAIRING_DATASET
 no_failure = []
 no_report = []
-score_threshold = 0.50
+score_threshold = 0.40
 
 
 ground_truth_target_exceptions = {
@@ -42,6 +42,17 @@ ground_truth_target_exceptions = {
     'time4j-728': ['java.lang.AssertionError']
     }
 
+map_names = {
+    'commons-math': 'math',
+    'commons-cli': 'cli',
+    'Time4J' : 'time4j',
+    'commons-jxpath': 'jxpath',
+    'commons-lang': 'lang',
+    'choco-solver': 'choco',
+    'commons-csv': 'csv',
+    'commons-io': 'io'
+}
+
 per_patches = pd.DataFrame(columns=['project','patch_id','correctness','original_failure','found_failure','same_reason'])
 
 patch_with_same_exceptions = {}
@@ -68,13 +79,17 @@ for subject_id in os.listdir(results_dir):
     score_file = os.path.join(results_dir, base_folder, 'scores-failing-tests.csv')
     score_df = pd.read_csv(score_file)
     failing_tests = len(score_df)
-    if failing_tests == 0:
-        print(f'No failing tests for {subject_id}')
-        continue
+
+    # Discarded tests are the ones with score < score_threshold
+    discarded_tests = 0
+    ranked_tests = 0
+    if failing_tests > 0:
+        discarded_tests = len(score_df[score_df['score'] < score_threshold])
+        ranked_tests = len(score_df[score_df['score'] >= score_threshold])
 
     max_score = score_df['score'].max()
     prediction = 0 if max_score >= score_threshold else 1
-    if prediction == 0:
+    if prediction == 0 or prediction == 1:
         failures_files = patch_json['bug']['failures']
         # Get failures which name ends in .failure
         failures_files = [f['failure'] for f in failures_files]
@@ -97,6 +112,14 @@ for subject_id in os.listdir(results_dir):
             continue
         target_exceptions = ground_truth_target_exceptions[subject_id]
         print(f'ground truth exception: {target_exceptions}')
+
+        if failing_tests == 0:
+            project = patch_json['project']
+            if project in map_names:
+                project = map_names[project]
+            new_row = {'project': project, 'patch_id': subject_id, 'correctness': 0, 'failing_tests': failing_tests, 'discarded_tests': discarded_tests, 'ranked_tests': ranked_tests, 'original_failure': exception_type, 'found_failure': '-', 'same_reason': '-'}
+            per_patches = pd.concat([per_patches, pd.DataFrame([new_row])])
+            continue
 
         # The patch is predicted as incorrect, thus we need to check if the exception is the same
         # Get the test with score max_score
@@ -123,8 +146,11 @@ for subject_id in os.listdir(results_dir):
                 same_reason = 0
 
         project = patch_json['project']
+        if project in map_names:
+            project = map_names[project]
+
         correctness = 0
-        new_row = {'project': project, 'patch_id': subject_id, 'correctness': 0, 'original_failure': exception_type, 'found_failure': found_exception, 'same_reason': same_reason}
+        new_row = {'project': project, 'patch_id': subject_id, 'correctness': 0, 'failing_tests': failing_tests, 'discarded_tests': discarded_tests, 'ranked_tests': ranked_tests, 'original_failure': exception_type, 'found_failure': found_exception, 'same_reason': same_reason}
         per_patches = pd.concat([per_patches, pd.DataFrame([new_row])])
     else:
         print(f'Patch is predicted as correct for {subject_id}')
@@ -145,17 +171,33 @@ def save_results_for_project(patches,project,row_latex):
         proj_rows = patches[patches['project'] == project]
 
     total_patches = len(proj_rows)
-    total_same_reason_patches = len(proj_rows[proj_rows['same_reason'] == 1])
-    total_different_reason_patches = len(proj_rows[proj_rows['same_reason'] == 0])
+    # total_same_reason_patches are patches with same_reason == 1 and ranked_tests > 0
+    total_same_reason_patches = len(proj_rows[(proj_rows['same_reason'] == 1) & (proj_rows['ranked_tests'] > 0)])
+    total_different_reason_patches = len(proj_rows[(proj_rows['same_reason'] == 0) & (proj_rows['ranked_tests'] > 0)])
+    failing_tests = int(proj_rows['failing_tests'].sum())
+    discarded_tests = int(proj_rows['discarded_tests'].sum())
+    ranked_tests = int(proj_rows['ranked_tests'].sum())
 
-
+    # Count rows with ranked_tests > 0
+    reported_fault_revealing_tests = len(proj_rows[proj_rows['ranked_tests'] > 0])
+    recall = round(total_same_reason_patches/total_patches,2)
 
     row_latex.append(total_patches)
+    row_latex.append(failing_tests)
+    row_latex.append(discarded_tests)
+    row_latex.append(ranked_tests)
+    row_latex.append(reported_fault_revealing_tests)
+
     row_latex.append(total_same_reason_patches)
-    row_latex.append(total_different_reason_patches)
+    #row_latex.append(total_different_reason_patches)
+
     # Precision with 2 decimals
-    precision = round(total_same_reason_patches/total_patches,2)
+    precision = 1.0
+    if reported_fault_revealing_tests > 0:
+        precision = round(total_same_reason_patches/reported_fault_revealing_tests,2)
+
     row_latex.append(precision)
+    row_latex.append(recall)
 
 
 
@@ -169,6 +211,10 @@ print('Failing different reason')
 print(failing_different_reason)
 print()
 
+
+# Sort per_patches by project name
+per_patches = per_patches.sort_values(by=['project'])
+
 # Loop for each unique project
 print('----------------------------------')
 print('Latex table')
@@ -177,5 +223,6 @@ for project in per_patches['project'].unique():
     save_results_for_project(per_patches,project,row_latex)
     print(' & '.join([str(elem) for elem in row_latex]) + ' \\\\')
 save_results_for_project(per_patches,'TOTAL',total_row_latex)
+print('\midrule')
 print(' & '.join([str(elem) for elem in total_row_latex]) + ' \\\\')
 print('----------------------------------')
