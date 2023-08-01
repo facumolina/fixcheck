@@ -91,6 +91,10 @@ def save_results_for_project(results,project,row_latex):
     print('Time Assertion Generation: ', fixcheck_time_ag)
     print('Time Test Execution: ', ficcheck_time_te)
     print('Total Time: ', fixcheck_time_tg + fixcheck_time_ag + ficcheck_time_te)
+    print('Averages')
+    print('Time Test Generation: ', proj_rows['fixcheck_time_tg'].mean())
+    print('Time Assertion Generation: ', proj_rows['fixcheck_time_ag'].mean())
+    print('Time Test Execution: ', proj_rows['fixcheck_time_te'].mean())
 
 save_results_for_project(exec_time,'Chart',chart_row_latex)
 save_results_for_project(exec_time,'Lang',lang_row_latex)
