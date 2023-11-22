@@ -7,6 +7,7 @@ import subprocess
 # The script performs the following steps:
 #   1. Extract the corresponding defects4j project from the subject config file
 #   2. Checkout and compile the project
+#   3. Apply the target patch and compile the patched project
 #
 # Usage: python3 experiments/setup-defect-repairing.py <subject_id>
 # Example: python3 experiments/setup-defect-repairing.py Patch1
