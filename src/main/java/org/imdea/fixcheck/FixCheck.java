@@ -168,6 +168,8 @@ public class FixCheck {
       return new GPT4AllReplitCodeLLM();
     if ("llama2-llm-13b".equals(Properties.ASSERTIONS_GENERATION))
       return new LlamaLLM();
+    if ("codellama-7b".equals(Properties.ASSERTIONS_GENERATION))
+      return new CodeLlama();
     throw new IllegalArgumentException("Unknown assertion generator: " + Properties.ASSERTIONS_GENERATION);
   }
 
