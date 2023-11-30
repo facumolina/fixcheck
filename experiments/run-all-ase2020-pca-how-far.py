@@ -14,6 +14,8 @@ patching_failed_subjects_file = os.path.join(PCA_HOW_FAR_DATASET, 'patching-fail
 # Get all lines of file
 with open(patching_failed_subjects_file) as f:
     lines_failing_patches = f.readlines()
+# Remove \n from lines
+lines_failing_patches = [line.strip() for line in lines_failing_patches]
 
 # Loop through the dataset and run the setup for each subject
 for index, row in df_how_far.iterrows():
@@ -21,7 +23,7 @@ for index, row in df_how_far.iterrows():
     subject_id = row['id']
     report_file = f'fixcheck-output/ase2020/{subject_id}/{assertion_generation}/report.csv'
     if os.path.exists(report_file):
-        print(f'Report already exists for patch: {patch}')
+        print(f'Report already exists for patch: {subject_id}')
         continue
     # Do not run if subject is in the list of failing patches
     if subject_id in lines_failing_patches:
