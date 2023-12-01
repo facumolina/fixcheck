@@ -7,7 +7,7 @@ dataset_csv = 'experiments/ase2020-pca-how-far.csv'
 df_how_far = pd.read_csv(dataset_csv)
 
 # Empty dataframe with the columns we need
-time_and_detection = pd.DataFrame(columns=['subject','project','incorrect','fixcheck_time_tg','fixcheck_time_ag','fixcheck_pred','both_pred'])
+time_and_detection = pd.DataFrame(columns=['subject','project','incorrect','fixcheck_time_tg','fixcheck_time_ag','fixcheck_pred'])
 
 assertion_generation = sys.argv[1]
 
@@ -49,4 +49,4 @@ for index, row in df_how_far.iterrows():
     time_and_detection = pd.concat([time_and_detection, pd.DataFrame([new_row])])
 
 # Save the results to a csv file
-time_and_detection.to_csv('fixcheck-output/ase2020/fixcheck-time-and-detection.csv', index=False)
+time_and_detection.to_csv(f'fixcheck-output/ase2020/fixcheck-time-and-detection-{assertion_generation}.csv', index=False)
