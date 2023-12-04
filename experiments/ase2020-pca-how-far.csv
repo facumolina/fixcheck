@@ -5,12 +5,12 @@ patch1-Closure-62-TBar,TBar,Correct,Closure,62,Closure62b,build/classes:lib/*:bu
 patch1-Closure-63-TBar,TBar,Correct,Closure,63,,,,,,,,
 patch1-Chart-4-TBar,TBar,Correct,Chart,4,Chart4b,build,build-tests,tests,org.jfree.chart.plot.junit.XYPlotTests,testDrawRangeGridlines,org.jfree.chart.plot.XYPlot,int
 patch1-Chart-9-TBar,TBar,Correct,Chart,9,Chart9b,build,build-tests,tests,org.jfree.data.time.junit.TimeSeriesTests,testBug1864222,org.jfree.data.time.TimeSeries,int
-patch1-Chart-20-TBar,TBar,Correct,Chart,20,Chart20b,build,build-tests,tests,org.jfree.chart.plot.junit.ValueMarkerTests,test1808376,org.jfree.chart.plot.ValueMarker,int
+patch1-Chart-20-TBar,TBar,Correct,Chart,20,Chart20b,build,build-tests,tests,org.jfree.chart.plot.junit.ValueMarkerTests,test1808376,org.jfree.chart.plot.ValueMarker,float
 patch1-Chart-1-TBar,TBar,Correct,Chart,1,Chart1b,build,build-tests,tests,org.jfree.chart.renderer.category.junit.AbstractCategoryItemRendererTests,test2947660,org.jfree.chart.renderer.category.LineAndShapeRenderer,java.lang.String
 patch1-Chart-19-TBar,TBar,Correct,Chart,19,Chart19b,build,build-tests,tests,org.jfree.chart.plot.junit.CategoryPlotTests,testGetRangeAxisIndex,org.jfree.chart.plot.CategoryPlot,java.lang.String
 patch1-Chart-24-TBar,TBar,Correct,Chart,24,Chart24b,build,build-tests,tests,org.jfree.chart.renderer.junit.GrayPaintScaleTests,testGetPaint,org.jfree.chart.renderer.GrayPaintScale,double
 patch1-Math-70-TBar,TBar,Correct,Math,70,Math70b,target/classes,target/test-classes,src/test/java,org.apache.commons.math.analysis.solvers.BisectionSolverTest,testMath369,org.apache.commons.math.analysis.solvers.BisectionSolver,double
-patch1-Math-75-TBar,TBar,Correct,Math,75,Math75b,target/classes,target/test-classes,src/test/java,org.apache.commons.math.stat.FrequencyTest,testPcts,org.apache.commons.math.stat.Frequency,long
+patch1-Math-75-TBar,TBar,Correct,Math,75,Math75b,target/classes,target/test-classes,src/test/java,org.apache.commons.math.stat.FrequencyTest,testPcts,org.apache.commons.math.stat.Frequency,int
 patch1-Math-89-TBar,TBar,Correct,Math,89,Math89b,target/classes,target/test-classes,src/test,org.apache.commons.math.stat.FrequencyTest,testAddNonComparable,org.apache.commons.math.stat.Frequency,int
 patch1-Math-5-TBar,TBar,Correct,Math,5,Math5b,target/classes,target/test-classes,src/test/java,org.apache.commons.math3.complex.ComplexTest,testReciprocalZero,org.apache.commons.math3.complex.Complex,double
 patch1-Math-79-TBar,TBar,Correct,Math,79,Math79b,target/classes,target/test-classes,src/test/java,org.apache.commons.math.stat.clustering.KMeansPlusPlusClustererTest,testPerformClusterAnalysisDegenerate,org.apache.commons.math.stat.clustering.KMeansPlusPlusClusterer,int
