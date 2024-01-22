@@ -213,7 +213,7 @@ trace2 = go.Pie(
 )
 
 fig = go.FigureWidget(data=[trace1, trace2])
-fig.update_traces(textposition='inside', textinfo='label', insidetextorientation='horizontal', textfont_size=16)
+fig.update_traces(textposition='inside', textinfo='label', insidetextorientation='radial', textfont_size=16)
 # Do not show legend
 fig.update_layout(showlegend=False)
 fig.update_layout(
