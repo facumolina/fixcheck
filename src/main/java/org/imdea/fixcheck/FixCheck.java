@@ -155,19 +155,12 @@ public class FixCheck {
    * Get the assertion generator to use
    */
   private static AssertionGenerator getAssertionGenerator() {
-    if ("no-assertion".equals(Properties.ASSERTIONS_GENERATION))
-      return new AssertTrueGenerator();
-    if ("previous-assertion".equals(Properties.ASSERTIONS_GENERATION))
-      return new UsePreviousAssertGenerator();
-    if ("llm-assertion".equals(Properties.ASSERTIONS_GENERATION))
-      return new TextDavinci003();
-    if ("replit-code-llm".equals(Properties.ASSERTIONS_GENERATION))
-      return new GPT4AllReplitCodeLLM();
-    if ("llama2-llm-13b".equals(Properties.ASSERTIONS_GENERATION))
-      return new LlamaLLM();
-    if ("codellama-7b".equals(Properties.ASSERTIONS_GENERATION))
-      return new CodeLlama();
-    throw new IllegalArgumentException("Unknown assertion generator: " + Properties.ASSERTIONS_GENERATION);
+    String assertionGeneratorClassName = Properties.ASSERTIONS_GENERATION;
+    try {
+      return (AssertionGenerator) Class.forName(assertionGeneratorClassName).getDeclaredConstructor().newInstance();
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Unknown assertion generator: " + assertionGeneratorClassName);
+    }
   }
 
   /**
