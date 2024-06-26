@@ -23,7 +23,7 @@ import org.json.JSONObject;
  * Specifically, this model "Can do any language task with better quality, longer output, and consistent instruction-following
  * than the curie, babbage, or ada models. Also supports inserting completions within text.	"
  *
- * @author Facundo Molina
+ * @author Facundo Molina <facundo.molina@imdea.org>
  */
 public class TextDavinci003 extends AssertionGenerator {
 

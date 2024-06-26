@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * LlamaLLM class: assertion generator based on the CodeLlama model by Meta.
+ * CodeLlama class: assertion generator based on the CodeLlama model by Meta.
  *
- * @author Facundo Molina
+ * @author Facundo Molina <facundo.molina@imdea.org>
  */
 public class CodeLlama extends AssertionGenerator {
 

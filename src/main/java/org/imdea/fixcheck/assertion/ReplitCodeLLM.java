@@ -14,15 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * GPT4AllReplitCodeLLM class: assertion generator based on the model Replic-Code, accessible trough GPT4All
+ * ReplitCodeLLM class: assertion generator based on the model Replic-Code, accessible trough GPT4All
  *
- * @author Facundo Molina
+ * @author Facundo Molina <facundo.molina@imdea.org>
  */
-public class GPT4AllReplitCodeLLM extends AssertionGenerator {
+public class ReplitCodeLLM extends AssertionGenerator {
 
   private final String API_URL = "http://localhost:5100/complete";
 
-  public GPT4AllReplitCodeLLM() {}
+  public ReplitCodeLLM() {}
 
   @Override
   public void generateAssertions(Prefix prefix) {

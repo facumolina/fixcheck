@@ -4,7 +4,7 @@ import org.imdea.fixcheck.prefix.Prefix;
 
 /**
  * AssertionGenerator class: abstract class representing assertion generators for prefixes.
- * @author Facundo Molina
+ * @author Facundo Molina <facundo.molina@imdea.org>
  */
 public abstract class AssertionGenerator {
 
