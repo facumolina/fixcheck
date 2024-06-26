@@ -1,14 +1,12 @@
 # fixcheck
-FixCheck is a tool for patch correctness analysis. It uses random testing to generate new inputs to test the patch and large language models to generate meaningful assertions for the new inputs. 
+FixCheck is a tool for patch correctness analysis. Given a target patch, it uses random testing to generate new inputs to test the patch and LLMs to generate meaningful assertions for the new inputs. The new tests are executed and those that fail are prioritized according to their likelihood of revealing a defect in the patch.
 
-## Setup
-
-### Requirements
+## Requirements
 
 - Java >= 1.8 (tested with 1.8)
 - Python3 (tested with 3.10.10)
 
-### Steps
+## Installation
 
 1. Clone the repository and build the project:
 ```bash
