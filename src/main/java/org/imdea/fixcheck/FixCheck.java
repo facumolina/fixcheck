@@ -94,9 +94,6 @@ public class FixCheck {
    */
   public static List<Prefix> generateSimilarPrefixes(List<Prefix> prefixes, int n) throws ClassNotFoundException, IOException {
     List<Prefix> generatedPrefixes = new ArrayList<>();
-    List<PrefixTransformer> transformers = Arrays.asList(
-        new InputTransformer()
-    );
     PrefixTransformer prefixTransformer = new InputTransformer();
     AssertionGenerator assertionGenerator = getAssertionGenerator();
     for (Prefix prefix : prefixes) {
@@ -171,19 +168,6 @@ public class FixCheck {
     if ("codellama-7b".equals(Properties.ASSERTIONS_GENERATION))
       return new CodeLlama();
     throw new IllegalArgumentException("Unknown assertion generator: " + Properties.ASSERTIONS_GENERATION);
-  }
-
-  /**
-   * Return a list of transformer randomly chosen from the given list
-   */
-  public List<PrefixTransformer> getTransformersToApply(List<PrefixTransformer> transformers) {
-    List<PrefixTransformer> transformersToApply = new ArrayList<>();
-    int n = (int) (Math.random() * transformers.size());
-    Collections.shuffle(transformers);
-    for (int i=0; i < n; i++) {
-      transformersToApply.add(transformers.get(i));
-    }
-    return transformersToApply;
   }
 
   /**
