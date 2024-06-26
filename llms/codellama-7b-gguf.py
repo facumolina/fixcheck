@@ -1,7 +1,7 @@
 from llama_cpp import Llama
 import flask
 
-llm = Llama(model_path="llms/models/codellama-7b.Q5_K_M.gguf")
+llm = Llama(model_path="llms/models/codellama-7b-instruct.Q5_K_M.gguf")
 
 app = flask.Flask(__name__)
 
