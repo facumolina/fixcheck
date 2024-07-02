@@ -17,12 +17,15 @@ import java.util.List;
  *
  * @author Facundo Molina <facundo.molina@imdea.org>
  */
-public class CodeLlama extends AssertionGenerator {
+public class CodeLlamaInstructJavaBindings extends AssertionGenerator {
 
-  private LlamaModel codeLlamaModel;
-  public CodeLlama() {
+  private final String model_gguf = "llms/models/codellama-7b-instruct.Q5_K_M.gguf";
+  private final LlamaModel codeLlamaModel;
+
+  public CodeLlamaInstructJavaBindings() {
     LlamaModel.setLogger(null, (level, message) -> {});
-    ModelParameters modelParams = new ModelParameters().setModelFilePath("/Users/facundo.molina/research/software/fixcheck/llms/models/codellama-7b-instruct.Q5_K_M.gguf");
+    String projectDir = System.getProperty("user.dir");
+    ModelParameters modelParams = new ModelParameters().setModelFilePath(projectDir + "/" + model_gguf);
     codeLlamaModel = new LlamaModel(modelParams);
   }
 
@@ -125,7 +128,7 @@ public class CodeLlama extends AssertionGenerator {
    */
   private void updateClassName(Prefix prefix) {
     String currentClassName = prefix.getClassName();
-    String newClassName = currentClassName + "withLlama2LLM";
+    String newClassName = currentClassName + "withCodeLlamaInstructJavaBindings";
     prefix.setClassName(newClassName);
     CompilationUnit compilationUnit = prefix.getMethodCompilationUnit();
     compilationUnit.getClassByName(currentClassName).get().setName(newClassName);
