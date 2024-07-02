@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ReplitCodeLLM class: assertion generator based on the model Replic-Code, accessible trough GPT4All
+ * ReplitCodeLLM class: assertion generator based on the model Replit-Code.
  *
  * @author Facundo Molina <facundo.molina@imdea.org>
  */
