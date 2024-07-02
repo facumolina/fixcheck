@@ -1,7 +1,6 @@
 package org.imdea.fixcheck.assertion;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.MethodDeclaration;
 import org.imdea.fixcheck.assertion.common.AssertionsHelper;
 import org.imdea.fixcheck.prefix.Prefix;
 
@@ -17,17 +16,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * TextDavinci003 class: assertion generator based on the GPT-3.5 model text-davinci-003 (see <a href="https://platform.openai.com/docs/models/gpt-3-5">text-davinci-003</a>)
- *
- * The text-davinci-003 model belongs to the GPT-3.5 family, and they can "can understand and generate natural language or code".
- * Specifically, this model "Can do any language task with better quality, longer output, and consistent instruction-following
- * than the curie, babbage, or ada models. Also supports inserting completions within text.	"
+ * GPT-3.5-turbo class: assertion generator based on the GPT-3.5-turbo model (see <a href="https://platform.openai.com/docs/models/gpt-3-5-turbo">gpt-3.5-turbo</a>)
  *
  * @author Facundo Molina <facundo.molina@imdea.org>
  */
-public class TextDavinci003 extends AssertionGenerator {
+public class GPT35Turbo extends AssertionGenerator {
 
-  private final String MODEL = "text-davinci-003";
+  private final String MODEL = "gpt-3.5-turbo";
   private final String API_URL = "https://api.openai.com/v1/completions";
 
   private final String API_KEY = System.getenv("OPENAI_API_KEY");
