@@ -38,7 +38,7 @@ public class GPT35Turbo extends AssertionGenerator {
   /**
    * Default constructor
    */
-  public TextDavinci003() {
+  public GPT35Turbo() {
     maxTokens = 500;
     temperature = 0.5;
   }
@@ -48,7 +48,7 @@ public class GPT35Turbo extends AssertionGenerator {
    * @param maxTokens Maximum number of tokens to generate in the completion.
    * @param temperature sampling temperature to use.
    */
-  public TextDavinci003(int maxTokens, double temperature) {
+  public GPT35Turbo(int maxTokens, double temperature) {
     this.maxTokens = maxTokens;
     this.temperature = temperature;
   }
