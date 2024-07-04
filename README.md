@@ -1,5 +1,5 @@
 # fixcheck
-FixCheck is a tool for patch correctness analysis. Given a target patch, it uses static analysis and random testing to generate new inputs to test the patch, and LLMs to generate meaningful assertions for the new inputs. The new tests are executed and those that fail are selected and prioritised according to their likelihood of revealing a defect in the patch.
+FixCheck is a tool for improving patch correctness analysis. Given a target patch, it uses static analysis and random testing to generate new inputs to test the patch, and LLMs to generate meaningful assertions for the new inputs. The new tests are executed and those that fail are selected and prioritised according to their likelihood of revealing a defect in the patch.
 
 ## Requirements
 
@@ -25,6 +25,8 @@ export FIXCHECK=path_to_thisrepo
 
 ### Docker
 
+TBD
+
 ## Running FixCheck
 
 ### Example
@@ -43,7 +45,7 @@ Now that the dependencies are installed, we can use FixCheck to analyse the patc
 python3 experiments/setup-defect-repairing.py Patch1
 ```
 > [!NOTE]
-> When running the setup script, Java 8 should be configured, as it is the version required to build Defects4J projects.
+> When running the setup script, Java 8 should be configured, as it is required to build Defects4J projects.
 
 From this point, we can now execute FixCheck as follows:
 ```bash
