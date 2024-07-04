@@ -49,7 +49,7 @@ python3 experiments/setup-defect-repairing.py Patch1
 
 From this point, we can now execute FixCheck as follows:
 ```bash
-python3 llms/codellama-7b-instruct.py &  
+nohup python3 llms/codellama-7b-instruct.py &  
 python3 experiments/run-fixcheck-defect-repairing.py Patch1
 ```
 The first script will setup the `codellama-7b-instruct` language model, and leave it ready to be called by FixCheck. The second script will automatically extract the arguments from the file `experiments/defect-repairing-subjects.csv`, and call FixCheck with the right parameters. For instance, the command used for the Patch1 subject is the following:
