@@ -14,7 +14,7 @@ according to their likelihood of revealing a defect in the patch.
 
 ### Local Installation
 
-To install FixCheck,  clone the repository, build the project with gradle and install the python requirements:
+To install FixCheck, clone the repository, build the project with gradle and install the python requirements:
 ```bash  
 git clone https://github.com/facumolina/fixcheck
 cd fixcheck
@@ -23,21 +23,42 @@ pip3 install -r experiments/requirements.txt
 pip3 install -r llms/requirements.txt
 ```
 
-Finally, set up the FixCheck environment variable:
+Set up the FixCheck environment variable:
 ```bash  
 export FIXCHECK=<path_to_thisrepo>
 ```
 
-FixCheck is now ready to be used with the [replit-code](https://github.com/replit/ReplitLM/tree/main/replit-code-v1-3b) LLM. To use FixCheck with 
-the codellama-7b-instruct model, the following additional steps are required:
+Although FixCheck support multiple LLMs (and can be extended), 
+it is necessary to download the LLMs that will be used, or interact
+with them through an API. Here we provide instructions on the currently 
+supported LLMs:
+
+#### codellama-7b-instruct 
+This model can be downloaded and executed with the following commands:
 ```bash  
 wget https://huggingface.co/TheBloke/CodeLlama-7B-Instruct-GGUF/resolve/main/codellama-7b-instruct.Q5_K_M.gguf?download=true -P llms/models/
+python3 llms/codellama-7b-instruct.py
 ```
 > [!Note]
-> Here we are using a version of the codellama-7b-instruct model in the GGUF format  
-> obtained through quantization. The GGUF format is developed by the [llama.cpp](https://github.com/ggerganov/llama.cpp) 
-> team, with the goal to enable LLM inference with minimal setup and state-of-the-art performance.
- 
+> We are using a version of the codellama-7b-instruct model in the GGUF format 
+> obtained through quantization. The GGUF format is developed 
+> by the [llama.cpp](https://github.com/ggerganov/llama.cpp)
+> team, with the goal to enable LLM inference with minimal 
+> setup and state-of-the-art performance.
+
+
+#### replit-code
+To use this model, other python requirements are needed, which, 
+for the sake of simplicity, are not included in the requirements.txt files. 
+To install them, run the following command:
+```bash
+pip3 install sentencepiece==0.1.99
+pip3 install torch==2.0.1
+python3 llms/replit-code.py
+```
+
+After setting any of the LLMs, FixCheck is ready to be used.
+
 ### Docker
 
 We provide a `Dockerfile` that can be used to build a docker image with 
@@ -52,9 +73,8 @@ docker run -it fixcheck
 > FixCheck, and also to analyze the example patches discussed below.
 
 > [!Note]
-> Also, FixCheck will be installed to be used with the replit-code LLM. 
-> To use the codellama-7b-instruct model, the corresponding model file needs 
-> to be downloaded as explained in the previous section.
+> Also, no LLM will be configured in the Docker image.
+> Thus, the user will need to set up the LLMs as described in the previous section.
 
 ## Using FixCheck
 
@@ -89,10 +109,14 @@ python3 experiments/setup-defect-repairing.py Patch1
 
 From this point, we can now execute FixCheck as follows:
 ```bash
-nohup python3 llms/replit-code.py &  
-python3 experiments/run-fixcheck-defect-repairing.py Patch1 org.imdea.fixcheck.assertion.ReplitCodeLLM
+nohup python3 llms/codellama-7b-instruct.py &
+python3 experiments/run-fixcheck-defect-repairing.py Patch1 org.imdea.fixcheck.assertion.CodeLlamaInstruct
 ```
-The first script will setup the `replit-code` language model, and leave it ready to be called by FixCheck. The second script will automatically extract the arguments from the file `experiments/defect-repairing-subjects.csv`, and call FixCheck with the right parameters. For instance, the command used for the Patch1 subject is the following:
+The first script will setup the `codellama-7b-instruct` language model, and leave it ready to be called by FixCheck. 
+The second script will automatically extract the arguments 
+from the file `experiments/defect-repairing-subjects.csv`, and call FixCheck 
+with the right parameters. For instance, the command used for the Patch1 
+subject is the following:
 ```bash  
 java -cp build/libs/fixcheck-all-1.0.0.jar:$DEFECT_REPAIRING_DATASET/tmp/Patch1/Chart1b/build:$DEFECT_REPAIRING_DATASET/tmp/Patch1/Chart1b/build-tests org.imdea.fixcheck.FixCheck 
   -tp $DEFECT_REPAIRING_DATASET/tmp/Patch1/Chart1b/build-tests 
@@ -104,6 +128,8 @@ java -cp build/libs/fixcheck-all-1.0.0.jar:$DEFECT_REPAIRING_DATASET/tmp/Patch1/
   -np 100 
   -ag org.imdea.fixcheck.assertion.CodeLlamaInstruct
 ```
+
+Once it finishes, the results will be stored in the folder `fixcheck-output/defects-repairing`.
 Other patches from the [DefectRepairing](https://github.com/Ultimanecat/DefectRepairing) benchmark can also be analysed following the same procedure, as they are all configured in the csv file `experiments/defect-repairing-subjects.csv`.
 
 ### Analysing Patches from other sources
