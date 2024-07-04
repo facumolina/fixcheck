@@ -1,12 +1,12 @@
 # fixcheck
 FixCheck is a tool for improving patch correctness analysis. Given a target Java patch, it uses static analysis and random testing to generate new inputs to test the patch, and LLMs to generate meaningful assertions for the new inputs. The new tests are executed and those that fail are selected and prioritised according to their likelihood of revealing a defect in the patch.
 
-## Requirements
+## Setting up FixCheck
+
+### Requirements
 
 - Java >= 17 (tested with 17)
 - Python3 (tested with 3.11.5)
-
-## Installation
 
 ### Local Installation
 
@@ -27,7 +27,7 @@ export FIXCHECK=path_to_thisrepo
 
 TBD
 
-## Running FixCheck
+## Using FixCheck
 
 ### Example
 
@@ -69,11 +69,13 @@ Other patches from the [DefectRepairing](https://github.com/Ultimanecat/DefectRe
 ### Analysing Patches from other sources
 TBD
 
-## Configuring FixCheck
+### Command-line interface
 
-## Extending FixCheck
+### Extending FixCheck
 TBD
+
 ## Contact
 TBD
+
 
 
