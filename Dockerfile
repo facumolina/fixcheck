@@ -20,7 +20,7 @@ ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 
 # Clone and build FixCheck
 WORKDIR /home/ubuntu
-RUN git clone --branch tool-demo https://github.com/facumolina/fixcheck
+RUN git clone https://github.com/facumolina/fixcheck
 WORKDIR /home/ubuntu/fixcheck
 RUN ./gradlew shadowJar
 RUN python3 -m venv venv
@@ -28,7 +28,6 @@ RUN . venv/bin/activate
 RUN pip3 install -r experiments/requirements.txt --break-system-packages
 RUN pip3 install -r llms/requirements.txt --break-system-packages
 
-# Download codellama-7b-instruct
 # Clone projects related to experiments
 WORKDIR /home/ubuntu
 RUN git clone https://github.com/rjust/defects4j
