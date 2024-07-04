@@ -1,0 +1,3 @@
+Flask==3.0.3
+transformers==4.42.3
+llama_cpp_python==0.2.81

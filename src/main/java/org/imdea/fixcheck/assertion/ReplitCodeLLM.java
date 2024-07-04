@@ -14,15 +14,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * LlamaLLM class: assertion generator based on the Llama 2 model by Meta.
+ * ReplitCodeLLM class: assertion generator based on the model Replit-Code.
  *
- * @author Facundo Molina
+ * @author Facundo Molina <facundo.molina@imdea.org>
  */
-public class LlamaLLM extends AssertionGenerator {
+public class ReplitCodeLLM extends AssertionGenerator {
 
   private final String API_URL = "http://localhost:5100/complete";
 
-  public LlamaLLM() {}
+  public ReplitCodeLLM() {}
 
   @Override
   public void generateAssertions(Prefix prefix) {
@@ -51,10 +51,9 @@ public class LlamaLLM extends AssertionGenerator {
    * @return Prompt for the model
    */
   private String generatePrompt(Prefix prefix) {
-    String prompt = "Complete the second Java unit test with assertions:\n";
-    prompt += prefix.getParent().getSourceCode() + "\n";
+    String prompt = prefix.getParent().getSourceCode() + "\n";
     prompt += prefix.getSourceCode();
-    // remove the last } so that the model can complete the code
+    // to properly understand it needs to complete the code
     prompt = replaceLast(prompt, "}", "");
     return prompt;
   }
@@ -134,7 +133,7 @@ public class LlamaLLM extends AssertionGenerator {
    */
   private void updateClassName(Prefix prefix) {
     String currentClassName = prefix.getClassName();
-    String newClassName = currentClassName + "withLlama2LLM";
+    String newClassName = currentClassName + "withReplitCodeLLM";
     prefix.setClassName(newClassName);
     CompilationUnit compilationUnit = prefix.getMethodCompilationUnit();
     compilationUnit.getClassByName(currentClassName).get().setName(newClassName);
@@ -142,4 +141,3 @@ public class LlamaLLM extends AssertionGenerator {
   }
 
 }
-

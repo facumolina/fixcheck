@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 /**
  * UsePreviousAssertGenerator class: assertion generator that uses the same assertion as the parent prefix.
- * @author Facundo Molina
+ * @author Facundo Molina <facundo.molina@imdea.org>
  */
 public class UsePreviousAssertGenerator extends AssertionGenerator {
 

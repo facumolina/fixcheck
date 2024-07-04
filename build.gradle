@@ -12,10 +12,13 @@ targetCompatibility = 1.8
 
 dependencies {
     implementation "junit:junit:4.12"
+    implementation "commons-cli:commons-cli:1.6.0"
     implementation group: 'org.bitbucket.mstrobel', name: 'procyon-compilertools', version: '0.6.0'
     implementation group: 'org.json', name: 'json', version: '20230227'
     implementation "com.github.javaparser:javaparser-symbol-solver-core:3.25.1"
     implementation group: 'com.opencsv', name: 'opencsv', version: '4.6'
+    implementation 'junit:junit:4.13.1'
+    implementation 'de.kherud:llama:3.2.1'
     testImplementation "junit:junit:4.12"
 }
 

@@ -5,7 +5,8 @@ import org.imdea.fixcheck.prefix.Prefix;
 
 /**
  * AssertTrueGenerator class: simple generator including an assert(true) at the end of the prefix, just for testing.
- * @author Facundo Molina
+ *
+ * @author Facundo Molina <facundo.molina@imdea.org>
  */
 public class AssertTrueGenerator extends AssertionGenerator {
 
