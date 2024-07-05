@@ -3,8 +3,6 @@ package org.imdea.fixcheck.assertion;
 import com.github.javaparser.ast.CompilationUnit;
 import org.imdea.fixcheck.assertion.common.AssertionsHelper;
 import org.imdea.fixcheck.prefix.Prefix;
-import org.imdea.fixcheck.transform.common.TransformationHelper;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -13,16 +11,47 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.imdea.fixcheck.transform.common.TransformationHelper;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 /**
- * GPT4AllReplitCodeLLM class: assertion generator based on the model Replic-Code, accessible trough GPT4All
+ * GPT-3.5-turbo class: assertion generator based on the GPT-3.5-turbo model (see <a href="https://platform.openai.com/docs/models/gpt-3-5-turbo">gpt-3.5-turbo</a>)
  *
- * @author Facundo Molina
+ * @author Facundo Molina <facundo.molina@imdea.org>
  */
-public class GPT4AllReplitCodeLLM extends AssertionGenerator {
+public class GPT35Turbo extends AssertionGenerator {
 
-  private final String API_URL = "http://localhost:5100/complete";
+  private final String MODEL = "gpt-3.5-turbo";
+  private final String API_URL = "https://api.openai.com/v1/completions";
 
-  public GPT4AllReplitCodeLLM() {}
+  private final String API_KEY = System.getenv("OPENAI_API_KEY");
+
+  // The maximum number of tokens to generate in the completion, defaults to 16
+  private int maxTokens;
+
+  // What sampling temperature to use, between 0 and 2.
+  // Higher values like 0.8 will make the output more random, while lower values like 0.2 will
+  // make it more focused and deterministic.
+  private double temperature;
+
+  /**
+   * Default constructor
+   */
+  public GPT35Turbo() {
+    maxTokens = 500;
+    temperature = 0.5;
+  }
+
+  /**
+   * Constructor with parameters
+   * @param maxTokens Maximum number of tokens to generate in the completion.
+   * @param temperature sampling temperature to use.
+   */
+  public GPT35Turbo(int maxTokens, double temperature) {
+    this.maxTokens = maxTokens;
+    this.temperature = temperature;
+  }
 
   @Override
   public void generateAssertions(Prefix prefix) {
@@ -51,19 +80,11 @@ public class GPT4AllReplitCodeLLM extends AssertionGenerator {
    * @return Prompt for the model
    */
   private String generatePrompt(Prefix prefix) {
-    String prompt = prefix.getParent().getSourceCode() + "\n";
+    String prompt = "Given the following Java test case:\n";
+    prompt += prefix.getParent().getSourceCode() + "\n";
+    prompt += "Produce as output assertions for the following test case:\n";
     prompt += prefix.getSourceCode();
-    // to properly understand it needs to complete the code
-    prompt = replaceLast(prompt, "}", "");
     return prompt;
-  }
-
-  private String replaceLast(String string, String substring, String replacement) {
-    int index = string.lastIndexOf(substring);
-    if (index == -1)
-      return string;
-    return string.substring(0, index) + replacement
-        + string.substring(index+substring.length());
   }
 
   /**
@@ -75,8 +96,12 @@ public class GPT4AllReplitCodeLLM extends AssertionGenerator {
       HttpURLConnection con = (HttpURLConnection) url.openConnection();
       con.setRequestMethod("POST");
       con.setRequestProperty("Content-Type", "application/json");
+      con.setRequestProperty("Authorization", "Bearer " + API_KEY);
       JSONObject requestBody = new JSONObject();
+      requestBody.put("model", MODEL);
       requestBody.put("prompt", prompt);
+      requestBody.put("max_tokens", maxTokens);
+      requestBody.put("temperature", temperature);
       con.setDoOutput(true);
       con.getOutputStream().write(requestBody.toString().getBytes("UTF-8"));
       BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -87,9 +112,9 @@ public class GPT4AllReplitCodeLLM extends AssertionGenerator {
       }
       in.close();
       JSONObject jsonResponse = new JSONObject(response.toString());
-      String completion = jsonResponse.getString("completion");
-      System.out.println("---> response: " + completion);
-      return completion;
+      JSONArray choices = jsonResponse.getJSONArray("choices");
+      System.out.println("---> response: " + choices);
+      return choices.getJSONObject(0).getString("text"); // Return the first choice
     } catch (Exception e) {
       System.out.println("Error while performing the call to the OpenAI API");
       e.printStackTrace();
@@ -105,27 +130,18 @@ public class GPT4AllReplitCodeLLM extends AssertionGenerator {
   private List<String> getAssertionsFromResponseText(String text) {
     List<String> assertionsStr = new ArrayList<>();
     String[] lines = text.split("\\r?\\n"); // Split by lines
-    // Process the lines of Strings backwards, until the first assertion is found
-    boolean withinAssertions = false;
-    for (int i = lines.length - 1; i >= 0; i--) {
-      String line = lines[i];
-      if (isAssertionString(line)) {
-        withinAssertions = true;
-        assertionsStr.add(line);
-      } else if (withinAssertions) {
-        break;
-      }
+    for (String possibleAssertion : lines) {
+      if (possibleAssertion.startsWith("//")) continue; // It's a comment
+      if (possibleAssertion.trim().isEmpty()) continue; // It's an empty line
+      assertionsStr.add(possibleAssertion);
     }
     return assertionsStr;
   }
 
-  private boolean isAssertionString(String possibleAssertion) {
-    return possibleAssertion.contains("assertEquals") ||
-        possibleAssertion.contains("assertNotNull") ||
-        possibleAssertion.contains("assertNull") ||
-        possibleAssertion.contains("assertTrue") ||
-        possibleAssertion.contains("assertFalse");
-  }
+  /**
+   * Valid/fix the given assertion string
+   */
+  private String validateOrFixAssertionStr(String assertionStr) { return ""; }
 
   /**
    * Update the class name with a new name
@@ -133,7 +149,7 @@ public class GPT4AllReplitCodeLLM extends AssertionGenerator {
    */
   private void updateClassName(Prefix prefix) {
     String currentClassName = prefix.getClassName();
-    String newClassName = currentClassName + "withReplitCodeLLM";
+    String newClassName = currentClassName + "withTextDavinci003";
     prefix.setClassName(newClassName);
     CompilationUnit compilationUnit = prefix.getMethodCompilationUnit();
     compilationUnit.getClassByName(currentClassName).get().setName(newClassName);

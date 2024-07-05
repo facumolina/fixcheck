@@ -1,28 +1,33 @@
 package org.imdea.fixcheck.assertion;
 
 import com.github.javaparser.ast.CompilationUnit;
+import de.kherud.llama.InferenceParameters;
+import de.kherud.llama.LlamaModel;
+import de.kherud.llama.LlamaOutput;
+import de.kherud.llama.ModelParameters;
 import org.imdea.fixcheck.assertion.common.AssertionsHelper;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.common.TransformationHelper;
-import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * LlamaLLM class: assertion generator based on the CodeLlama model by Meta.
+ * CodeLlama class: assertion generator based on the CodeLlama model by Meta.
  *
- * @author Facundo Molina
+ * @author Facundo Molina <facundo.molina@imdea.org>
  */
-public class CodeLlama extends AssertionGenerator {
+public class CodeLlamaInstructJavaBindings extends AssertionGenerator {
 
-  private final String API_URL = "http://localhost:5100/complete";
+  private final String model_gguf = "llms/models/codellama-7b-instruct.Q5_K_M.gguf";
+  private final LlamaModel codeLlamaModel;
 
-  public CodeLlama() {}
+  public CodeLlamaInstructJavaBindings() {
+    LlamaModel.setLogger(null, (level, message) -> {});
+    String projectDir = System.getProperty("user.dir");
+    ModelParameters modelParams = new ModelParameters().setModelFilePath(projectDir + "/" + model_gguf);
+    codeLlamaModel = new LlamaModel(modelParams);
+  }
 
   @Override
   public void generateAssertions(Prefix prefix) {
@@ -30,8 +35,11 @@ public class CodeLlama extends AssertionGenerator {
     String prompt = generatePrompt(prefix);
     System.out.println("prompt:");
     System.out.println(prompt);
-    // Perform the call to the OpenAI API
+
+    // Calling the model
     String responseText = performCall(prompt);
+
+    // Processing output
     List<String> assertionsStr = getAssertionsFromResponseText(responseText);
     System.out.println("---> assertions: " + assertionsStr);
     System.out.println();
@@ -71,31 +79,17 @@ public class CodeLlama extends AssertionGenerator {
    * Perform the call to the OpenAI API.
    */
   private String performCall(String prompt) {
-    try {
-      URL url = new URL(API_URL);
-      HttpURLConnection con = (HttpURLConnection) url.openConnection();
-      con.setRequestMethod("POST");
-      con.setRequestProperty("Content-Type", "application/json");
-      JSONObject requestBody = new JSONObject();
-      requestBody.put("prompt", prompt);
-      con.setDoOutput(true);
-      con.getOutputStream().write(requestBody.toString().getBytes("UTF-8"));
-      BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-      String inputLine;
-      StringBuffer response = new StringBuffer();
-      while ((inputLine = in.readLine()) != null) {
-        response.append(inputLine);
-      }
-      in.close();
-      JSONObject jsonResponse = new JSONObject(response.toString());
-      String completion = jsonResponse.getString("completion");
-      System.out.println("---> response: " + completion);
-      return completion;
-    } catch (Exception e) {
-      System.out.println("Error while performing the call to the OpenAI API");
-      e.printStackTrace();
-      throw new RuntimeException(e);
+    InferenceParameters inferParams = new InferenceParameters(prompt)
+        .setTemperature(0.8f)
+        .setPenalizeNl(true)
+        .setStopStrings("}");
+    String completion = "";
+    for (LlamaOutput output : codeLlamaModel.generate(inferParams)) {
+      System.out.print(output);
+      completion += output;
     }
+    System.out.println("---> response: " + completion);
+    return completion;
   }
 
   /**
@@ -134,7 +128,7 @@ public class CodeLlama extends AssertionGenerator {
    */
   private void updateClassName(Prefix prefix) {
     String currentClassName = prefix.getClassName();
-    String newClassName = currentClassName + "withLlama2LLM";
+    String newClassName = currentClassName + "withCodeLlamaInstructJavaBindings";
     prefix.setClassName(newClassName);
     CompilationUnit compilationUnit = prefix.getMethodCompilationUnit();
     compilationUnit.getClassByName(currentClassName).get().setName(newClassName);

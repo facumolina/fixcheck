@@ -1,9 +1,10 @@
 package org.imdea.fixcheck.assertion;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.MethodDeclaration;
 import org.imdea.fixcheck.assertion.common.AssertionsHelper;
 import org.imdea.fixcheck.prefix.Prefix;
+import org.imdea.fixcheck.transform.common.TransformationHelper;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -12,51 +13,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.imdea.fixcheck.transform.common.TransformationHelper;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 /**
- * TextDavinci003 class: assertion generator based on the GPT-3.5 model text-davinci-003 (see <a href="https://platform.openai.com/docs/models/gpt-3-5">text-davinci-003</a>)
+ * CodeLlamaInstruct class: assertion generator based on the CodeLlamaInstruct model by Meta.
  *
- * The text-davinci-003 model belongs to the GPT-3.5 family, and they can "can understand and generate natural language or code".
- * Specifically, this model "Can do any language task with better quality, longer output, and consistent instruction-following
- * than the curie, babbage, or ada models. Also supports inserting completions within text.	"
- *
- * @author Facundo Molina
+ * @author Facundo Molina <facundo.molina@imdea.org>
  */
-public class TextDavinci003 extends AssertionGenerator {
+public class CodeLlamaInstruct extends AssertionGenerator {
 
-  private final String MODEL = "text-davinci-003";
-  private final String API_URL = "https://api.openai.com/v1/completions";
+  private final String API_URL = "http://localhost:5100/complete";
 
-  private final String API_KEY = System.getenv("OPENAI_API_KEY");
-
-  // The maximum number of tokens to generate in the completion, defaults to 16
-  private int maxTokens;
-
-  // What sampling temperature to use, between 0 and 2.
-  // Higher values like 0.8 will make the output more random, while lower values like 0.2 will
-  // make it more focused and deterministic.
-  private double temperature;
-
-  /**
-   * Default constructor
-   */
-  public TextDavinci003() {
-    maxTokens = 500;
-    temperature = 0.5;
-  }
-
-  /**
-   * Constructor with parameters
-   * @param maxTokens Maximum number of tokens to generate in the completion.
-   * @param temperature sampling temperature to use.
-   */
-  public TextDavinci003(int maxTokens, double temperature) {
-    this.maxTokens = maxTokens;
-    this.temperature = temperature;
-  }
+  public CodeLlamaInstruct() {}
 
   @Override
   public void generateAssertions(Prefix prefix) {
@@ -85,11 +51,20 @@ public class TextDavinci003 extends AssertionGenerator {
    * @return Prompt for the model
    */
   private String generatePrompt(Prefix prefix) {
-    String prompt = "Given the following Java test case:\n";
+    String prompt = "Complete the second Java unit test with assertions:\n";
     prompt += prefix.getParent().getSourceCode() + "\n";
-    prompt += "Produce as output assertions for the following test case:\n";
     prompt += prefix.getSourceCode();
+    // remove the last } so that the model can complete the code
+    prompt = replaceLast(prompt, "}", "");
     return prompt;
+  }
+
+  private String replaceLast(String string, String substring, String replacement) {
+    int index = string.lastIndexOf(substring);
+    if (index == -1)
+      return string;
+    return string.substring(0, index) + replacement
+        + string.substring(index+substring.length());
   }
 
   /**
@@ -101,12 +76,8 @@ public class TextDavinci003 extends AssertionGenerator {
       HttpURLConnection con = (HttpURLConnection) url.openConnection();
       con.setRequestMethod("POST");
       con.setRequestProperty("Content-Type", "application/json");
-      con.setRequestProperty("Authorization", "Bearer " + API_KEY);
       JSONObject requestBody = new JSONObject();
-      requestBody.put("model", MODEL);
       requestBody.put("prompt", prompt);
-      requestBody.put("max_tokens", maxTokens);
-      requestBody.put("temperature", temperature);
       con.setDoOutput(true);
       con.getOutputStream().write(requestBody.toString().getBytes("UTF-8"));
       BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -117,9 +88,9 @@ public class TextDavinci003 extends AssertionGenerator {
       }
       in.close();
       JSONObject jsonResponse = new JSONObject(response.toString());
-      JSONArray choices = jsonResponse.getJSONArray("choices");
-      System.out.println("---> response: " + choices);
-      return choices.getJSONObject(0).getString("text"); // Return the first choice
+      String completion = jsonResponse.getString("completion");
+      System.out.println("---> response: " + completion);
+      return completion;
     } catch (Exception e) {
       System.out.println("Error while performing the call to the OpenAI API");
       e.printStackTrace();
@@ -135,18 +106,27 @@ public class TextDavinci003 extends AssertionGenerator {
   private List<String> getAssertionsFromResponseText(String text) {
     List<String> assertionsStr = new ArrayList<>();
     String[] lines = text.split("\\r?\\n"); // Split by lines
-    for (String possibleAssertion : lines) {
-      if (possibleAssertion.startsWith("//")) continue; // It's a comment
-      if (possibleAssertion.trim().isEmpty()) continue; // It's an empty line
-      assertionsStr.add(possibleAssertion);
+    // Process the lines of Strings backwards, until the first assertion is found
+    boolean withinAssertions = false;
+    for (int i = lines.length - 1; i >= 0; i--) {
+      String line = lines[i];
+      if (isAssertionString(line)) {
+        withinAssertions = true;
+        assertionsStr.add(line);
+      } else if (withinAssertions) {
+        break;
+      }
     }
     return assertionsStr;
   }
 
-  /**
-   * Valid/fix the given assertion string
-   */
-  private String validateOrFixAssertionStr(String assertionStr) { return ""; }
+  private boolean isAssertionString(String possibleAssertion) {
+    return possibleAssertion.contains("assertEquals") ||
+        possibleAssertion.contains("assertNotNull") ||
+        possibleAssertion.contains("assertNull") ||
+        possibleAssertion.contains("assertTrue") ||
+        possibleAssertion.contains("assertFalse");
+  }
 
   /**
    * Update the class name with a new name
@@ -154,7 +134,7 @@ public class TextDavinci003 extends AssertionGenerator {
    */
   private void updateClassName(Prefix prefix) {
     String currentClassName = prefix.getClassName();
-    String newClassName = currentClassName + "withTextDavinci003";
+    String newClassName = currentClassName + "withCodeLlamaInstruct";
     prefix.setClassName(newClassName);
     CompilationUnit compilationUnit = prefix.getMethodCompilationUnit();
     compilationUnit.getClassByName(currentClassName).get().setName(newClassName);
@@ -162,3 +142,4 @@ public class TextDavinci003 extends AssertionGenerator {
   }
 
 }
+

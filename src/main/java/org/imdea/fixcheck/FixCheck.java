@@ -13,6 +13,8 @@ import org.imdea.fixcheck.writer.ReportWriter;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
+import org.apache.commons.cli.*;
+
 import java.io.*;
 import java.util.*;
 
@@ -29,22 +31,90 @@ public class FixCheck {
 
   private static Map<Prefix, Double> failingPrefixesScores = new HashMap<>(); // Failing prefixes with their scores (similarity to the original failure)
 
+  /**
+   * Build the command line options
+   * @return the command line options
+   */
+  private static Options buildOptions() {
+    Options options = new Options();
+
+    // Test classes path
+    Option testClassesPathOpt = new Option("tp", "test-classes-path", true, "Path to the test classes directory");
+    testClassesPathOpt.setRequired(true);
+    options.addOption(testClassesPathOpt);
+
+    // Target test class
+    Option targetTestClassOpt = new Option("tc", "test-class", true, "Fully qualified name of the target test class");
+    targetTestClassOpt.setRequired(true);
+    options.addOption(targetTestClassOpt);
+
+    // Target test methods
+    Option targetTestMethodOpt = new Option("tm", "test-methods", true, "List of names of the initial fault revealing test methods");
+    targetTestMethodOpt.setRequired(false);
+    options.addOption(targetTestMethodOpt);
+
+    // Target test class source directory
+    Option targetSrcDirOpt = new Option("ts", "test-classes-src", true, "Path to the test classes sources directory");
+    targetSrcDirOpt.setRequired(true);
+    options.addOption(targetSrcDirOpt);
+
+    // Target test class failure trace
+    Option targetFailureLogOpt = new Option("tf", "test-failure-trace-log", true, "File containing the failure trace of the target test");
+    targetFailureLogOpt.setRequired(true);
+    options.addOption(targetFailureLogOpt);
+
+    // Inputs class
+    Option inputClassOpt = new Option("i", "inputs-class", true, "Fully qualified name of the inputs class");
+    inputClassOpt.setRequired(true);
+    options.addOption(inputClassOpt);
+
+    // Test prefixes variations
+    Option prefixesVariationsOpt = new Option("np", "number-of-prefixes", true, "Number of prefixes variations to generate");
+    prefixesVariationsOpt.setRequired(true);
+    options.addOption(prefixesVariationsOpt);
+
+    // Assertion generation
+    Option assertionGenerationOpt = new Option("ag", "assertion-generator", true, "Assertion generator class fully qualified name");
+    assertionGenerationOpt.setRequired(true);
+    options.addOption(assertionGenerationOpt);
+
+    // Add help option
+    Option helpOpt = new Option("h", "help", false, "Print this message");
+    helpOpt.setRequired(false);
+    options.addOption(helpOpt);
+
+    return options;
+  }
+
   private static void readArgs(String[] args) {
-    Properties.TEST_CLASSES_PATH = args[0];
-    Properties.TEST_CLASS = args[1];
-    Properties.TEST_CLASS_METHODS = args[2].split(":");
-    Properties.TEST_CLASS_SRC_DIR = args[3];
-    Properties.TARGET_CLASS = args[4];
-    Properties.INPUTS_CLASS = args[5];
-    Properties.ORIGINAL_FAILURE_LOG = args[6];
-    Properties.PREFIX_VARIATIONS = Integer.parseInt(args[7]);
-    Properties.ASSERTIONS_GENERATION = args[8];
+    Options options = buildOptions();
+
+    CommandLineParser parser = new DefaultParser();
+    HelpFormatter formatter = new HelpFormatter();
+    CommandLine cmd = null;//not a good practice, it serves it purpose
+
+    try {
+      cmd = parser.parse(options, args);
+    } catch (ParseException e) {
+      System.out.println(e.getMessage());
+      formatter.printHelp("java -jar fixcheck-all.jar", options);
+      System.exit(1);
+    }
+
+    Properties.TEST_CLASSES_PATH = cmd.getOptionValue("test-classes-path");
+    Properties.TEST_CLASS = cmd.getOptionValue("test-class");
+    Properties.TEST_CLASS_METHODS = cmd.getOptionValue("test-methods").split(":");
+    Properties.TEST_CLASS_SRC_DIR = cmd.getOptionValue("test-classes-src");
+    Properties.ORIGINAL_FAILURE_LOG = cmd.getOptionValue("test-failure-trace-log");
+    Properties.TARGET_CLASS = "";
+    Properties.INPUTS_CLASS = cmd.getOptionValue("inputs-class");
+    Properties.PREFIX_VARIATIONS = Integer.parseInt(cmd.getOptionValue("number-of-prefixes"));
+    Properties.ASSERTIONS_GENERATION = cmd.getOptionValue("assertion-generator");
     System.out.println("classpath: " + Properties.FULL_CLASSPATH);
     System.out.println("test classes path: " + Properties.TEST_CLASSES_PATH);
     System.out.println("test class: " + Properties.TEST_CLASS);
     System.out.println("test class methods: " + String.join(", ", Properties.TEST_CLASS_METHODS));
     System.out.println("test classes sources: " + Properties.TEST_CLASS_SRC_DIR);
-    System.out.println("target class: " + Properties.TARGET_CLASS);
     System.out.println("inputs class: " + Properties.INPUTS_CLASS);
     System.out.println("original failure log: " + Properties.ORIGINAL_FAILURE_LOG);
     System.out.println();
@@ -94,9 +164,6 @@ public class FixCheck {
    */
   public static List<Prefix> generateSimilarPrefixes(List<Prefix> prefixes, int n) throws ClassNotFoundException, IOException {
     List<Prefix> generatedPrefixes = new ArrayList<>();
-    List<PrefixTransformer> transformers = Arrays.asList(
-        new InputTransformer()
-    );
     PrefixTransformer prefixTransformer = new InputTransformer();
     AssertionGenerator assertionGenerator = getAssertionGenerator();
     for (Prefix prefix : prefixes) {
@@ -158,32 +225,12 @@ public class FixCheck {
    * Get the assertion generator to use
    */
   private static AssertionGenerator getAssertionGenerator() {
-    if ("no-assertion".equals(Properties.ASSERTIONS_GENERATION))
-      return new AssertTrueGenerator();
-    if ("previous-assertion".equals(Properties.ASSERTIONS_GENERATION))
-      return new UsePreviousAssertGenerator();
-    if ("llm-assertion".equals(Properties.ASSERTIONS_GENERATION))
-      return new TextDavinci003();
-    if ("replit-code-llm".equals(Properties.ASSERTIONS_GENERATION))
-      return new GPT4AllReplitCodeLLM();
-    if ("llama2-llm-13b".equals(Properties.ASSERTIONS_GENERATION))
-      return new LlamaLLM();
-    if ("codellama-7b".equals(Properties.ASSERTIONS_GENERATION))
-      return new CodeLlama();
-    throw new IllegalArgumentException("Unknown assertion generator: " + Properties.ASSERTIONS_GENERATION);
-  }
-
-  /**
-   * Return a list of transformer randomly chosen from the given list
-   */
-  public List<PrefixTransformer> getTransformersToApply(List<PrefixTransformer> transformers) {
-    List<PrefixTransformer> transformersToApply = new ArrayList<>();
-    int n = (int) (Math.random() * transformers.size());
-    Collections.shuffle(transformers);
-    for (int i=0; i < n; i++) {
-      transformersToApply.add(transformers.get(i));
+    String assertionGeneratorClassName = Properties.ASSERTIONS_GENERATION;
+    try {
+      return (AssertionGenerator) Class.forName(assertionGeneratorClassName).getDeclaredConstructor().newInstance();
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Unknown assertion generator: " + assertionGeneratorClassName);
     }
-    return transformersToApply;
   }
 
   /**
