@@ -78,6 +78,13 @@ docker run -it fixcheck
 
 ## Using FixCheck
 
+In general, to analyse a patch with FixCheck the following steps are needed:
+
+1. Build the **buggy** version of the project corresponding to the patch under analysis
+2. Run an initial bug revealing test to collect its failure trace
+3. Apply the patch to the project and built the **patched** version
+4. Run FixCheck with the right parameters
+
 ### Example
 
 This section contains a simple example analysing a patch 
@@ -130,14 +137,6 @@ java -cp build/libs/fixcheck-all-1.0.0.jar:$DEFECT_REPAIRING_DATASET/tmp/Patch1/
 
 Once it finishes, the results will be stored in the folder `fixcheck-output/defects-repairing`.
 Other patches from the [DefectRepairing](https://github.com/Ultimanecat/DefectRepairing) benchmark can also be analysed following the same procedure, as they are all configured in the csv file `experiments/defect-repairing-subjects.csv`.
-
-### Analysing Patches from other sources
-
-In general, to analyse patches from other sources, the following steps are needed:
-1. Build the **buggy** version of the project corresponding to the patch under analysis
-2. Run the fault revealing test to collect its failure trace
-3. Apply the patch to the project and built the **patched** version
-4. Run FixCheck with the right parameters
 
 ### FixCheck Parameters
 TBD
