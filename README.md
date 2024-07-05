@@ -108,7 +108,7 @@ clone the project corresponding to the patch under analysis,
 apply the patch and build the project. 
 For instance, to analyse the Patch1, the setup can be performed by running:
 ```bash  
-python3 experiments/setup-defect-repairing.py Patch1
+python3 experiments/setup-defect-repairing.py Patch169
 ```
 > [!IMPORTANT]
 > When running the setup script, Java 8 should be configured, as it is required to build defects4j projects.
@@ -116,7 +116,7 @@ python3 experiments/setup-defect-repairing.py Patch1
 From this point, we can now execute FixCheck as follows:
 ```bash
 nohup python3 llms/codellama-7b-instruct.py &
-python3 experiments/run-fixcheck-defect-repairing.py Patch1 org.imdea.fixcheck.assertion.CodeLlamaInstruct
+python3 experiments/run-fixcheck-defect-repairing.py Patch169 org.imdea.fixcheck.assertion.CodeLlamaInstruct
 ```
 The first script will setup the `codellama-7b-instruct` language model, and leave it ready to be called by FixCheck. 
 The second script will automatically extract the arguments 
@@ -124,13 +124,13 @@ from the file `experiments/defect-repairing-subjects.csv`, and call FixCheck
 with the right parameters. For instance, the command used for the Patch1 
 subject is the following:
 ```bash  
-java -cp build/libs/fixcheck-all-1.0.0.jar:$DEFECT_REPAIRING_DATASET/tmp/Patch1/Chart1b/build:$DEFECT_REPAIRING_DATASET/tmp/Patch1/Chart1b/build-tests org.imdea.fixcheck.FixCheck 
-  -tp $DEFECT_REPAIRING_DATASET/tmp/Patch1/Chart1b/build-tests 
-  -tc org.jfree.chart.renderer.category.junit.AbstractCategoryItemRendererTests 
-  -tm test2947660 
-  -ts $DEFECT_REPAIRING_DATASET/tmp/Patch1/Chart1b/tests 
-  -i java.lang.String 
-  -tf $DEFECT_REPAIRING_DATASET/tmp/Patch1/Chart1b/failing_tests 
+java -cp build/libs/fixcheck-all-1.0.0.jar:$DEFECT_REPAIRING_DATASET/tmp/Patch169/Math69b/target/classes:$DEFECT_REPAIRING_DATASET/tmp/Patch169/Math69b/target/test-classes org.imdea.fixcheck.FixCheck 
+  -tp $DEFECT_REPAIRING_DATASET/tmp/Patch169/Math69b/target/test-classes
+  -tc org.apache.commons.math.stat.correlation.PearsonsCorrelationTest
+  -tm testPValueNearZero 
+  -ts $DEFECT_REPAIRING_DATASET/tmp/Patch169/Math69b/src/test/java 
+  -i int
+  -tf $DEFECT_REPAIRING_DATASET/tmp/Patch169/Math69b/failing_tests 
   -np 100 
   -ag org.imdea.fixcheck.assertion.CodeLlamaInstruct
 ```
