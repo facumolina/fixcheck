@@ -36,7 +36,7 @@ supported LLMs:
 #### codellama-7b-instruct 
 This model can be downloaded and executed with the following commands:
 ```bash  
-wget https://huggingface.co/TheBloke/CodeLlama-7B-Instruct-GGUF/resolve/main/codellama-7b-instruct.Q5_K_M.gguf?download=true -P llms/models/
+wget https://huggingface.co/TheBloke/CodeLlama-7B-Instruct-GGUF/resolve/main/codellama-7b-instruct.Q5_K_M.gguf -P llms/models/
 python3 llms/codellama-7b-instruct.py
 ```
 > [!Note]
