@@ -139,7 +139,58 @@ Once it finishes, the results will be stored in the folder `fixcheck-output/defe
 Other patches from the [DefectRepairing](https://github.com/Ultimanecat/DefectRepairing) benchmark can also be analysed following the same procedure, as they are all configured in the csv file `experiments/defect-repairing-subjects.csv`.
 
 ### FixCheck Parameters
-TBD
+
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-73oq">Parameter</th>
+    <th class="tg-73oq">Long Option</th>
+    <th class="tg-73oq">Description</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-73oq">tp</td>
+    <td class="tg-73oq">test-classes-path</td>
+    <td class="tg-73oq">Path to the test classes directory</td>
+  </tr>
+ <tr>
+    <td class="tg-73oq">ts</td>
+    <td class="tg-73oq">test-classes-src</td>
+    <td class="tg-73oq">Path to the test classes sources directory</td>
+  </tr>
+ <tr>
+    <td class="tg-73oq">tc</td>
+    <td class="tg-73oq">test-class</td>
+    <td class="tg-73oq">Fully qualified name of the target test class</td>
+  </tr>
+ <tr>
+    <td class="tg-73oq">tm</td>
+    <td class="tg-73oq">test-methods</td>
+    <td class="tg-73oq">List of names of the initial fault revealing test methods, seperated by ':'</td>
+  </tr>
+ <tr>
+    <td class="tg-73oq">tf</td>
+    <td class="tg-73oq">test-failure-trace-log</td>
+    <td class="tg-73oq">File containing the failure trace of the target test method</td>
+  </tr>
+  <tr>
+    <td class="tg-73oq">i</td>
+    <td class="tg-73oq">inputs-class</td>
+    <td class="tg-73oq">Name of the inputs class (int,float,double,java.lang.String, etc)</td>
+  </tr>
+  <tr>
+    <td class="tg-73oq">np</td>
+    <td class="tg-73oq">number-of-prefixes</td>
+    <td class="tg-73oq">Number of prefixes variations to generate</td>
+  </tr>
+  <tr>
+    <td class="tg-73oq">ag</td>
+    <td class="tg-73oq">assertion-generator</td>
+    <td class="tg-73oq">Assertion generator class fully qualified name (e.g., org.imdea.fixcheck.assertion.ReplitCodeLLM)</td>
+  </tr>
+</tbody>
+</table>
 
 ### Extending FixCheck
 TBD
