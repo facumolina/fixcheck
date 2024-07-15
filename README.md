@@ -193,8 +193,18 @@ Other patches from the [DefectRepairing](https://github.com/Ultimanecat/DefectRe
 </table>
 
 ### Extending FixCheck
-TBD
 
+FixCheck can be extended by adding new assertion generators,
+e.g., based on other LLMs or other techniques. To extend 
+FixCheck with a new assertion generator, the following steps are needed:
+
+1. Create a new class that extends `org.imdea.fixcheck.assertion.AssertionGenerator`
+2. Implement the `generateAssertions` method, which, given a test prefix, 
+   returns a list of assertions for it. 
+3. Ivoking FixCheck with the `-ag` parameter pointing to the fully qualified name of the new assertion generator.
+
+Examples of different assertion generators can be found in the 
+package `org.imdea.fixcheck.assertion`.
 ## Contact
 If you experience any issues, please submit an issue or contact us at facundo.molina@imdea.org!
 
