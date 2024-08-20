@@ -5,6 +5,7 @@ new inputs to test the patch, and LLMs to generate meaningful assertions for the
 The new tests are executed and those that fail are selected and prioritised 
 according to their likelihood of revealing a defect in the patch.
 
+---
 ## Setting up FixCheck
 
 ### Requirements
@@ -76,6 +77,7 @@ docker run -it fixcheck
 > Also, no LLM will be configured in the Docker image.
 > Thus, the user will need to set up the LLMs as described in the previous section.
 
+---
 ## Using FixCheck
 
 In general, to analyse a patch with FixCheck the following steps are needed:
@@ -83,7 +85,7 @@ In general, to analyse a patch with FixCheck the following steps are needed:
 1. Build the **buggy** version of the project corresponding to the patch under analysis
 2. Run an initial bug revealing test to collect its failure trace
 3. Apply the patch to the project and built the **patched** version
-4. Run FixCheck with the right parameters
+4. Run FixCheck with the right properties
 
 ### Example
 
@@ -121,71 +123,65 @@ python3 experiments/run-fixcheck-defect-repairing.py Patch169 org.imdea.fixcheck
 The first script will setup the `codellama-7b-instruct` language model, and leave it ready to be called by FixCheck. 
 The second script will automatically extract the arguments 
 from the file `experiments/defect-repairing-subjects.csv`, and call FixCheck 
-with the right parameters. For instance, the command used for the Patch1 
-subject is the following:
-```bash  
+with the right properties. For instance, for the Patch1 
+subject the executed command was the following:
+```bash
 java -cp build/libs/fixcheck-all-1.0.0.jar:$DEFECT_REPAIRING_DATASET/tmp/Patch169/Math69b/target/classes:$DEFECT_REPAIRING_DATASET/tmp/Patch169/Math69b/target/test-classes org.imdea.fixcheck.FixCheck 
-  -tp $DEFECT_REPAIRING_DATASET/tmp/Patch169/Math69b/target/test-classes
-  -tc org.apache.commons.math.stat.correlation.PearsonsCorrelationTest
-  -tm testPValueNearZero 
-  -ts $DEFECT_REPAIRING_DATASET/tmp/Patch169/Math69b/src/test/java 
-  -i int
-  -tf $DEFECT_REPAIRING_DATASET/tmp/Patch169/Math69b/failing_tests 
-  -np 100 
-  -ag org.imdea.fixcheck.assertion.CodeLlamaInstruct
+```
+, where the file fixcheck.properties contained the following properties:
+```bash  
+test-classes-path=$DEFECT_REPAIRING_DATASET/tmp/Patch169/Math69b/target/test-classes
+test-class=org.apache.commons.math.stat.correlation.PearsonsCorrelationTest
+test-methods=testPValueNearZero 
+test-classes-src=$DEFECT_REPAIRING_DATASET/tmp/Patch169/Math69b/src/test/java 
+inputs-class=int
+test-failure-trace-log=$DEFECT_REPAIRING_DATASET/tmp/Patch169/Math69b/failing_tests 
+number-of-prefixes=100 
+assertion-generator=org.imdea.fixcheck.assertion.CodeLlamaInstruct
 ```
 
 Once it finishes, the results will be stored in the folder `fixcheck-output/defects-repairing`.
 Other patches from the [DefectRepairing](https://github.com/Ultimanecat/DefectRepairing) benchmark can also be analysed following the same procedure, as they are all configured in the csv file `experiments/defect-repairing-subjects.csv`.
 
-### FixCheck Parameters
+### FixCheck Properties
 
 <table class="tg">
 <thead>
   <tr>
-    <th class="tg-73oq">Parameter</th>
-    <th class="tg-73oq">Long Option</th>
+    <th class="tg-73oq">Property</th>
     <th class="tg-73oq">Description</th>
   </tr>
 </thead>
 <tbody>
   <tr>
-    <td class="tg-73oq">tp</td>
     <td class="tg-73oq">test-classes-path</td>
     <td class="tg-73oq">Path to the test classes directory</td>
   </tr>
  <tr>
-    <td class="tg-73oq">ts</td>
     <td class="tg-73oq">test-classes-src</td>
     <td class="tg-73oq">Path to the test classes sources directory</td>
   </tr>
  <tr>
-    <td class="tg-73oq">tc</td>
     <td class="tg-73oq">test-class</td>
     <td class="tg-73oq">Fully qualified name of the target test class</td>
   </tr>
  <tr>
-    <td class="tg-73oq">tm</td>
     <td class="tg-73oq">test-methods</td>
     <td class="tg-73oq">List of names of the initial fault revealing test methods, seperated by ':'</td>
   </tr>
  <tr>
-    <td class="tg-73oq">tf</td>
     <td class="tg-73oq">test-failure-trace-log</td>
     <td class="tg-73oq">File containing the failure trace of the target test method</td>
   </tr>
   <tr>
-    <td class="tg-73oq">i</td>
     <td class="tg-73oq">inputs-class</td>
     <td class="tg-73oq">Name of the inputs class (int,float,double,java.lang.String, etc)</td>
   </tr>
   <tr>
-    <td class="tg-73oq">np</td>
     <td class="tg-73oq">number-of-prefixes</td>
     <td class="tg-73oq">Number of prefixes variations to generate</td>
   </tr>
   <tr>
-    <td class="tg-73oq">ag</td>
     <td class="tg-73oq">assertion-generator</td>
     <td class="tg-73oq">Assertion generator class fully qualified name (e.g., org.imdea.fixcheck.assertion.ReplitCodeLLM)</td>
   </tr>
@@ -201,10 +197,12 @@ FixCheck with a new assertion generator, the following steps are needed:
 1. Create a new class that extends `org.imdea.fixcheck.assertion.AssertionGenerator`
 2. Implement the `generateAssertions` method, which, given a test prefix, 
    returns a list of assertions for it. 
-3. Ivoking FixCheck with the `-ag` parameter pointing to the fully qualified name of the new assertion generator.
+3. Invoking FixCheck with the `assertion-generator` property defined with the fully qualified name of the new assertion generator.
 
 Examples of different assertion generators can be found in the 
 package `org.imdea.fixcheck.assertion`.
+
+---
 ## Contact
 If you experience any issues, please submit an issue or contact us at facundo.molina@imdea.org!
 
