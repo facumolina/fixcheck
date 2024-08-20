@@ -8,6 +8,7 @@ import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.input.InputHelper;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -16,7 +17,7 @@ import java.util.*;
  * Properties class: contains properties to configure the FixCheck execution.
  * @author Facundo Molina
  */
-public class Properties {
+public class FixCheckProperties {
 
   // General properties
   public static String FULL_CLASSPATH = System.getProperty("java.class.path"); // Full classpath (test classes + dependencies + fixcheck)
@@ -50,6 +51,73 @@ public class Properties {
   public static String OUTPUT_FAILING_PREFIXES_DIR = "failing-tests"; // Output dir for failing tests
   public static String OUTPUT_NONCOMPILING_PREFIXES_DIR = "non-compiling-tests"; // Output dir for non compiling tests
   public static String OUTPUT_SCORES = "scores-failing-tests.csv"; // Output file for score of each failing prefix
+
+  /**
+   * Load properties from the given properties file.
+   */
+  public static void loadProperties(String propertiesFile) {
+    try (InputStream input = Files.newInputStream(Paths.get(propertiesFile))) {
+
+      Properties prop = new Properties();
+
+      // load a properties file
+      prop.load(input);
+
+      // get the property value and print it out
+      FixCheckProperties.TEST_CLASSES_PATH = prop.getProperty("test-classes-path");
+      if (FixCheckProperties.TEST_CLASSES_PATH == null) {
+        System.out.println("Error: test-classes-path property is required");
+        System.exit(1);
+      }
+      FixCheckProperties.TEST_CLASS = prop.getProperty("test-class");
+      if (FixCheckProperties.TEST_CLASS == null) {
+        System.out.println("Error: test-class property is required");
+        System.exit(1);
+      }
+      if (prop.getProperty("test-methods") == null) {
+        System.out.println("Error: test-methods property is required");
+        System.exit(1);
+      }
+      FixCheckProperties.TEST_CLASS_METHODS = prop.getProperty("test-methods").split(":");
+      FixCheckProperties.TEST_CLASS_SRC_DIR = prop.getProperty("test-classes-src");
+      if (FixCheckProperties.TEST_CLASS_SRC_DIR == null) {
+        System.out.println("Error: test-classes-src property is required");
+        System.exit(1);
+      }
+      FixCheckProperties.ORIGINAL_FAILURE_LOG = prop.getProperty("test-failure-trace-log");
+      if (FixCheckProperties.ORIGINAL_FAILURE_LOG == null) {
+        System.out.println("Error: test-failure-trace-log property is required");
+        System.exit(1);
+      }
+      FixCheckProperties.TARGET_CLASS = "";
+      FixCheckProperties.INPUTS_CLASS = prop.getProperty("inputs-class");
+      if (FixCheckProperties.INPUTS_CLASS == null) {
+        System.out.println("Error: inputs-class property is required");
+        System.exit(1);
+      }
+      if (prop.getProperty("number-of-prefixes") == null) {
+        System.out.println("Error: number-of-prefixes property is required");
+        System.exit(1);
+      }
+      FixCheckProperties.PREFIX_VARIATIONS = Integer.parseInt(prop.getProperty("number-of-prefixes"));
+      FixCheckProperties.ASSERTIONS_GENERATION = prop.getProperty("assertion-generator");
+      if (FixCheckProperties.ASSERTIONS_GENERATION == null) {
+        System.out.println("Error: assertion-generator property is required");
+        System.exit(1);
+      }
+      System.out.println("classpath: " + FixCheckProperties.FULL_CLASSPATH);
+      System.out.println("test classes path: " + FixCheckProperties.TEST_CLASSES_PATH);
+      System.out.println("test class: " + FixCheckProperties.TEST_CLASS);
+      System.out.println("test class methods: " + String.join(", ", FixCheckProperties.TEST_CLASS_METHODS));
+      System.out.println("test classes sources: " + FixCheckProperties.TEST_CLASS_SRC_DIR);
+      System.out.println("inputs class: " + FixCheckProperties.INPUTS_CLASS);
+      System.out.println("original failure log: " + FixCheckProperties.ORIGINAL_FAILURE_LOG);
+      System.out.println();
+
+    } catch (IOException ex) {
+      ex.printStackTrace();
+    }
+  }
 
   /**
    * Setup all Properties.

@@ -1,6 +1,6 @@
 package org.imdea.fixcheck.runner;
 
-import org.imdea.fixcheck.Properties;
+import org.imdea.fixcheck.FixCheckProperties;
 import org.imdea.fixcheck.compilation.InMemoryFileManager;
 import org.imdea.fixcheck.compilation.JavaSourceFromString;
 import org.imdea.fixcheck.prefix.Prefix;
@@ -46,7 +46,7 @@ public class PrefixRunner {
     List<JavaFileObject> sourceFiles = Collections.singletonList(new JavaSourceFromString(prefix.getClassName(), sourceCode));
 
     // set compiler's classpath to the full classpath
-    List<String> optionList = new ArrayList<>(Arrays.asList("-classpath", Properties.FULL_CLASSPATH));
+    List<String> optionList = new ArrayList<>(Arrays.asList("-classpath", FixCheckProperties.FULL_CLASSPATH));
 
     JavaCompiler.CompilationTask task = compiler.getTask(null, manager, diagnostics, optionList, null, sourceFiles);
 

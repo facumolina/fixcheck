@@ -7,7 +7,7 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithType;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.Statement;
-import org.imdea.fixcheck.Properties;
+import org.imdea.fixcheck.FixCheckProperties;
 import org.imdea.fixcheck.prefix.BasicInput;
 import org.imdea.fixcheck.prefix.Input;
 import org.imdea.fixcheck.prefix.ObjectInput;
@@ -47,7 +47,7 @@ public class InputTransformer extends PrefixTransformer {
     // Prepare the new method body
     MethodDeclaration newMethod = TransformationHelper.getMethodDeclFromCompilationUnit(newCompilationUnit, prefixMethod.getNameAsString());
     // Remove assert statements from the method containing org.junit.Assert or org.junit.TestCase*assert
-    if (!("previous-assertion".equals(Properties.ASSERTIONS_GENERATION)))
+    if (!("previous-assertion".equals(FixCheckProperties.ASSERTIONS_GENERATION)))
       removeAssertionsFromMethod(newMethod);
     // Replace the input
     replaceInput(newMethod);
@@ -106,8 +106,8 @@ public class InputTransformer extends PrefixTransformer {
     // Get an input expression to be replaced
     Input input;
     Class<? extends Expression> classToSearch;
-    if (InputHelper.isKnownClass(Properties.INPUTS_CLASS)) {
-      classToSearch = getClassForNewInput(Properties.INPUTS_CLASS);
+    if (InputHelper.isKnownClass(FixCheckProperties.INPUTS_CLASS)) {
+      classToSearch = getClassForNewInput(FixCheckProperties.INPUTS_CLASS);
       input = getRandomInputKnownType(methodDecl, classToSearch);
     } else {
       ObjectInput objInput = getRandomInputUnknownType(methodDecl);
@@ -121,7 +121,7 @@ public class InputTransformer extends PrefixTransformer {
     Object value = InputHelper.getValueForType(classToSearch);
     // Replace the value in the expression
     TransformationHelper.replace(input, classToSearch, value);
-    lastTransformation = "[" + previousExpr + ":" + Properties.INPUTS_CLASS +"] replaced by [" + value + ":" + value.getClass().getName() +"]";
+    lastTransformation = "[" + previousExpr + ":" + FixCheckProperties.INPUTS_CLASS +"] replaced by [" + value + ":" + value.getClass().getName() +"]";
     transformationsApplied++;
   }
 
@@ -141,7 +141,7 @@ public class InputTransformer extends PrefixTransformer {
         allInputsOfType.addAll(inputs);
       }
     });
-    if (allInputsOfType.isEmpty()) throw new IllegalArgumentException("No locals of type " + Properties.INPUTS_CLASS);
+    if (allInputsOfType.isEmpty()) throw new IllegalArgumentException("No locals of type " + FixCheckProperties.INPUTS_CLASS);
     Random random = new Random();
     int index = random.nextInt(allInputsOfType.size());
     return new BasicInput(classToSearch,allInputsOfType.get(index));
@@ -166,12 +166,12 @@ public class InputTransformer extends PrefixTransformer {
     for (Expression expr : expressionsWithType) {
       if (expr instanceof NodeWithType) {
         NodeWithType nodeWithType = (NodeWithType) expr;
-        if (nodeWithType.getType().toString().equals(Properties.INPUTS_CLASS)) {
+        if (nodeWithType.getType().toString().equals(FixCheckProperties.INPUTS_CLASS)) {
           expressionsWithInputType.add(expr);
         }
       }
     }
-    if (expressionsWithInputType.isEmpty()) throw new IllegalArgumentException("No expressions with type " + Properties.INPUTS_CLASS);
+    if (expressionsWithInputType.isEmpty()) throw new IllegalArgumentException("No expressions with type " + FixCheckProperties.INPUTS_CLASS);
     Random random = new Random();
     int index = random.nextInt(expressionsWithInputType.size());
     Expression expr = expressionsWithInputType.get(index);

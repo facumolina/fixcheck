@@ -1,7 +1,7 @@
 package org.imdea.fixcheck.writer;
 
 import com.opencsv.CSVWriter;
-import org.imdea.fixcheck.Properties;
+import org.imdea.fixcheck.FixCheckProperties;
 import org.imdea.fixcheck.utils.Stats;
 
 import java.io.File;
@@ -19,7 +19,7 @@ public class ReportWriter {
 
   public static void writeReport(String reportFileName) {
     try {
-      Files.createDirectories(Paths.get(Properties.OUTPUT_DIR));
+      Files.createDirectories(Paths.get(FixCheckProperties.OUTPUT_DIR));
       File file = new File(reportFileName);
       try (CSVWriter writer = new CSVWriter(new FileWriter(file), CSVWriter.DEFAULT_SEPARATOR, CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END)) {
         writer.writeNext(reportHeader);
@@ -37,10 +37,10 @@ public class ReportWriter {
    */
   private static void writeReportData(CSVWriter writer) {
     String[] data = new String[reportHeader.length];
-    data[0] = Properties.TEST_CLASS;
-    data[1] = String.valueOf(Properties.PREFIXES_IN_TEST_CLASS);
-    data[2] = Properties.INPUTS_CLASS;
-    data[3] = Properties.TARGET_CLASS;
+    data[0] = FixCheckProperties.TEST_CLASS;
+    data[1] = String.valueOf(FixCheckProperties.PREFIXES_IN_TEST_CLASS);
+    data[2] = FixCheckProperties.INPUTS_CLASS;
+    data[3] = FixCheckProperties.TARGET_CLASS;
     data[4] = String.valueOf(Stats.MS_PREFIXES_GENERATION);
     data[5] = String.valueOf(Stats.MS_ASSERTIONS_GENERATION);
     data[6] = String.valueOf(Stats.MS_RUNNING_PREFIXES);

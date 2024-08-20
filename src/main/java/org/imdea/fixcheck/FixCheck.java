@@ -38,45 +38,10 @@ public class FixCheck {
   private static Options buildOptions() {
     Options options = new Options();
 
-    // Test classes path
-    Option testClassesPathOpt = new Option("tp", "test-classes-path", true, "Path to the test classes directory");
-    testClassesPathOpt.setRequired(true);
-    options.addOption(testClassesPathOpt);
-
-    // Target test class
-    Option targetTestClassOpt = new Option("tc", "test-class", true, "Fully qualified name of the target test class");
-    targetTestClassOpt.setRequired(true);
-    options.addOption(targetTestClassOpt);
-
-    // Target test methods
-    Option targetTestMethodOpt = new Option("tm", "test-methods", true, "List of names of the initial fault revealing test methods");
-    targetTestMethodOpt.setRequired(false);
-    options.addOption(targetTestMethodOpt);
-
-    // Target test class source directory
-    Option targetSrcDirOpt = new Option("ts", "test-classes-src", true, "Path to the test classes sources directory");
-    targetSrcDirOpt.setRequired(true);
-    options.addOption(targetSrcDirOpt);
-
-    // Target test class failure trace
-    Option targetFailureLogOpt = new Option("tf", "test-failure-trace-log", true, "File containing the failure trace of the target test");
-    targetFailureLogOpt.setRequired(true);
-    options.addOption(targetFailureLogOpt);
-
-    // Inputs class
-    Option inputClassOpt = new Option("i", "inputs-class", true, "Fully qualified name of the inputs class");
-    inputClassOpt.setRequired(true);
-    options.addOption(inputClassOpt);
-
-    // Test prefixes variations
-    Option prefixesVariationsOpt = new Option("np", "number-of-prefixes", true, "Number of prefixes variations to generate");
-    prefixesVariationsOpt.setRequired(true);
-    options.addOption(prefixesVariationsOpt);
-
-    // Assertion generation
-    Option assertionGenerationOpt = new Option("ag", "assertion-generator", true, "Assertion generator class fully qualified name");
-    assertionGenerationOpt.setRequired(true);
-    options.addOption(assertionGenerationOpt);
+    // Properties file
+    Option propertiesFileOpt = new Option("p", "properties-file", true, "Properties file");
+    propertiesFileOpt.setRequired(false);
+    options.addOption(propertiesFileOpt);
 
     // Add help option
     Option helpOpt = new Option("h", "help", false, "Print this message");
@@ -101,23 +66,17 @@ public class FixCheck {
       System.exit(1);
     }
 
-    Properties.TEST_CLASSES_PATH = cmd.getOptionValue("test-classes-path");
-    Properties.TEST_CLASS = cmd.getOptionValue("test-class");
-    Properties.TEST_CLASS_METHODS = cmd.getOptionValue("test-methods").split(":");
-    Properties.TEST_CLASS_SRC_DIR = cmd.getOptionValue("test-classes-src");
-    Properties.ORIGINAL_FAILURE_LOG = cmd.getOptionValue("test-failure-trace-log");
-    Properties.TARGET_CLASS = "";
-    Properties.INPUTS_CLASS = cmd.getOptionValue("inputs-class");
-    Properties.PREFIX_VARIATIONS = Integer.parseInt(cmd.getOptionValue("number-of-prefixes"));
-    Properties.ASSERTIONS_GENERATION = cmd.getOptionValue("assertion-generator");
-    System.out.println("classpath: " + Properties.FULL_CLASSPATH);
-    System.out.println("test classes path: " + Properties.TEST_CLASSES_PATH);
-    System.out.println("test class: " + Properties.TEST_CLASS);
-    System.out.println("test class methods: " + String.join(", ", Properties.TEST_CLASS_METHODS));
-    System.out.println("test classes sources: " + Properties.TEST_CLASS_SRC_DIR);
-    System.out.println("inputs class: " + Properties.INPUTS_CLASS);
-    System.out.println("original failure log: " + Properties.ORIGINAL_FAILURE_LOG);
-    System.out.println();
+    if (cmd.hasOption("help")) {
+      formatter.printHelp("java -jar fixcheck-all.jar", options);
+      System.exit(0);
+    }
+
+    String propertiesFile = System.getProperty("user.dir") + "/fixcheck.properties";
+    if (cmd.hasOption("properties-file")) {
+      propertiesFile = cmd.getOptionValue("properties-file");
+    }
+
+    FixCheckProperties.loadProperties(propertiesFile);
   }
 
   public static void main(String[] args) {
@@ -126,10 +85,10 @@ public class FixCheck {
 
     System.out.println("====== SETUP ======");
     // Loading the prefixes to analyze
-    List<Prefix> prefixes = Properties.getPrefixes();
+    List<Prefix> prefixes = FixCheckProperties.getPrefixes();
     System.out.println("loaded prefixes: " + prefixes.size());
-    System.out.println("prefixes to produce: " + Properties.PREFIX_VARIATIONS);
-    System.out.println("assertions generation: " + Properties.ASSERTIONS_GENERATION);
+    System.out.println("prefixes to produce: " + FixCheckProperties.PREFIX_VARIATIONS);
+    System.out.println("assertions generation: " + FixCheckProperties.ASSERTIONS_GENERATION);
     System.out.println("inputs used in the prefixes:");
     // Show the inputs collected in the providers
     InputHelper.PROVIDERS.forEach((k,v) -> { System.out.println("  " + k + ": " + v);});
@@ -137,7 +96,7 @@ public class FixCheck {
 
     try {
       System.out.println("====== GENERATION ======");
-      generateSimilarPrefixes(prefixes, Properties.PREFIX_VARIATIONS);
+      generateSimilarPrefixes(prefixes, FixCheckProperties.PREFIX_VARIATIONS);
     } catch (ClassNotFoundException | IOException e) {
       System.out.println("Error generating similar prefixes!!");
       System.out.println(e.getMessage());
@@ -225,7 +184,7 @@ public class FixCheck {
    * Get the assertion generator to use
    */
   private static AssertionGenerator getAssertionGenerator() {
-    String assertionGeneratorClassName = Properties.ASSERTIONS_GENERATION;
+    String assertionGeneratorClassName = FixCheckProperties.ASSERTIONS_GENERATION;
     try {
       return (AssertionGenerator) Class.forName(assertionGeneratorClassName).getDeclaredConstructor().newInstance();
     } catch (Exception e) {
@@ -269,7 +228,7 @@ public class FixCheck {
   private static void measureFailureReason(Prefix prefix, Result result) {
     double max=0;
     for (Failure failure : result.getFailures()) {
-      max = Math.max(FailureChecker.similarity(failure, Properties.ORIGINAL_FAILURE_STR),max);
+      max = Math.max(FailureChecker.similarity(failure, FixCheckProperties.ORIGINAL_FAILURE_STR),max);
     }
     System.out.println("---> failure similarity: "+max);
     failingPrefixesScores.put(prefix, max);
@@ -279,20 +238,20 @@ public class FixCheck {
    * Generate the output files
    */
   private static void generateOutputFiles() {
-    String reportFile = Properties.getReportFileName();
+    String reportFile = FixCheckProperties.getReportFileName();
     System.out.println("report file: " + reportFile);
     ReportWriter.writeReport(reportFile);
-    String nonCompilingPrefixesDir = Properties.getNonCompilingTestsDir();
+    String nonCompilingPrefixesDir = FixCheckProperties.getNonCompilingTestsDir();
     System.out.println("non compiling prefixes: "+nonCompilingPrefixesDir);
     PrefixWriter.saveNonCompilingPrefixes(nonCompilingPrefixes, nonCompilingPrefixesDir);
-    String passingPrefixesDir = Properties.getPassingTestsDir();
+    String passingPrefixesDir = FixCheckProperties.getPassingTestsDir();
     System.out.println("passing prefixes: "+passingPrefixesDir);
     PrefixWriter.savePassingPrefixes(passingPrefixes, passingPrefixesDir);
-    String failingPrefixesDir = Properties.getFailingTestsDir();
+    String failingPrefixesDir = FixCheckProperties.getFailingTestsDir();
     System.out.println("failing prefixes: "+failingPrefixesDir);
     PrefixWriter.saveFailingPrefixes(crashingPrefixes, failingPrefixesDir);
     PrefixWriter.saveFailingPrefixes(assertionFailingPrefixes, failingPrefixesDir);
-    String scoresFile = Properties.geScoresFileName();
+    String scoresFile = FixCheckProperties.geScoresFileName();
     System.out.println("scores file: "+scoresFile);
     PrefixWriter.saveScores(failingPrefixesScores, scoresFile);
   }

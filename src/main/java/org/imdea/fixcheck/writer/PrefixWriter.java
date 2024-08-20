@@ -1,7 +1,7 @@
 package org.imdea.fixcheck.writer;
 
 import com.opencsv.CSVWriter;
-import org.imdea.fixcheck.Properties;
+import org.imdea.fixcheck.FixCheckProperties;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -84,7 +84,7 @@ public class PrefixWriter {
    */
   public static void saveScores(Map<Prefix, Double> scores, String scoresFileName) {
     try {
-      Files.createDirectories(Paths.get(Properties.OUTPUT_DIR));
+      Files.createDirectories(Paths.get(FixCheckProperties.OUTPUT_DIR));
       String[] header = {"prefix","score"};
       File file = new File(scoresFileName);
       try (CSVWriter writer = new CSVWriter(new FileWriter(file), CSVWriter.DEFAULT_SEPARATOR, CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END)) {

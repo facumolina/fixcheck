@@ -2,7 +2,7 @@ package org.imdea.fixcheck.transform.input;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.*;
-import org.imdea.fixcheck.Properties;
+import org.imdea.fixcheck.FixCheckProperties;
 import org.imdea.fixcheck.transform.input.provider.*;
 
 import java.util.*;
@@ -52,7 +52,7 @@ public class InputHelper {
    * Search for inputs in the test suite under analysis.
    */
   private static void searchForInputs() {
-    CompilationUnit cu = Properties.TEST_CLASS_SRC;
+    CompilationUnit cu = FixCheckProperties.TEST_CLASS_SRC;
     cu.findAll(StringLiteralExpr.class).forEach(stringLiteralExpr -> PROVIDERS.get(StringLiteralExpr.class).addInput(stringLiteralExpr.getValue()));
   }
 
