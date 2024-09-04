@@ -11,7 +11,17 @@ original_failure_log=$8
 assertion_generation=$9
 full_cp='build/libs/fixcheck-all-1.0.0.jar:'$subject_cp
 
-cmd="java -cp $full_cp org.imdea.fixcheck.FixCheck -tp $test_classes_path -tc $target_test -tm $target_test_methods -ts $target_test_dir -i $inputs_class -tf $original_failure_log -np 100 -ag $assertion_generation"
-echo 'command: '$cmd
-echo ''
-java -cp $full_cp org.imdea.fixcheck.FixCheck -tp $test_classes_path -tc $target_test -tm $target_test_methods -ts $target_test_dir -i $inputs_class -tf $original_failure_log -np 100 -ag $assertion_generation | tee log.out
+properties_file='fixcheck-props.properties'
+cat <<EOF > $properties_file
+test-classes-path=$test_classes_path
+test-class=$target_test
+test-methods=$target_test_methods
+test-classes-src=$target_test_dir
+test-failure-trace-log=$original_failure_log
+inputs-class=$input_class
+number-of-prefixes=100
+assertion-generator=$assertion_generation
+EOF
+echo 'properties file: '$properties_file
+
+java -cp $full_cp org.imdea.fixcheck.FixCheck -p $properties_file | tee log.out
