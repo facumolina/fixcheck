@@ -16,7 +16,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * GPT-3.5-turbo class: assertion generator based on the GPT-3.5-turbo model (see <a href="https://platform.openai.com/docs/models/gpt-3-5-turbo">gpt-3.5-turbo</a>)
+ * GPT-3.5-turbo class: assertion generator based on the GPT-3.5-turbo model
+ * (see <a href="https://platform.openai.com/docs/models/gpt-3-5-turbo">gpt-3.5-turbo</a>)
  *
  * @author Facundo Molina <facundo.molina@imdea.org>
  */

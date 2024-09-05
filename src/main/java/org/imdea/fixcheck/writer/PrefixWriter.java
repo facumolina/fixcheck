@@ -1,7 +1,7 @@
 package org.imdea.fixcheck.writer;
 
 import com.opencsv.CSVWriter;
-import org.imdea.fixcheck.FixCheckProperties;
+import org.imdea.fixcheck.properties.FixCheckProperties;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;

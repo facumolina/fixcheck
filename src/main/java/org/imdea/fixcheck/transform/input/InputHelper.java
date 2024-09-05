@@ -2,7 +2,7 @@ package org.imdea.fixcheck.transform.input;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.*;
-import org.imdea.fixcheck.FixCheckProperties;
+import org.imdea.fixcheck.properties.FixCheckProperties;
 import org.imdea.fixcheck.transform.input.provider.*;
 
 import java.util.*;

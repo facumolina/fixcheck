@@ -2,7 +2,7 @@ package org.imdea.fixcheck.prefix;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import org.imdea.fixcheck.FixCheckProperties;
+import org.imdea.fixcheck.properties.FixCheckProperties;
 import org.junit.runner.Result;
 
 import java.util.Objects;

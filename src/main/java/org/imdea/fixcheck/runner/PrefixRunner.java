@@ -1,6 +1,6 @@
 package org.imdea.fixcheck.runner;
 
-import org.imdea.fixcheck.FixCheckProperties;
+import org.imdea.fixcheck.properties.FixCheckProperties;
 import org.imdea.fixcheck.compilation.InMemoryFileManager;
 import org.imdea.fixcheck.compilation.JavaSourceFromString;
 import org.imdea.fixcheck.prefix.Prefix;

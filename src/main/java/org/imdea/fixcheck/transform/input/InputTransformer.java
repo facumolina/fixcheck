@@ -7,7 +7,7 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.nodeTypes.NodeWithType;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.Statement;
-import org.imdea.fixcheck.FixCheckProperties;
+import org.imdea.fixcheck.properties.FixCheckProperties;
 import org.imdea.fixcheck.prefix.BasicInput;
 import org.imdea.fixcheck.prefix.Input;
 import org.imdea.fixcheck.prefix.ObjectInput;
@@ -47,7 +47,7 @@ public class InputTransformer extends PrefixTransformer {
     // Prepare the new method body
     MethodDeclaration newMethod = TransformationHelper.getMethodDeclFromCompilationUnit(newCompilationUnit, prefixMethod.getNameAsString());
     // Remove assert statements from the method containing org.junit.Assert or org.junit.TestCase*assert
-    if (!("previous-assertion".equals(FixCheckProperties.ASSERTIONS_GENERATION)))
+    if (!("previous-assertion".equals(FixCheckProperties.ASSERTION_GENERATOR)))
       removeAssertionsFromMethod(newMethod);
     // Replace the input
     replaceInput(newMethod);

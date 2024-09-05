@@ -1,4 +1,4 @@
-package org.imdea.fixcheck;
+package org.imdea.fixcheck.properties;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -39,7 +39,7 @@ public class FixCheckProperties {
 
   // Properties related to prefixes
   public static int PREFIX_VARIATIONS = 1; // Total number of prefix variations to generate
-  public static String ASSERTIONS_GENERATION = "org.imdea.fixcheck.assertion.AssertTrueGenerator"; // Assertion mechanism to use
+  public static String ASSERTION_GENERATOR = "org.imdea.fixcheck.assertion.AssertTrueGenerator"; // Assertion mechanism to use
 
   // Properties related to inputs
   public static String INPUTS_CLASS; // Full name of the inputs class
@@ -100,10 +100,12 @@ public class FixCheckProperties {
         System.exit(1);
       }
       FixCheckProperties.PREFIX_VARIATIONS = Integer.parseInt(prop.getProperty("number-of-prefixes"));
-      FixCheckProperties.ASSERTIONS_GENERATION = prop.getProperty("assertion-generator");
-      if (FixCheckProperties.ASSERTIONS_GENERATION == null) {
+      FixCheckProperties.ASSERTION_GENERATOR = prop.getProperty("assertion-generator");
+      if (prop.getProperty("assertion-generator") == null) {
         System.out.println("Error: assertion-generator property is required");
         System.exit(1);
+      } else {
+        FixCheckProperties.ASSERTION_GENERATOR = AssertionGeneratorProperty.parseOption(prop.getProperty("assertion-generator"));
       }
       System.out.println("classpath: " + FixCheckProperties.FULL_CLASSPATH);
       System.out.println("test classes path: " + FixCheckProperties.TEST_CLASSES_PATH);

@@ -3,6 +3,7 @@ package org.imdea.fixcheck;
 import org.imdea.fixcheck.assertion.*;
 import org.imdea.fixcheck.checker.FailureChecker;
 import org.imdea.fixcheck.prefix.Prefix;
+import org.imdea.fixcheck.properties.FixCheckProperties;
 import org.imdea.fixcheck.runner.PrefixRunner;
 import org.imdea.fixcheck.transform.PrefixTransformer;
 import org.imdea.fixcheck.transform.input.InputHelper;
@@ -88,7 +89,7 @@ public class FixCheck {
     List<Prefix> prefixes = FixCheckProperties.getPrefixes();
     System.out.println("loaded prefixes: " + prefixes.size());
     System.out.println("prefixes to produce: " + FixCheckProperties.PREFIX_VARIATIONS);
-    System.out.println("assertions generation: " + FixCheckProperties.ASSERTIONS_GENERATION);
+    System.out.println("assertions generation: " + FixCheckProperties.ASSERTION_GENERATOR);
     System.out.println("inputs used in the prefixes:");
     // Show the inputs collected in the providers
     InputHelper.PROVIDERS.forEach((k,v) -> { System.out.println("  " + k + ": " + v);});
@@ -184,7 +185,7 @@ public class FixCheck {
    * Get the assertion generator to use
    */
   private static AssertionGenerator getAssertionGenerator() {
-    String assertionGeneratorClassName = FixCheckProperties.ASSERTIONS_GENERATION;
+    String assertionGeneratorClassName = FixCheckProperties.ASSERTION_GENERATOR;
     try {
       return (AssertionGenerator) Class.forName(assertionGeneratorClassName).getDeclaredConstructor().newInstance();
     } catch (Exception e) {

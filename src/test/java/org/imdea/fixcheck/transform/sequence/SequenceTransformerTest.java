@@ -1,7 +1,7 @@
 package org.imdea.fixcheck.transform.sequence;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
-import org.imdea.fixcheck.FixCheckProperties;
+import org.imdea.fixcheck.properties.FixCheckProperties;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.common.TransformationHelper;
 import org.imdea.fixcheck.transform.input.InputHelper;
