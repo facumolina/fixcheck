@@ -18,7 +18,7 @@ test-class=$target_test
 test-methods=$target_test_methods
 test-classes-src=$target_test_dir
 test-failure-trace-log=$original_failure_log
-inputs-class=$input_class
+inputs-class=$inputs_class
 number-of-prefixes=100
 assertion-generator=$assertion_generation
 EOF
