@@ -86,6 +86,7 @@ public class Llama3_1Ollama extends AssertionGenerator {
       requestBody.put("model", "llama3.1");
       requestBody.put("system", SYSTEM);
       requestBody.put("prompt", prompt);
+      requestBody.put("options", new JSONObject().put("stop", "}"));
       requestBody.put("stream", false);
       System.out.println("request: " + requestBody);
       con.setDoOutput(true);
@@ -102,7 +103,7 @@ public class Llama3_1Ollama extends AssertionGenerator {
       System.out.println("---> response: " + completion);
       return completion;
     } catch (Exception e) {
-      System.out.println("Error while performing the call to the OpenAI API");
+      System.out.println("Error while performing the call to the model llama3.1 through Ollama");
       e.printStackTrace();
       throw new RuntimeException(e);
     }
