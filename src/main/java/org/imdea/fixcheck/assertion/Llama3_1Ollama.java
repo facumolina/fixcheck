@@ -4,6 +4,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import org.imdea.fixcheck.assertion.common.AssertionsHelper;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.common.TransformationHelper;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -86,7 +87,7 @@ public class Llama3_1Ollama extends AssertionGenerator {
       requestBody.put("model", "llama3.1");
       requestBody.put("system", SYSTEM);
       requestBody.put("prompt", prompt);
-      requestBody.put("options", new JSONObject().put("stop", "}"));
+      requestBody.put("options", new JSONObject().put("stop", new JSONArray().put("}")));
       requestBody.put("stream", false);
       System.out.println("request: " + requestBody);
       con.setDoOutput(true);
