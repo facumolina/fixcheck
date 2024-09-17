@@ -22,8 +22,7 @@ public class CodeLlamaOllama extends AssertionGenerator {
 
   private final String API_URL = "http://localhost:11434/api/generate";
 
-  private final String SYSTEM = "You are an expert programmer that helps complete Java unit tests with assertions. " +
-      "Don't explain anything just write the tests.";
+  private final String SYSTEM = "You are an expert programmer that helps complete Java unit tests with test assertions. Don't explain anything just write the tests.";
   public CodeLlamaOllama() {}
 
   @Override
@@ -53,13 +52,10 @@ public class CodeLlamaOllama extends AssertionGenerator {
    * @return Prompt for the model
    */
   private String generatePrompt(Prefix prefix) {
-    //String prompt = "You are an assertion generator, that is, you generate meaningful test assertions for " +
-    //    "Java tests. You will always receive as input a sample test with assertions, and you will be asked " +
-    //    "to produce the test assertions for the second tests. As an assertion generator, you are only required" +
-    //    "to produce just the test assertions to be directly incorporated to the code base. Now, here is your task: \n";
-    //String prompt = "[INST] Your task is to complete a given Java test with assertions. You must respect the same style" +
-    //    " as the following test:\n";
-    String prompt = prefix.getParent().getSourceCode() + "\n";
+    String prompt = "You are an expert programmer that helps complete Java unit tests with test assertions. " +
+        "Avoid using text. Don't explain anything just complete the given code snippet with the " +
+        "corresponding test assertions";
+    prompt += prefix.getParent().getSourceCode() + "\n";
     //prompt += "Problem: produce the assertions for the following test:\n";
     prompt += prefix.getSourceCode();
     //prompt += "[/INST]";
