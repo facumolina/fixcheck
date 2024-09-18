@@ -2,7 +2,7 @@ package org.imdea.fixcheck.prefix;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import org.imdea.fixcheck.Properties;
+import org.imdea.fixcheck.properties.FixCheckProperties;
 import org.junit.runner.Result;
 
 import java.util.Objects;
@@ -101,7 +101,7 @@ public class Prefix {
 
   public void setClassName(String className) { this.className = className;}
   public String getClassName() { return className; }
-  public String getFullClassName() { return Properties.TEST_CLASS_PACKAGE_NAME + "." + className; }
+  public String getFullClassName() { return FixCheckProperties.TEST_CLASS_PACKAGE_NAME + "." + className; }
 
   public void setExecutionResult(Result result) { executionResult = result;}
   public Result getExecutionResult() { return executionResult; }

@@ -1,7 +1,7 @@
 package org.imdea.fixcheck.transform.input;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
-import org.imdea.fixcheck.Properties;
+import org.imdea.fixcheck.properties.FixCheckProperties;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.common.TransformationHelper;
 import org.junit.Before;
@@ -19,9 +19,9 @@ public class PrimitiveInputTransformationsTest {
   @Before
   public void initialize() {
     // Initialize stuff for inputs
-    Properties.TEST_CLASS_SRC_DIR = "src/test/java";
-    Properties.TEST_CLASS = "org.imdea.fixcheck.transform.input.PrimitiveInputTransformationsTest";
-    Properties.setup();
+    FixCheckProperties.TEST_CLASS_SRC_DIR = "src/test/java";
+    FixCheckProperties.TEST_CLASS = "org.imdea.fixcheck.transform.input.PrimitiveInputTransformationsTest";
+    FixCheckProperties.setup();
     InputHelper.initializeHelper();
   }
 
@@ -29,8 +29,8 @@ public class PrimitiveInputTransformationsTest {
 
   private Prefix getTargetPrefix(String prefixMethodName) {
     // Get the corresponding method from the compilation unit
-    MethodDeclaration methodDecl = TransformationHelper.getMethodDeclFromCompilationUnit(Properties.TEST_CLASS_SRC, prefixMethodName);
-    return new Prefix(methodDecl, Properties.TEST_CLASS_SRC);
+    MethodDeclaration methodDecl = TransformationHelper.getMethodDeclFromCompilationUnit(FixCheckProperties.TEST_CLASS_SRC, prefixMethodName);
+    return new Prefix(methodDecl, FixCheckProperties.TEST_CLASS_SRC);
   }
 
   // Basic methods to be used in the tests in Target class
@@ -68,7 +68,7 @@ public class PrimitiveInputTransformationsTest {
   // Actual tests
   @Test
   public void testIntTransformation() {
-    Properties.INPUTS_CLASS = "int";
+    FixCheckProperties.INPUTS_CLASS = "int";
     Prefix targetPrefix = getTargetPrefix("testIntMethod");
     Prefix transformedPrefix = INPUT_TRANSFORMER.transform(targetPrefix);
     String lastTransformation = INPUT_TRANSFORMER.getLastTransformation();
@@ -78,7 +78,7 @@ public class PrimitiveInputTransformationsTest {
 
   @Test
   public void testBooleanTransformation() {
-    Properties.INPUTS_CLASS = "boolean";
+    FixCheckProperties.INPUTS_CLASS = "boolean";
     Prefix targetPrefix = getTargetPrefix("testBooleanMethod");
     Prefix transformedPrefix = INPUT_TRANSFORMER.transform(targetPrefix);
     String lastTransformation = INPUT_TRANSFORMER.getLastTransformation();
@@ -88,7 +88,7 @@ public class PrimitiveInputTransformationsTest {
 
   @Test
   public void testDoubleTransformation() {
-    Properties.INPUTS_CLASS = "double";
+    FixCheckProperties.INPUTS_CLASS = "double";
     Prefix targetPrefix = getTargetPrefix("testDoubleMethod");
     Prefix transformedPrefix = INPUT_TRANSFORMER.transform(targetPrefix);
     String lastTransformation = INPUT_TRANSFORMER.getLastTransformation();

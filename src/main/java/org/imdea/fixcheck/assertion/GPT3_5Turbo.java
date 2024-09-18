@@ -16,11 +16,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * GPT-3.5-turbo class: assertion generator based on the GPT-3.5-turbo model (see <a href="https://platform.openai.com/docs/models/gpt-3-5-turbo">gpt-3.5-turbo</a>)
+ * GPT-3.5-turbo class: assertion generator based on the GPT-3.5-turbo model
+ * (see <a href="https://platform.openai.com/docs/models/gpt-3-5-turbo">gpt-3.5-turbo</a>)
  *
  * @author Facundo Molina <facundo.molina@imdea.org>
  */
-public class GPT35Turbo extends AssertionGenerator {
+public class GPT3_5Turbo extends AssertionGenerator {
 
   private final String MODEL = "gpt-3.5-turbo";
   private final String API_URL = "https://api.openai.com/v1/completions";
@@ -38,7 +39,7 @@ public class GPT35Turbo extends AssertionGenerator {
   /**
    * Default constructor
    */
-  public GPT35Turbo() {
+  public GPT3_5Turbo() {
     maxTokens = 500;
     temperature = 0.5;
   }
@@ -48,7 +49,7 @@ public class GPT35Turbo extends AssertionGenerator {
    * @param maxTokens Maximum number of tokens to generate in the completion.
    * @param temperature sampling temperature to use.
    */
-  public GPT35Turbo(int maxTokens, double temperature) {
+  public GPT3_5Turbo(int maxTokens, double temperature) {
     this.maxTokens = maxTokens;
     this.temperature = temperature;
   }

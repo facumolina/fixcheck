@@ -1,11 +1,10 @@
 package org.imdea.fixcheck.transform.sequence;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
-import org.imdea.fixcheck.Properties;
+import org.imdea.fixcheck.properties.FixCheckProperties;
 import org.imdea.fixcheck.prefix.Prefix;
 import org.imdea.fixcheck.transform.common.TransformationHelper;
 import org.imdea.fixcheck.transform.input.InputHelper;
-import org.imdea.fixcheck.transform.input.InputTransformer;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,9 +20,9 @@ public class SequenceTransformerTest {
   @Before
   public void initialize() {
     // Initialize stuff for inputs
-    Properties.TEST_CLASS_SRC_DIR = "src/test/java";
-    Properties.TEST_CLASS = "org.imdea.fixcheck.transform.sequence.SequenceTransformerTest";
-    Properties.setup();
+    FixCheckProperties.TEST_CLASS_SRC_DIR = "src/test/java";
+    FixCheckProperties.TEST_CLASS = "org.imdea.fixcheck.transform.sequence.SequenceTransformerTest";
+    FixCheckProperties.setup();
     InputHelper.initializeHelper();
   }
 
@@ -31,8 +30,8 @@ public class SequenceTransformerTest {
 
   private Prefix getTargetPrefix(String prefixMethodName) {
     // Get the corresponding method from the compilation unit
-    MethodDeclaration methodDecl = TransformationHelper.getMethodDeclFromCompilationUnit(Properties.TEST_CLASS_SRC, prefixMethodName);
-    return new Prefix(methodDecl, Properties.TEST_CLASS_SRC);
+    MethodDeclaration methodDecl = TransformationHelper.getMethodDeclFromCompilationUnit(FixCheckProperties.TEST_CLASS_SRC, prefixMethodName);
+    return new Prefix(methodDecl, FixCheckProperties.TEST_CLASS_SRC);
   }
 
   // Basic methods to be used in the tests in Target class
@@ -54,7 +53,7 @@ public class SequenceTransformerTest {
   @Test
   public void testRemoveSequence() {
     // Get the corresponding method from the compilation unit
-    Properties.INPUTS_CLASS = "int";
+    FixCheckProperties.INPUTS_CLASS = "int";
     Prefix prefix = getTargetPrefix("simpleMethod");
 
     // Transform the prefix
