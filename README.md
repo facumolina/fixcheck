@@ -12,6 +12,7 @@ according to their likelihood of revealing a defect in the patch.
 
 - Java >= 17 (tested with 17)
 - Python3 (tested with 3.11.5)
+- [Ollama](https://ollama.com/) (tool providing access to open source LLMs)
 
 ### Local Installation
 
@@ -34,20 +35,6 @@ it is necessary to download the LLMs that will be used, or interact
 with them through an API. Here we provide instructions on the currently 
 supported LLMs:
 
-#### codellama-7b-instruct 
-This model can be downloaded and executed with the following commands:
-```bash  
-wget https://huggingface.co/TheBloke/CodeLlama-7B-Instruct-GGUF/resolve/main/codellama-7b-instruct.Q5_K_M.gguf -P llms/models/
-python3 llms/codellama-7b-instruct.py
-```
-> [!Note]
-> We are using a version of the codellama-7b-instruct model in the GGUF format 
-> obtained through quantization. The GGUF format is developed 
-> by the [llama.cpp](https://github.com/ggerganov/llama.cpp)
-> team, with the goal to enable LLM inference with minimal 
-> setup and state-of-the-art performance.
-
-
 #### replit-code
 To use this model, other python requirements are needed, which, 
 for the sake of simplicity, are not included in the requirements.txt files. 
@@ -57,6 +44,17 @@ pip3 install sentencepiece==0.1.99
 pip3 install torch==2.0.1
 python3 llms/replit-code.py
 ```
+
+#### codellama
+Codellama needs to be downloaded using Ollama:
+```bash  
+ollama run codellama
+```
+> [!Note]
+> This command will download the 7B version of the codellama model. 
+> Other version can be downloaded by specifying the version in the command,
+> but in order to use other versions you will need to extend 
+> FixCheck as described in the Extending FixCheck section.
 
 After setting any of the LLMs, FixCheck is ready to be used.
 
@@ -117,12 +115,11 @@ python3 experiments/setup-defect-repairing.py Patch169
 
 From this point, we can now execute FixCheck as follows:
 ```bash
-nohup python3 llms/codellama-7b-instruct.py &
-python3 experiments/run-fixcheck-defect-repairing.py Patch169 org.imdea.fixcheck.assertion.CodeLlamaInstruct
+python3 experiments/run-fixcheck-defect-repairing.py Patch169 codellama
 ```
-The first script will setup the `codellama-7b-instruct` language model, and leave it ready to be called by FixCheck. 
-The second script will automatically extract the arguments 
-from the file `experiments/defect-repairing-subjects.csv`, and call FixCheck 
+The script will automatically extract the arguments 
+from the file `experiments/defect-repairing-subjects.csv`, 
+and call FixCheck 
 with the right properties. For instance, for the Patch1 
 subject the executed command was the following:
 ```bash
@@ -137,7 +134,7 @@ test-classes-src=$DEFECT_REPAIRING_DATASET/tmp/Patch169/Math69b/src/test/java
 inputs-class=int
 test-failure-trace-log=$DEFECT_REPAIRING_DATASET/tmp/Patch169/Math69b/failing_tests 
 number-of-prefixes=100 
-assertion-generator=org.imdea.fixcheck.assertion.CodeLlamaInstruct
+assertion-generator=codellama
 ```
 
 Once it finishes, the results will be stored in the folder `fixcheck-output/defects-repairing`.
